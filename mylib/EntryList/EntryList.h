@@ -22,6 +22,13 @@ unsigned int get_number_entries(const entry_list el);
 void *get_first(const entry_list el);
 void *get_next(const entry_list el, ListNode node);
 
+/* Returns the item of the node */
+void *get_node_item(ListNode node);
+
+/* Returns the first and the next node of list */
+ListNode get_first_node(const entry_list el);
+ListNode get_next_node(ListNode node);
+
 /* Add item as first item to entry list */
 ErrorCode add_entry(entry_list el, void *e);
 

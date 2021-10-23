@@ -49,8 +49,17 @@ void *get_next(const entry_list el, ListNode node){
     return next_node->item;
 }
 
+void *get_node_item(ListNode node){
+    assert(node != NULL);
+    return node->item;
+}
+
 ListNode get_first_node(const entry_list el){
     return el->dummy->next;
+}
+
+ListNode get_next_node(ListNode node){
+    return node->next;
 }
 
 void *list_insert_next(entry_list el, ListNode node, void *item){
