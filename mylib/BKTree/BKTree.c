@@ -6,6 +6,8 @@
 
 
 struct treenode{
+    //number of node's children
+    int no_child;
     char* word;
     /* cost is the distance between the current word and the parent's one */
     int cost;
@@ -41,10 +43,11 @@ ErrorCode build_entry_index(const entry_list* el,MatchType type, BK_tree* ix){
     return EC_SUCCESS;
 }
 
+//makes and returns BK_treenodes
 BK_treenode make_treenode(const char* word){
     BK_treenode new_node = NULL;
     new_node = (BK_treenode)malloc(sizeof(struct treenode));
-    new_node->word = (char*)malloc(20);
+    new_node->word = (char*)malloc(sizeof(char)*strlen(word)+1);
     strcpy(new_node->word,word);
     new_node->next = NULL;
     new_node->child = NULL;
@@ -68,6 +71,7 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
         if (temp == NULL) {
             (*root)->child = new_node;
             new_node->cost = dist;
+            (*root)->no_child++;
             return EC_SUCCESS;
         }
         else{
@@ -87,6 +91,7 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
                     else
                         prev->next = new_node;
                     new_node->cost = dist;
+                    (*root)->no_child++;
                     return EC_SUCCESS;
                 }
                 //This is the last option where the root already has a child with the same cost
@@ -99,6 +104,7 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
             //If we reached the end of the loop it means new_node must be places in the last position of the list
             new_node->cost = dist;
             prev->next = new_node;
+            (*root)->no_child++;
             return EC_SUCCESS;
         }
     }
@@ -109,8 +115,28 @@ void print_BK_tree(BK_treenode root){
         print_BK_tree(root->child);
     if(root->next)
         print_BK_tree(root->next);
-    printf("%s\n", root->word);
+    printf("%s-%d\n", root->word,root->no_child);
     return;
+}
+
+//delete function that deletes the tree
+ErrorCode destroy_entry_index(BK_tree ix){
+    destroy_tree(ix->root);
+    free(ix);
+    ix = NULL;
+    return EC_SUCCESS;
+}
+
+//recursive delete function for the tree nodes
+ErrorCode destroy_tree(BK_treenode root){
+    if(root->child)
+        destroy_tree(root->child);
+    if(root->next)
+        destroy_tree(root->next);
+    free(root->word);
+    free(root);
+    root = NULL;
+    return EC_SUCCESS;
 }
 
 int compare_words(const char* word1, const char* word2){

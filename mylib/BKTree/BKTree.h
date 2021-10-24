@@ -10,4 +10,5 @@ BK_treenode make_treenode(const char* word);
 ErrorCode BK_tree_insert(BK_treenode* tree,BK_treenode node);
 void print_BK_tree(BK_treenode root);
 int compare_words(const char* word1, const char* word2);
-/*ErrorCode destroy_entry_index(BK_tree ix);*/
+ErrorCode destroy_entry_index(BK_tree ix);
+ErrorCode destroy_tree(BK_treenode root);

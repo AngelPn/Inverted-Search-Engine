@@ -4,6 +4,7 @@
 #include "core.h"
 #include "Entry.h"
 #include "EntryList.h"
+#include "../mylib/BKTree/BKTree.h"
 
 int main(){
 
@@ -31,6 +32,11 @@ int main(){
         printf("Error! Add entry failed\n");
 
     print_entry_list(el, print_entry_word);
+
+    //BK_Tree test
+    BK_tree ix = NULL;
+    build_entry_index(&el,MT_EXACT_MATCH,&ix);
+    destroy_entry_index(ix);
 
     if (destroy_entry_list(el) == EC_FAIL)
         printf("Error! Destroy entry list failed\n");
