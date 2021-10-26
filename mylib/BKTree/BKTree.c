@@ -51,6 +51,8 @@ BK_treenode make_treenode(const entry e){
     new_node->item = e;
     new_node->next = NULL;
     new_node->child = NULL;
+    new_node->cost = 0;
+    new_node->no_child = 0;
     return new_node;
 }
 
