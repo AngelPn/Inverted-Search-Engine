@@ -170,3 +170,44 @@ int compare_words(const char* word1, const char* word2){
     }
     return distance;
 }
+
+ErrorCode lookup_entry_index(const word* w, BK_tree ix, int threshold, entry_list* result) {
+    entry_list candidate_words = NULL; /* actually keeps treenodes so we can get their children and cost */
+    if (create_entry_list(&candidate_words, NULL) == EC_FAIL) {
+        printf("Error! Create entry list failed\n");
+        return EC_FAIL;
+    }
+
+    entry_list found_words = NULL; /* this list is the result and doesn't need the whole node's info */
+    if (create_entry_list(&found_words, NULL) == EC_FAIL) {
+        printf("Error! Create entry list failed\n");
+        return EC_FAIL;
+    }
+
+    /* Step 1: Add root to candidate words */
+    add_entry(candidate_words, ix->root);
+
+    BK_treenode candidate = NULL;
+    while ((candidate = pop_entry(candidate_words)) != NULL){
+
+        /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
+//        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
+        int dist = compare_words(get_entry_word(candidate->item), w);
+        if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
+            add_entry(found_words, candidate->item);
+            BK_treenode current = candidate->child;
+            /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
+            while (current!=NULL) {
+//            printf("diasthma [%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
+                if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
+                    add_entry(candidate_words, current);
+                }
+                current = current->next;
+            }
+        }
+
+    }
+    *result = found_words;
+    destroy_entry_list(candidate_words);
+    return EC_SUCCESS;
+}
