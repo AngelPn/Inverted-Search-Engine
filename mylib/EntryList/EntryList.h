@@ -29,8 +29,11 @@ void *get_node_item(ListNode node);
 ListNode get_first_node(const entry_list el);
 ListNode get_next_node(ListNode node);
 
-/* Add item as first item to entry list */
+/* Adds item as first item to entry list */
 ErrorCode add_entry(entry_list el, void *e);
+
+/* Pops item from entry list and returns it */
+void *pop_entry(entry_list el);
 
 /* Sets or changes the destroy item */
 void list_set_destroy_item(entry_list el, DestroyFunc destroy_item);
