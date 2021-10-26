@@ -8,7 +8,8 @@
 struct treenode{
     //number of node's children
     int no_child;
-    char* word;
+    //entry is struct_entry*
+    entry item;
     /* cost is the distance between the current word and the parent's one */
     int cost;
     /*Child is the list with all child nodes of the current node*/
@@ -32,11 +33,11 @@ ErrorCode build_entry_index(const entry_list* el,MatchType type, BK_tree* ix){
     //add all entry_list's nodes to the tree iteratively
     ListNode current = get_first_node(*el);
     //adding root
-    BK_tree_insert(&((*ix)->root), make_treenode(get_entry_word(get_node_item(current))));
+    BK_tree_insert(&((*ix)->root), make_treenode(get_node_item(current)));
     //adding all other nodes
     for(int i=1 ; i<(*ix)->size ; i++){
         current = get_next_node(current);
-        BK_tree_insert(&((*ix)->root), make_treenode(get_entry_word(get_node_item(current))));
+        BK_tree_insert(&((*ix)->root), make_treenode(get_node_item(current)));
     }
     printf("Printing BK tree:\n");
     print_BK_tree((*ix)->root);
@@ -44,11 +45,10 @@ ErrorCode build_entry_index(const entry_list* el,MatchType type, BK_tree* ix){
 }
 
 //makes and returns BK_treenodes
-BK_treenode make_treenode(const char* word){
+BK_treenode make_treenode(const entry e){
     BK_treenode new_node = NULL;
     new_node = (BK_treenode)malloc(sizeof(struct treenode));
-    new_node->word = (char*)malloc(sizeof(char)*strlen(word)+1);
-    strcpy(new_node->word,word);
+    new_node->item = e;
     new_node->next = NULL;
     new_node->child = NULL;
     return new_node;
@@ -64,7 +64,10 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
     else {
         int dist;
         //edit distance function
-        dist = compare_words((*root)->word, new_node->word);
+        dist = compare_words(get_entry_word((*root)->item), get_entry_word(new_node->item));
+        //Rejecting duplicate words
+        if(dist == 0)
+            return EC_FAIL;
         BK_treenode temp = (*root)->child;
         BK_treenode prev = (*root);
         //if root doesn't have any children
@@ -115,7 +118,7 @@ void print_BK_tree(BK_treenode root){
         print_BK_tree(root->child);
     if(root->next)
         print_BK_tree(root->next);
-    printf("%s-%d\n", root->word,root->no_child);
+    printf("%s-%d\n", get_entry_word(root->item),root->no_child);
     return;
 }
 
@@ -133,7 +136,6 @@ ErrorCode destroy_tree(BK_treenode root){
         destroy_tree(root->child);
     if(root->next)
         destroy_tree(root->next);
-    free(root->word);
     free(root);
     root = NULL;
     return EC_SUCCESS;
