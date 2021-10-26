@@ -39,8 +39,6 @@ ErrorCode build_entry_index(const entry_list* el,MatchType type, BK_tree* ix){
         current = get_next_node(current);
         BK_tree_insert(&((*ix)->root), make_treenode(get_node_item(current)));
     }
-    printf("Printing BK tree:\n");
-    print_BK_tree((*ix)->root);
     return EC_SUCCESS;
 }
 
@@ -115,12 +113,21 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
     }
 }
 
-void print_BK_tree(BK_treenode root){
-    if(root->child)
-        print_BK_tree(root->child);
-    if(root->next)
-        print_BK_tree(root->next);
+BK_treenode get_root(BK_tree tree){
+    return tree->root;
+}
+
+void print_BK_tree(BK_tree tree){
+    printf("Printing BK tree:\n");
+    print_BK_tree_helper(tree->root);
+}
+
+void print_BK_tree_helper(BK_treenode root){
     printf("%s-%d\n", get_entry_word(root->item),root->no_child);
+    if(root->child)
+        print_BK_tree_helper(root->child);
+    if(root->next)
+        print_BK_tree_helper(root->next);
     return;
 }
 

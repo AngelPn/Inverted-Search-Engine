@@ -7,7 +7,6 @@
 #include "../mylib/BKTree/BKTree.h"
 
 int main(){
-
     entry e1 = NULL, e2 = NULL, e3 = NULL, e4 = NULL;
     if (create_entry("hell", &e1) == EC_FAIL)
         printf("Error! Create entry failed\n");
@@ -64,6 +63,7 @@ int main(){
     /* build a BK tree */
     BK_tree index = NULL;
     build_entry_index(&entryList,MT_EXACT_MATCH,&index);
+    print_BK_tree(index);
 
     printf("Find words similar to henn with max distance 2:\n");
 
