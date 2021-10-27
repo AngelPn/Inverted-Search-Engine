@@ -35,6 +35,8 @@ int main(){
     //BK_Tree test
     BK_tree ix = NULL;
     build_entry_index(&el,MT_EXACT_MATCH,&ix);
+    print_BK_tree(ix);
+
     printf("Find words similar to henn with max distance 2:\n");
 
     entry_list result;
