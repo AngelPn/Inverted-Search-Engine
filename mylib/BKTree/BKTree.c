@@ -202,15 +202,16 @@ ErrorCode lookup_entry_index(const word* w, BK_tree ix, int threshold, entry_lis
         int dist = compare_words(get_entry_word(candidate->item), w);
         if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
             add_entry(found_words, candidate->item);
-            BK_treenode current = candidate->child;
-            /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
-            while (current!=NULL) {
+        }
+
+        /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
+        BK_treenode current = candidate->child;
+        while (current!=NULL) {
 //            printf("diasthma [%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
-                if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
-                    add_entry(candidate_words, current);
-                }
-                current = current->next;
+            if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
+                add_entry(candidate_words, current);
             }
+            current = current->next;
         }
 
     }
