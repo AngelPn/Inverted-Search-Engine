@@ -39,3 +39,15 @@ ErrorCode destroy_entry(void *e){
     free(ce);
     return EC_SUCCESS;
 }
+
+
+void test_example(void) {
+    void* mem;
+
+    mem = malloc(10);
+    TEST_CHECK(mem != NULL);
+
+    mem = realloc(mem, 20);
+    TEST_CHECK(mem != NULL);
+
+}
