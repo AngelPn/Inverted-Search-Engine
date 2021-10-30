@@ -10,11 +10,11 @@ struct treenode{
     int no_child;
     //entry is struct_entry*
     entry item;
-    /* cost is the distance between the current word and the parent's one */
+    // cost is the distance between the current word and the parent's one
     int cost;
-    /*Child is the list with all child nodes of the current node*/
+    //Child is the list with all child nodes of the current node
     BK_treenode child;
-    /* Next is the next element of parent node's children*/
+    // Next is the next element of parent node's children
     BK_treenode next;
 };
 
