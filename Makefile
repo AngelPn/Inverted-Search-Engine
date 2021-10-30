@@ -3,27 +3,37 @@ INCL = include
 SRC = src
 MODULES = mylib
 ODIR = build
+TEST = tests
 
 #compiler
 CC = gcc
 
-#executable's name
-EXEC = searchEngine
-
 #compile options
-CFLAGS = -Wall -g -I$(MODULES)/EntryList -I$(MODULES)/Entry -I$(MODULES)/BKTree -I$(INCL)
+CFLAGS = -Wall -g -I$(INCL) -I$(MODULES)/EntryList -I$(MODULES)/Entry -I$(MODULES)/BKTree
 
-OBJS =  $(SRC)/main.o
-OBJS += $(MODULES)/Entry/Entry.o
+# OBJS =  $(SRC)/main.o
+OBJS = $(MODULES)/Entry/Entry.o
 OBJS += $(MODULES)/EntryList/EntryList.o
 OBJS += $(MODULES)/BKTree/BKTree.o
 
-$(EXEC): clean $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC) -lm
+test_Entry: clean $(OBJS) $(TEST)/Entry.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
 	mkdir -p $(ODIR)
-	mv $(OBJS) $(ODIR)
+	mv $(OBJS) $(TEST)/Entry.test.o $(ODIR)
+
+test_EntryList: clean $(OBJS) $(TEST)/EntryList.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/EntryList.test.o -o test_EntryList
+	mkdir -p $(ODIR)
+	mv $(OBJS) $(TEST)/EntryList.test.o $(ODIR)
+
+test_BKTree: clean $(OBJS) $(TEST)/BKTree.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
+	mkdir -p $(ODIR)
+	mv $(OBJS) $(TEST)/BKTree.test.o $(ODIR)
+
+all: test_Entry test_EntryList test_BKTree
 
 # delete executable & object files
 clean:
-	rm -f $(EXEC)
+	rm -f test_Entry test_EntryList test_BKTree
 	rm -rf $(ODIR)
