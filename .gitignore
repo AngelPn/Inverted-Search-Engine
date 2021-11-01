@@ -1,4 +1,8 @@
-.idea
+# Our executables
+searchEngine
+test_Entry
+test_EntryList
+test_BKTree
 
 # Prerequisites
 *.d
