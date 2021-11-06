@@ -58,3 +58,7 @@ Mkfile.old
 dkms.conf
 .idea
 .vscode
+
+cmake-build-debug
+CMakeLists.txt
+build
