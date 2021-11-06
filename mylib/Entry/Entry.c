@@ -37,5 +37,6 @@ ErrorCode destroy_entry(void *e){
     entry ce = e;
     free(ce->w);
     free(ce);
+    ce = NULL;
     return EC_SUCCESS;
 }
