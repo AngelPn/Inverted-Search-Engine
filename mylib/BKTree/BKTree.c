@@ -131,6 +131,18 @@ void print_BK_tree_helper(BK_treenode root){
     return;
 }
 
+void print_BK_tree_helper_tostring(BK_treenode root, char *string){
+    sprintf(string, "%s-%d\n", get_entry_word(root->item),root->no_child);
+    if(root->child)
+        print_BK_tree_helper_tostring(root->child, string+strlen(string));
+    if(root->next)
+        print_BK_tree_helper_tostring(root->next, string+strlen(string));
+}
+
+void print_BK_tree_tostring(BK_tree tree, char *string){
+    print_BK_tree_helper_tostring(tree->root, string);
+}
+
 //delete function that deletes the tree
 ErrorCode destroy_entry_index(BK_tree ix){
     destroy_tree(ix->root);
