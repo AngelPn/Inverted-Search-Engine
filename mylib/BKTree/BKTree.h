@@ -1,18 +1,26 @@
-#include "../../include/core.h"
-#include "../EntryList/EntryList.h"
-#include "../Entry/Entry.h"
+#ifndef BK_TREE_H
+#define BK_TREE_H
+
+#include "core.h"
+#include "EntryList.h"
+#include "Entry.h"
 
 typedef struct treenode* BK_treenode;
 typedef struct tree* BK_tree;
 
-ErrorCode build_entry_index(const entry_list* el,MatchType type, BK_tree* ix);
-BK_treenode make_treenode(const entry e);
-ErrorCode BK_tree_insert(BK_treenode* tree,BK_treenode node);
-void print_BK_tree(BK_tree tree);
-void print_BK_tree_helper(BK_treenode root);
-int compare_words(const char* word1, const char* word2);
-ErrorCode destroy_entry_index(BK_tree ix);
-ErrorCode destroy_tree(BK_treenode root);
-void print_BK_tree_tostring(BK_tree tree, char *string);
+/* Builds BK tree from given entry list */
+ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix);
 
-ErrorCode lookup_entry_index(const word* w, BK_tree ix, int threshold, entry_list* result);
+/* Returns an entry list that matches given word */
+ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, entry_list* result);
+
+/* Prints BK tree: (word of entry) - (number of children) */
+void print_BK_tree(BK_tree tree);
+
+/* Items of BK tree as string */
+void BK_tree_toString(BK_tree tree, char *string);
+
+/* Deallocates of memory of BK tree */
+ErrorCode destroy_entry_index(BK_tree ix);
+
+#endif

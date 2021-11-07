@@ -6,11 +6,11 @@
 
 struct entry_struct
 {
-    word *w;
+    char *w;
     void *payload;
 };
 
-ErrorCode create_entry(const word *w, entry *e){
+ErrorCode create_entry(const char *w, entry *e){
 
     if (((*e) = (entry)malloc(sizeof(struct entry_struct))) == NULL)
         return EC_FAIL;
@@ -24,7 +24,7 @@ ErrorCode create_entry(const word *w, entry *e){
     return EC_SUCCESS;
 }
 
-word *get_entry_word(entry e){
+char *get_entry_word(entry e){
     return e->w;
 }
 
