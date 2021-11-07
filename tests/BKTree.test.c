@@ -29,6 +29,7 @@ void test_build_entry_index(void) {
     TEST_MSG("expected:\n%s", string);
     TEST_MSG("produced:\n%s", string_res);
 
+    free(string_res);
     destroy_entry_index(index);
     destroy_entry_list(entryList);
 
