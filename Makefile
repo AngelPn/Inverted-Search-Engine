@@ -1,17 +1,18 @@
-#paths
+# Paths
 INCL = include
 SRC = src
 MODULES = mylib
 ODIR = build
 TEST = tests
 
-#compiler
+# Compiler
 CC = gcc
 
-#compile options
+# Compile options
 CFLAGS = -Wall -g -I$(INCL) -I$(MODULES)/EntryList -I$(MODULES)/Entry -I$(MODULES)/BKTree
+# Valgrind flags
+VALFLAGS = --leak-check=full --track-origins=yes -s
 
-# OBJS =  $(SRC)/main.o
 OBJS = $(MODULES)/Entry/Entry.o
 OBJS += $(MODULES)/EntryList/EntryList.o
 OBJS += $(MODULES)/BKTree/BKTree.o
@@ -34,7 +35,12 @@ run: all
 	./test_EntryList
 	./test_BKTree
 
-# delete executable & object files
+valgrind: all
+	valgrind $(VALFLAGS) ./test_Entry
+	valgrind $(VALFLAGS) ./test_EntryList
+	valgrind $(VALFLAGS) ./test_BKTree
+
+# Delete executable & object files
 clean:
 	rm -f test_Entry test_EntryList test_BKTree
 	rm -rf $(ODIR)
