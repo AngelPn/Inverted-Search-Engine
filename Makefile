@@ -29,7 +29,7 @@ test_EntryList: clean $(OBJS) $(TEST)/EntryList.test.o
 test_BKTree: clean $(OBJS) $(TEST)/BKTree.test.o
 	$(CC) $(CFLAGS) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
 
-run:
+run: all
 	./test_Entry
 	./test_EntryList
 	./test_BKTree
