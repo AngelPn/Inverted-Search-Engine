@@ -89,43 +89,9 @@ void test_pop_entry(){
     destroy_entry_list(el);
 }
 
-//void test_list_destroy_item(){
-//    entry_list el = NULL;
-//    if (create_entry_list(&el, NULL) == EC_FAIL)
-//        printf("Error! Create entry list failed\n");
-//
-//    entry e = NULL;
-//    if (create_entry("hell", &e) == EC_FAIL)
-//        printf("Error! Create entry failed\n");
-//    add_entry(el, e);
-//    destroy_entry_list(el);
-//    TEST_CHECK(e != NULL);
-//
-//
-//    el = NULL;
-//    if (create_entry_list(&el, destroy_entry) == EC_FAIL)
-//        printf("Error! Create entry list failed\n");
-//
-//    if (e == NULL){
-//        if (create_entry("hell", &e) == EC_FAIL)
-//            printf("Error! Create entry failed\n");
-//    }
-//    add_entry(el, e);
-//    destroy_entry_list(el);
-//
-//    TEST_CHECK(e == NULL);
-//
-//    if (e!=NULL){
-//        destroy_entry(e);
-//    }
-//
-//}
-//
-
 TEST_LIST = {
         { "create_entry_list", test_create },
         { "add_entry", test_add_entry },
         { "pop_entry", test_pop_entry },
-//        { "destroy list items", test_list_destroy_item },
         { NULL, NULL }
 };
