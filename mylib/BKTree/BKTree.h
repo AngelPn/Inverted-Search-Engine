@@ -13,5 +13,6 @@ void print_BK_tree_helper(BK_treenode root);
 int compare_words(const char* word1, const char* word2);
 ErrorCode destroy_entry_index(BK_tree ix);
 ErrorCode destroy_tree(BK_treenode root);
+void print_BK_tree_tostring(BK_tree tree, char *string);
 
 ErrorCode lookup_entry_index(const word* w, BK_tree ix, int threshold, entry_list* result);
