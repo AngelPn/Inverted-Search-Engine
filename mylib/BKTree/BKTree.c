@@ -195,7 +195,6 @@ ErrorCode destroy_entry_index(BK_tree ix) {
 /**************************************************************/
 
 int compare_words(const char* word1, const char* word2) {
-    /* using edit distance */
 
     int distance = 0;
 
