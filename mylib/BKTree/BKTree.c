@@ -163,7 +163,6 @@ ErrorCode destroy_tree(BK_treenode root){
 }
 
 int compare_words(const char* word1, const char* word2){
-    /* using edit distance */
 
     int distance = 0;
 

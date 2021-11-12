@@ -20,7 +20,6 @@ void test_create(void) {
         printf("Error! Destroy entry failed\n");
 }
 
-
 void test_get_entry_word(void) {
 
     char *w = "hell";
@@ -35,8 +34,21 @@ void test_get_entry_word(void) {
         printf("Error! Destroy entry failed\n");
 }
 
+void test_destroy_entry(void) {
+
+    char *w = "hell";
+    entry e1 = NULL;
+    if (create_entry(w, &e1) == EC_FAIL)
+        printf("Error! Create entry failed\n");
+
+    if (destroy_entry(e1) == EC_FAIL)
+        printf("Error! Destroy entry failed\n");
+    TEST_CHECK(e1 == NULL);
+}
+
 TEST_LIST = {
     { "create entry", test_create },
     { "get_entry_word", test_get_entry_word },
+    { "destroy_entry", test_destroy_entry },
     { NULL, NULL }
 };

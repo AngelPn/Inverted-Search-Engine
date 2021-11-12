@@ -117,8 +117,49 @@ void test_lookup_entry_index(){
 
 }
 
+void test_destroy_index(){
+    entry e1 = NULL, e2 = NULL, e3 = NULL, e4 = NULL;
+    if (create_entry("hell", &e1) == EC_FAIL)
+        printf("Error! Create entry failed\n");
+    if (create_entry("felt", &e2) == EC_FAIL)
+        printf("Error! Create entry failed\n");
+    if (create_entry("henn", &e3) == EC_FAIL)
+        printf("Error! Create entry failed\n");
+    if (create_entry("ken", &e4) == EC_FAIL)
+        printf("Error! Create entry failed\n");
+
+    entry_list el = NULL;
+    if (create_entry_list(&el, destroy_entry) == EC_FAIL)
+        printf("Error! Create entry list failed\n");
+
+    if (add_entry(el, e1) == EC_FAIL)
+        printf("Error! Add entry failed\n");
+    if (add_entry(el, e2) == EC_FAIL)
+        printf("Error! Add entry failed\n");
+    if (add_entry(el, e3) == EC_FAIL)
+        printf("Error! Add entry failed\n");
+    if (add_entry(el, e4) == EC_FAIL)
+        printf("Error! Add entry failed\n");
+
+    //BK_Tree test
+    BK_tree ix = NULL;
+    build_entry_index(&el,MT_EXACT_MATCH,&ix);
+
+    entry_list result;
+    lookup_entry_index("henn", ix, 2, &result);
+
+    destroy_entry_list(result);
+    destroy_entry_index(ix);
+    TEST_CHECK(ix == NULL);
+
+    if (destroy_entry_list(el) == EC_FAIL)
+        printf("Error! Destroy entry list failed\n");
+
+}
+
 TEST_LIST = {
         { "test build entry index", test_build_entry_index },
         { "test lookup entry index", test_lookup_entry_index },
+        { "test destroy_index", test_destroy_index },
         { NULL, NULL }
 };
