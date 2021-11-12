@@ -20,11 +20,11 @@ void test_build_entry_index(void) {
 
     /* build a BK tree */
     BK_tree index = NULL;
-    build_entry_index(&entryList,MT_EXACT_MATCH,&index);
+    build_entry_index(entryList, MT_EXACT_MATCH, &index);
 
     char string[] = "hell-3\nhelp-1\nfell-0\nfall-2\nfelt-0\nmelt-0\nsmall-0\n"; /* this is the expected tree */
     char* string_res = malloc(strlen(string)+1);
-    print_BK_tree_tostring(index, string_res);
+    BK_tree_toString(index, string_res);
     TEST_CHECK(strcmp(string, string_res) == 0);
     TEST_MSG("expected:\n%s", string);
     TEST_MSG("produced:\n%s", string_res);
@@ -64,7 +64,7 @@ void test_lookup_entry_index(){
 
     //BK_Tree test
     BK_tree ix = NULL;
-    build_entry_index(&el,MT_EXACT_MATCH,&ix);
+    build_entry_index(el, MT_EXACT_MATCH, &ix);
 //    print_BK_tree(ix);
 
 //    TEST_MSG("Find words similar to henn with max distance 2:\n");
@@ -98,7 +98,7 @@ void test_lookup_entry_index(){
 
     /* build a BK tree */
     BK_tree index = NULL;
-    build_entry_index(&entryList,MT_EXACT_MATCH,&index);
+    build_entry_index(entryList, MT_EXACT_MATCH, &index);
 //    print_BK_tree(index);
 
 //    printf("Find words similar to henn with max distance 2:\n");

@@ -4,48 +4,24 @@
 
 #include "BKTree.h"
 
-
-struct treenode{
-    //number of node's children
-    int no_child;
-    //entry is struct_entry*
-    entry item;
-    // cost is the distance between the current word and the parent's one
-    int cost;
-    //Child is the list with all child nodes of the current node
-    BK_treenode child;
-    // Next is the next element of parent node's children
-    BK_treenode next;
+struct treenode
+{
+    int no_child;       /* number of node's children */
+    entry item;         /* item is of struct_entry* */
+    int cost;           /* distance between the current word and the parent's one */ 
+    BK_treenode child;  /* the list with all child nodes of the current node */
+    BK_treenode next    /* the next element of parent node's children */;
 };
 
-struct tree{
+struct tree
+{
     BK_treenode root;
-    /*Size is the total number of nodes*/
-    int size;
+    int size; /* the total number of nodes */
 };
 
-ErrorCode build_entry_index(const entry_list* el,MatchType type, BK_tree* ix){
-    //initialize new tree
-    if (((*ix) = (BK_tree)malloc(sizeof(struct tree))) == NULL)
-        return EC_FAIL;
-    (*ix)->size = get_number_entries(*el);
-    (*ix)->root = NULL;
-    //add all entry_list's nodes to the tree iteratively
-    ListNode current = get_first_node(*el);
-    //adding root
-    BK_tree_insert(&((*ix)->root), make_treenode(get_node_item(current)));
-    //adding all other nodes
-    for(int i=1 ; i<(*ix)->size ; i++){
-        current = get_next_node(current);
-        BK_tree_insert(&((*ix)->root), make_treenode(get_node_item(current)));
-    }
-    return EC_SUCCESS;
-}
-
-//makes and returns BK_treenodes
-BK_treenode make_treenode(const entry e){
-    BK_treenode new_node = NULL;
-    new_node = (BK_treenode)malloc(sizeof(struct treenode));
+/* Creates and returns BK_treenode */
+BK_treenode make_treenode(const entry e) {
+    BK_treenode new_node = (BK_treenode)malloc(sizeof(struct treenode));
     new_node->item = e;
     new_node->next = NULL;
     new_node->child = NULL;
@@ -54,41 +30,43 @@ BK_treenode make_treenode(const entry e){
     return new_node;
 }
 
-ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
+int compare_words(const char* word1, const char* word2);
+
+/* Inserts new node to BK tree */
+ErrorCode BK_tree_insert(BK_treenode* root, BK_treenode new_node) {
+
     BK_treenode temp = *root;
-    //if root is empty
-    if(temp == NULL){
+    if(temp == NULL) { /* If root is empty */
         *root = new_node;
         return EC_SUCCESS;
     }
     else {
-        int dist;
-        //edit distance function
-        dist = compare_words(get_entry_word((*root)->item), get_entry_word(new_node->item));
-        //Rejecting duplicate words
-        if(dist == 0)
+        /* edit distance function */
+        int dist = compare_words(get_entry_word((*root)->item), get_entry_word(new_node->item));
+        /* Rejecting duplicate words */
+        if (dist == 0)
             return EC_FAIL;
         BK_treenode temp = (*root)->child;
         BK_treenode prev = (*root);
-        //if root doesn't have any children
+        /* if root doesn't have any children */
         if (temp == NULL) {
             (*root)->child = new_node;
             new_node->cost = dist;
             (*root)->no_child++;
             return EC_SUCCESS;
-        }
-        else{
-            //Looping the root's children while holding a pointer to the previous node,
-            // in case we find a node with bigger distance and we must insert the new node in the previous position
+        } else {
+            /*  Looping the root's children while holding a pointer to the previous node,
+                in case we find a node with bigger distance and we must insert the new node in the previous position 
+            */
             while (temp != NULL) {
                 if (dist > temp->cost) {
                     prev = temp;
                     temp = temp->next;
                     continue;
                 } else if (dist < temp->cost) {
-                    //inserting in the previous position
+                    /* inserting in the previous position */
                     new_node->next = temp;
-                    //If temp is the first child of our root then we make new_node the new first child
+                    /* If temp is the first child of our root then we make new_node the new first child */
                     if(prev == (*root))
                         prev->child = new_node;
                     else
@@ -96,15 +74,12 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
                     new_node->cost = dist;
                     (*root)->no_child++;
                     return EC_SUCCESS;
-                }
-                //This is the last option where the root already has a child with the same cost
-                //So we must insert the new node in this child's children
-                else {
+                } else { /* Root already has a child with the same cost -> Insert the new node in the child's childer */              
                     BK_tree_insert(&temp, new_node);
                     return EC_SUCCESS;
                 }
             }
-            //If we reached the end of the loop it means new_node must be places in the last position of the list
+            /* If we reached the end of the loop it means new_node must be placed in the last position of the list */
             new_node->cost = dist;
             prev->next = new_node;
             (*root)->no_child++;
@@ -113,83 +88,24 @@ ErrorCode BK_tree_insert(BK_treenode* root,BK_treenode new_node){
     }
 }
 
-BK_treenode get_root(BK_tree tree){
-    return tree->root;
-}
+ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix) {
 
-void print_BK_tree(BK_tree tree){
-    printf("Printing BK tree:\n");
-    print_BK_tree_helper(tree->root);
-}
+    if (((*ix) = (BK_tree)malloc(sizeof(struct tree))) == NULL)
+        return EC_FAIL;
+    (*ix)->size = get_number_entries(el);
+    (*ix)->root = NULL;
 
-void print_BK_tree_helper(BK_treenode root){
-    printf("%s-%d\n", get_entry_word(root->item),root->no_child);
-    if(root->child)
-        print_BK_tree_helper(root->child);
-    if(root->next)
-        print_BK_tree_helper(root->next);
-    return;
-}
-
-void print_BK_tree_helper_tostring(BK_treenode root, char *string){
-    sprintf(string, "%s-%d\n", get_entry_word(root->item),root->no_child);
-    if(root->child)
-        print_BK_tree_helper_tostring(root->child, string+strlen(string));
-    if(root->next)
-        print_BK_tree_helper_tostring(root->next, string+strlen(string));
-}
-
-void print_BK_tree_tostring(BK_tree tree, char *string){
-    print_BK_tree_helper_tostring(tree->root, string);
-}
-
-//delete function that deletes the tree
-ErrorCode destroy_entry_index(BK_tree ix){
-    destroy_tree(ix->root);
-    free(ix);
-    ix = NULL;
+    /* Insert all entry_list's items to the tree iteratively */
+    ListNode current = get_first_node(el);
+    for(int i = 0; i < (*ix)->size; i++) {
+        if (BK_tree_insert(&((*ix)->root), make_treenode(get_node_item(current))) == EC_FAIL)
+            return EC_FAIL;
+        current = get_next_node(current);
+    }
     return EC_SUCCESS;
 }
 
-//recursive delete function for the tree nodes
-ErrorCode destroy_tree(BK_treenode root){
-    if(root->child)
-        destroy_tree(root->child);
-    if(root->next)
-        destroy_tree(root->next);
-    free(root);
-    root = NULL;
-    return EC_SUCCESS;
-}
-
-int compare_words(const char* word1, const char* word2){
-
-    int distance = 0;
-
-    /* points to current character */
-    const char *curr1 = word1, *curr2 = word2;
-
-    while (*curr1 && *curr2){
-        if (*curr1 != *curr2){
-            distance++;
-        }
-        curr1++;
-        curr2++;
-    }
-
-    while (*curr1){
-        distance++;
-        curr1++;
-    }
-
-    while (*curr2){
-        distance++;
-        curr2++;
-    }
-    return distance;
-}
-
-ErrorCode lookup_entry_index(const word* w, BK_tree ix, int threshold, entry_list* result) {
+ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, entry_list* result) {
     entry_list candidate_words = NULL; /* actually keeps treenodes so we can get their children and cost */
     if (create_entry_list(&candidate_words, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
@@ -229,4 +145,79 @@ ErrorCode lookup_entry_index(const word* w, BK_tree ix, int threshold, entry_lis
     *result = found_words;
     destroy_entry_list(candidate_words);
     return EC_SUCCESS;
+}
+
+void print_BK_tree_helper(BK_treenode root) {
+    printf("%s-%d\n", get_entry_word(root->item),root->no_child);
+    if(root->child)
+        print_BK_tree_helper(root->child);
+    if(root->next)
+        print_BK_tree_helper(root->next);
+    return;
+}
+
+void print_BK_tree(BK_tree tree) {
+    printf("Printing BK tree:\n");
+    print_BK_tree_helper(tree->root);
+}
+
+void BK_tree_toString_helper(BK_treenode root, char *string) {
+    sprintf(string, "%s-%d\n", get_entry_word(root->item),root->no_child);
+    if(root->child)
+        BK_tree_toString_helper(root->child, string+strlen(string));
+    if(root->next)
+        BK_tree_toString_helper(root->next, string+strlen(string));
+}
+
+void BK_tree_toString(BK_tree tree, char *string) {
+    BK_tree_toString_helper(tree->root, string);
+}
+
+/* Recursive delete function for the tree nodes */
+ErrorCode destroy_tree(BK_treenode root) {
+    if(root->child)
+        destroy_tree(root->child);
+    if(root->next)
+        destroy_tree(root->next);
+    free(root);
+    root = NULL;
+    return EC_SUCCESS;
+}
+
+/* Delete function that deletes the tree */
+ErrorCode destroy_entry_index(BK_tree ix) {
+    destroy_tree(ix->root);
+    free(ix);
+    ix = NULL;
+    return EC_SUCCESS;
+}
+
+/**************************************************************/
+
+int compare_words(const char* word1, const char* word2) {
+    /* using edit distance */
+
+    int distance = 0;
+
+    /* points to current character */
+    const char *curr1 = word1, *curr2 = word2;
+
+    while (*curr1 && *curr2){
+        if (*curr1 != *curr2){
+            distance++;
+        }
+        curr1++;
+        curr2++;
+    }
+
+    while (*curr1){
+        distance++;
+        curr1++;
+    }
+
+    while (*curr2){
+        distance++;
+        curr2++;
+    }
+    return distance;
 }
