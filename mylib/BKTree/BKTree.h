@@ -21,6 +21,6 @@ void print_BK_tree(BK_tree tree);
 void BK_tree_toString(BK_tree tree, char *string);
 
 /* Deallocates of memory of BK tree */
-ErrorCode destroy_entry_index(BK_tree ix);
+ErrorCode destroy_entry_index(BK_tree* ix);
 
 #endif
