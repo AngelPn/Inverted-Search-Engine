@@ -16,7 +16,7 @@ void test_create(void) {
     TEST_ASSERT(e1 != NULL);
     TEST_CHECK(strcmp(w, get_entry_word(e1)) == 0);
 
-    if (destroy_entry(e1) == EC_FAIL)
+    if (destroy_entry((void**)&e1) == EC_FAIL)
         printf("Error! Destroy entry failed\n");
 }
 
@@ -30,7 +30,7 @@ void test_get_entry_word(void) {
     TEST_ASSERT(get_entry_word(e1)!=NULL);
     TEST_CHECK(strcmp(w, get_entry_word(e1)) == 0);
 
-    if (destroy_entry(e1) == EC_FAIL)
+    if (destroy_entry((void**)&e1) == EC_FAIL)
         printf("Error! Destroy entry failed\n");
 }
 
@@ -41,9 +41,9 @@ void test_destroy_entry(void) {
     if (create_entry(w, &e1) == EC_FAIL)
         printf("Error! Create entry failed\n");
 
-    if (destroy_entry(e1) == EC_FAIL)
+    if (destroy_entry((void**)&e1) == EC_FAIL)
         printf("Error! Destroy entry failed\n");
-    // TEST_CHECK(e1 == NULL);
+    TEST_CHECK(e1 == NULL);
 }
 
 TEST_LIST = {

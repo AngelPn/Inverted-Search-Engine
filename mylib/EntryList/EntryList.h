@@ -5,7 +5,7 @@
 #include "core.h"
 
 /* pointer to function that destroys an item */
-typedef ErrorCode (*DestroyFunc)(void *item);
+typedef ErrorCode (*DestroyFunc)(void **item);
 /* pointer to function that prints an item */
 typedef void (*PrintItem)(void *item);
 

@@ -16,6 +16,6 @@ char *get_entry_word(entry e);
 void print_entry_word(void *e);
 
 /* Deallocates memory of entry */
-ErrorCode destroy_entry(void *e);
+ErrorCode destroy_entry(void **e);
 
 #endif

@@ -108,7 +108,7 @@ ErrorCode destroy_entry_list(entry_list *el) {
 		ListNode next = node->next;
 
 		if (node != (*el)->dummy && (*el)->destroy_item != NULL) {
-            if ((*el)->destroy_item(node->item) == EC_FAIL)
+            if ((*el)->destroy_item(&(node->item)) == EC_FAIL)
                 return EC_FAIL;
         }
 

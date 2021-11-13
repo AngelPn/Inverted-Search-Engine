@@ -111,7 +111,7 @@ void test_pop_entry(){
         temp = pop_entry(el);
         TEST_ASSERT(get_number_entries(el) == (4-(i+1)));
         TEST_ASSERT(temp == e[4-(i+1)]);
-        destroy_entry(temp);
+        destroy_entry((void**)&temp);
     }
 
     destroy_entry_list(&el);
@@ -209,7 +209,7 @@ void test_destroy_entry_list() {
     entry temp = NULL;
     for (int i=0; i<2; i++){
         temp = pop_entry(el);
-        destroy_entry(temp);
+        destroy_entry((void**)&temp);
     }
     destroy_entry_list(&el);
     TEST_CHECK(el == NULL);

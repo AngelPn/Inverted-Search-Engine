@@ -33,10 +33,11 @@ void print_entry_word(void *e){
     printf("%s\n", ce->w);
 }
 
-ErrorCode destroy_entry(void *e){
-    entry ce = e;
+ErrorCode destroy_entry(void **e) {
+    entry ce = *e;
     free(ce->w);
     free(ce);
     ce = NULL;
+    *e = NULL;
     return EC_SUCCESS;
 }
