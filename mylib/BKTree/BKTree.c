@@ -197,10 +197,10 @@ ErrorCode destroy_tree(BK_treenode root) {
 }
 
 /* Delete function that deletes the tree */
-ErrorCode destroy_entry_index(BK_tree ix) {
-    destroy_tree(ix->root);
-    free(ix);
-    ix = NULL;
+ErrorCode destroy_entry_index(BK_tree* ix) {
+    destroy_tree((*ix)->root);
+    free(*ix);
+    *ix = NULL;
     return EC_SUCCESS;
 }
 

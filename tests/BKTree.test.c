@@ -30,7 +30,7 @@ void test_build_entry_index(void) {
     TEST_MSG("produced:\n%s", string_res);
 
     free(string_res);
-    destroy_entry_index(index);
+    destroy_entry_index(&index);
     destroy_entry_list(entryList);
 
 }
@@ -79,7 +79,7 @@ void test_lookup_entry_index(){
                && (strcmp(get_entry_word(result3), "ken") == 0) );
 
     destroy_entry_list(result);
-    destroy_entry_index(ix);
+    destroy_entry_index(&ix);
 
     if (destroy_entry_list(el) == EC_FAIL)
         printf("Error! Destroy entry list failed\n");
@@ -112,7 +112,7 @@ void test_lookup_entry_index(){
                && (strcmp(get_entry_word(res2), "hell") == 0) );
 
     destroy_entry_list(res);
-    destroy_entry_index(index);
+    destroy_entry_index(&index);
     destroy_entry_list(entryList);
 
 }
@@ -143,13 +143,13 @@ void test_destroy_index(){
 
     //BK_Tree test
     BK_tree ix = NULL;
-    build_entry_index(&el,MT_EXACT_MATCH,&ix);
+    build_entry_index(el,MT_EXACT_MATCH,&ix);
 
     entry_list result;
     lookup_entry_index("henn", ix, 2, &result);
 
     destroy_entry_list(result);
-    destroy_entry_index(ix);
+    destroy_entry_index(&ix);
     TEST_CHECK(ix == NULL);
 
     if (destroy_entry_list(el) == EC_FAIL)
