@@ -102,20 +102,21 @@ void list_set_destroy_item(entry_list el, DestroyFunc destroy_item) {
 	el->destroy_item = destroy_item;
 }
 
-ErrorCode destroy_entry_list(entry_list el) {
-    ListNode node = el->dummy;
+ErrorCode destroy_entry_list(entry_list *el) {
+    ListNode node = (*el)->dummy;
 	while (node != NULL){
 		ListNode next = node->next;
 
-		if (node != el->dummy && el->destroy_item != NULL) {
-            if (el->destroy_item(node->item) == EC_FAIL)
+		if (node != (*el)->dummy && (*el)->destroy_item != NULL) {
+            if ((*el)->destroy_item(node->item) == EC_FAIL)
                 return EC_FAIL;
         }
 
 		free(node);
 		node = next;
 	}
-	free(el);
+	free((*el));
+    *el = NULL;
     return EC_SUCCESS;
 }
 

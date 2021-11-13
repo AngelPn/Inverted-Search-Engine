@@ -30,9 +30,9 @@ void test_build_entry_index(void) {
     TEST_MSG("produced:\n%s", string_res);
 
     free(string_res);
+    
     destroy_entry_index(&index);
-    destroy_entry_list(entryList);
-
+    destroy_entry_list(&entryList);
 }
 
 void test_lookup_entry_index(){
@@ -78,10 +78,10 @@ void test_lookup_entry_index(){
                && (strcmp(get_entry_word(result2), "hell") == 0)
                && (strcmp(get_entry_word(result3), "ken") == 0) );
 
-    destroy_entry_list(result);
+    destroy_entry_list(&result);
     destroy_entry_index(&ix);
 
-    if (destroy_entry_list(el) == EC_FAIL)
+    if (destroy_entry_list(&el) == EC_FAIL)
         printf("Error! Destroy entry list failed\n");
 
     /***************** Test lookup with another tree (assignment's example) *****************/
@@ -111,9 +111,9 @@ void test_lookup_entry_index(){
     TEST_CHECK((strcmp(get_entry_word(res1), "help") == 0)
                && (strcmp(get_entry_word(res2), "hell") == 0) );
 
-    destroy_entry_list(res);
+    destroy_entry_list(&res);
+    destroy_entry_list(&entryList);
     destroy_entry_index(&index);
-    destroy_entry_list(entryList);
 
 }
 
@@ -148,11 +148,11 @@ void test_destroy_index(){
     entry_list result;
     lookup_entry_index("henn", ix, 2, &result);
 
-    destroy_entry_list(result);
+    destroy_entry_list(&result);
     destroy_entry_index(&ix);
     TEST_CHECK(ix == NULL);
 
-    if (destroy_entry_list(el) == EC_FAIL)
+    if (destroy_entry_list(&el) == EC_FAIL)
         printf("Error! Destroy entry list failed\n");
 
 }

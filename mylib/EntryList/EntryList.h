@@ -39,7 +39,7 @@ void *pop_entry(entry_list el);
 void list_set_destroy_item(entry_list el, DestroyFunc destroy_item);
 
 /* Destroys list */
-ErrorCode destroy_entry_list(entry_list el);
+ErrorCode destroy_entry_list(entry_list *el);
 
 /* Prints items of list */
 void print_entry_list(entry_list el, PrintItem print);

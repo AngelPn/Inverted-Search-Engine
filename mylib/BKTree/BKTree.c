@@ -155,7 +155,7 @@ ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, entry_lis
 
     }
     *result = found_words;
-    destroy_entry_list(candidate_words);
+    destroy_entry_list(&candidate_words);
     return EC_SUCCESS;
 }
 
