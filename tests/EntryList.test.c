@@ -172,10 +172,16 @@ void test_get_next() {
             printf("Error! Add entry failed\n");
     }
 
-    entry e_test = get_next(el, get_first_node(el));
-    TEST_CHECK(e_test == e[3]);
-    e_test = get_next(el, get_next_node(el));
+    ListNode first_node = get_first_node(el);
+    entry e_test = get_next(el, first_node);
     TEST_CHECK(e_test == e[2]);
+
+    ListNode second_node = get_next_node(first_node);
+    e_test = get_next(el, second_node);
+    TEST_CHECK(e_test == e[1]);
+
+    e_test = get_next(el, get_next_node(second_node));
+    TEST_CHECK(e_test == e[0]);
 
     destroy_entry_list(&el);
 }
