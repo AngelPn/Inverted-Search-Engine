@@ -15,7 +15,7 @@ void test_create_entry_list(void) {
     TEST_ASSERT(el!=NULL);
     TEST_CHECK(get_number_entries(el) == 0);
 
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
 }
 
 void test_get_number_entries() {
@@ -45,7 +45,7 @@ void test_get_number_entries() {
         TEST_ASSERT(get_number_entries(el) == (i+1));
     }
 
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
 }
 
 void test_add_entry(void) {
@@ -78,7 +78,7 @@ void test_add_entry(void) {
         TEST_CHECK(get_first(el) == e[i]);
     }
 
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
 
 }
 
@@ -114,7 +114,7 @@ void test_pop_entry(){
         destroy_entry(temp);
     }
 
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
 }
 
 void test_get_first() {
@@ -144,7 +144,7 @@ void test_get_first() {
         TEST_CHECK(get_first(el) == e[i]);
     }
 
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
 }
 
 void test_get_next() {
@@ -177,7 +177,7 @@ void test_get_next() {
     e_test = get_next(el, get_next_node(el));
     TEST_CHECK(e_test == e[2]);
 
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
 }
 
 void test_destroy_entry_list() {
@@ -205,7 +205,7 @@ void test_destroy_entry_list() {
         temp = pop_entry(el);
         destroy_entry(temp);
     }
-    destroy_entry_list(el);
+    destroy_entry_list(&el);
     TEST_CHECK(el == NULL);
 }
 
