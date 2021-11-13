@@ -64,8 +64,8 @@ void test_lookup_entry_index(){
 
     //BK_Tree test
     BK_tree ix = NULL;
-    build_entry_index(el, MT_EXACT_MATCH, &ix);
-//    print_BK_tree(ix);
+    build_entry_index(el, MT_EDIT_DIST, &ix);
+    print_BK_tree(ix);
 
 //    TEST_MSG("Find words similar to henn with max distance 2:\n");
 
@@ -98,8 +98,8 @@ void test_lookup_entry_index(){
 
     /* build a BK tree */
     BK_tree index = NULL;
-    build_entry_index(entryList, MT_EXACT_MATCH, &index);
-//    print_BK_tree(index);
+    build_entry_index(entryList, MT_EDIT_DIST, &index);
+    print_BK_tree(index);
 
 //    printf("Find words similar to henn with max distance 2:\n");
 
