@@ -35,6 +35,35 @@ void test_build_entry_index(void) {
     destroy_entry_list(&entryList);
 }
 
+void test_build_entry_index_hamm(void) {
+
+    /* add every word mentioned in the example to an entry list */
+    entry e = NULL;
+    entry_list entryList; create_entry_list(&entryList, destroy_entry);
+    create_entry("move", &e); add_entry(entryList, e);
+    create_entry("duck", &e); add_entry(entryList, e);
+    create_entry("dock", &e); add_entry(entryList, e);
+    create_entry("lock", &e); add_entry(entryList, e);
+    create_entry("look", &e); add_entry(entryList, e);
+    create_entry("book", &e); add_entry(entryList, e);
+
+    /* build a BK tree */
+    BK_tree index = NULL;
+    build_entry_index(entryList, MT_HAMMING_DIST, &index);
+
+    char string[] = "book-3\nlook-0\nlock-1\ndock-0\nduck-1\nmove-0\n"; /* this is the expected tree */
+    char* string_res = malloc(strlen(string)+1);
+    BK_tree_toString(index, string_res);
+    TEST_CHECK(strcmp(string, string_res) == 0);
+    TEST_MSG("expected:\n%s", string);
+    TEST_MSG("produced:\n%s", string_res);
+
+    free(string_res);
+
+    destroy_entry_index(&index);
+    destroy_entry_list(&entryList);
+}
+
 void test_lookup_entry_index(){
 
     entry e1 = NULL, e2 = NULL, e3 = NULL, e4 = NULL;
@@ -158,8 +187,9 @@ void test_destroy_index(){
 }
 
 TEST_LIST = {
-        { "test build entry index", test_build_entry_index },
-        { "test lookup entry index", test_lookup_entry_index },
-        { "test destroy_index", test_destroy_index },
+        { "build entry index with edit dist", test_build_entry_index },
+        { "build entry index with hamming dist", test_build_entry_index_hamm },
+        { "lookup entry index", test_lookup_entry_index },
+        { "destroy_index", test_destroy_index },
         { NULL, NULL }
 };
