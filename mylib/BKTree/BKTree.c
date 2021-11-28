@@ -31,10 +31,7 @@ BK_treenode make_treenode(const entry e) {
     return new_node;
 }
 
-/* distance functions */
 int compare_words(const char* word1, const char* word2);
-int HammingDistance(const char* a, const char* b);
-int EditDistance(const char* a, const char* b);
 
 /* Inserts new node to BK tree */
 ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node) {
@@ -191,6 +188,8 @@ ErrorCode destroy_tree(BK_treenode root) {
         destroy_tree(root->child);
     if(root->next)
         destroy_tree(root->next);
+    if(root->item)
+        destroy_entry((void**)&(root->item));
     free(root);
     root = NULL;
     return EC_SUCCESS;
@@ -198,7 +197,8 @@ ErrorCode destroy_tree(BK_treenode root) {
 
 /* Delete function that deletes the tree */
 ErrorCode destroy_entry_index(BK_tree* ix) {
-    destroy_tree((*ix)->root);
+    if((*ix)->root)
+        destroy_tree((*ix)->root);
     free(*ix);
     *ix = NULL;
     return EC_SUCCESS;

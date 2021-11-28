@@ -23,4 +23,8 @@ void BK_tree_toString(BK_tree tree, char *string);
 /* Deallocates of memory of BK tree */
 ErrorCode destroy_entry_index(BK_tree* ix);
 
+BK_treenode make_treenode(const entry e);
+ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node);
+int HammingDistance(const char* a, const char* b);
+int EditDistance(const char* a, const char* b);
 #endif
