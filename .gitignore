@@ -1,4 +1,5 @@
 # Our executables
+main
 searchEngine
 test_Entry
 test_EntryList

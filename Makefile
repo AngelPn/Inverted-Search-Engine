@@ -16,15 +16,17 @@ VALFLAGS = --leak-check=full --track-origins=yes -s
 OBJS = $(MODULES)/Entry/Entry.o
 OBJS += $(MODULES)/EntryList/EntryList.o
 OBJS += $(MODULES)/BKTree/BKTree.o
-OBJS += $(MODULES)/HammingTree/HammingTree.o
-OBJS += $(MODULES)/main.o
 
 all: test_Entry test_EntryList test_BKTree
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(TEST)/Entry.test.o $(TEST)/EntryList.test.o $(TEST)/BKTree.test.o $(ODIR)
 
-mainonly: clean $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o main
+mainonly: clean $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o
+	$(CC) $(CFLAGS) $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o -o main
+	mkdir -p $(ODIR)
+	mv $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o $(ODIR)
+
+move:
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(ODIR)
 
