@@ -5,6 +5,7 @@
 #include "core.h"
 
 typedef struct entry_struct *entry;
+typedef struct info_struct *info;
 
 /* Creates entry */
 ErrorCode create_entry(const char *w, entry *e);

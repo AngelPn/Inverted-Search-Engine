@@ -3,11 +3,20 @@
 #include <stdlib.h>
 
 #include "Entry.h"
+#include "../EntryList/EntryList.h"
 
 struct entry_struct
 {
     char *w;
-    void *payload;
+    entry_list pl;
+};
+
+struct info_struct {
+    int id;
+    int method;
+    int n;
+    int size;
+    int index;
 };
 
 ErrorCode create_entry(const char *w, entry *e){
@@ -19,9 +28,13 @@ ErrorCode create_entry(const char *w, entry *e){
         return EC_FAIL;
     strcpy((*e)->w, w);
 
-    (*e)->payload = NULL;
+    (*e)->pl = NULL;
     
     return EC_SUCCESS;
+}
+
+ErrorCode update_entry_payload(entry *e,info n){
+    return add_entry((*e)->pl,n);
 }
 
 char *get_entry_word(entry e){
