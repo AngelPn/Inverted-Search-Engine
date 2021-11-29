@@ -9,7 +9,7 @@ void test_build_entry_index(void) {
 
     /* add every word mentioned in the example to an entry list */
     entry e = NULL;
-    entry_list entryList; create_entry_list(&entryList, destroy_entry);
+    entry_list entryList; create_entry_list(&entryList, NULL);
     create_entry("melt", &e); add_entry(entryList, e);
     create_entry("small", &e); add_entry(entryList, e);
     create_entry("fell", &e); add_entry(entryList, e);
@@ -39,7 +39,7 @@ void test_build_entry_index_hamm(void) {
 
     /* add every word mentioned in the example to an entry list */
     entry e = NULL;
-    entry_list entryList; create_entry_list(&entryList, destroy_entry);
+    entry_list entryList; create_entry_list(&entryList, NULL);
     create_entry("move", &e); add_entry(entryList, e);
     create_entry("duck", &e); add_entry(entryList, e);
     create_entry("dock", &e); add_entry(entryList, e);
@@ -77,7 +77,7 @@ void test_lookup_entry_index(){
         printf("Error! Create entry failed\n");
 
     entry_list el = NULL;
-    if (create_entry_list(&el, destroy_entry) == EC_FAIL)
+    if (create_entry_list(&el, NULL) == EC_FAIL)
         printf("Error! Create entry list failed\n");
 
     if (add_entry(el, e1) == EC_FAIL)
@@ -116,7 +116,7 @@ void test_lookup_entry_index(){
     /***************** Test lookup with another tree (assignment's example) *****************/
     /* add every word mentioned in the example to an entry list */
     entry e = NULL;
-    entry_list entryList; create_entry_list(&entryList, destroy_entry);
+    entry_list entryList; create_entry_list(&entryList, NULL);
     create_entry("melt", &e); add_entry(entryList, e);
     create_entry("small", &e); add_entry(entryList, e);
     create_entry("fell", &e); add_entry(entryList, e);
@@ -158,7 +158,7 @@ void test_destroy_index(){
         printf("Error! Create entry failed\n");
 
     entry_list el = NULL;
-    if (create_entry_list(&el, destroy_entry) == EC_FAIL)
+    if (create_entry_list(&el, NULL) == EC_FAIL)
         printf("Error! Create entry list failed\n");
 
     if (add_entry(el, e1) == EC_FAIL)
