@@ -27,12 +27,17 @@ HammingTree initialize_hamming_tree() {
     return res;
 }
 
-ErrorCode hamming_tree_insert(HammingTree ht, char* w){
+ErrorCode hamming_tree_insert(HammingTree ht, char* w) {
     entry e;
-    if(create_entry(w,&e) == EC_FAIL)
+    ErrorCode er;
+    if (create_entry(w, &e) == EC_FAIL)
         return EC_FAIL;
     BK_treenode treend = make_treenode(e);
-    BK_tree_insert(ht->TreeArray[strlen(w)-4],&(ht->TreeArray[strlen(w)-4]->root),treend);
+    er = BK_tree_insert(ht->TreeArray[strlen(w) - 4], &(ht->TreeArray[strlen(w) - 4]->root), treend);
+    if (er == EC_FAIL){
+        destroy_entry((void**)&e);
+        free(treend);
+    }
     return EC_SUCCESS;
 }
 
