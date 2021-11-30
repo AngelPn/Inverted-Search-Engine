@@ -34,7 +34,8 @@ ErrorCode create_entry(const char *w, entry *e){
 }
 
 ErrorCode update_entry_payload(entry *e,info n){
-    return add_entry((*e)->pl,n);
+    // return add_entry((*e)->pl,n);
+    return EC_SUCCESS;
 }
 
 char *get_entry_word(entry e){

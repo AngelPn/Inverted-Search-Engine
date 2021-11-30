@@ -1,3 +1,31 @@
+# Copyright (c) 2013 KAUST - InfoCloud Group (All Rights Reserved)
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+#
+# Authors: Amin Allam  <amin.allam@kaust.edu.sa>,
+#          Fuad Jamour <fuad.jamour@kaust.edu.sa>
+#
+# Current version: 1.0 (initial release)
+
 # Paths
 INCL = include
 SRC = src
@@ -5,51 +33,39 @@ MODULES = mylib
 ODIR = build
 TEST = tests
 
-# Compiler
-CC = gcc
-
-# Compile options
-CFLAGS = -Wall -g -I$(INCL) -I$(MODULES)/EntryList -I$(MODULES)/Entry -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
-# Valgrind flags
-VALFLAGS = --leak-check=full --track-origins=yes -s
-
+# Build targets (your implementation targets should go in IMPL_O)
+TEST_O=test_driver/test.o 
+IMPL_O=ref_impl/core.o
 OBJS = $(MODULES)/Entry/Entry.o
-OBJS += $(MODULES)/EntryList/EntryList.o
-OBJS += $(MODULES)/BKTree/BKTree.o
 
-all: test_Entry test_EntryList test_BKTree
+# Compiler flags
+CC  = gcc
+CXX = g++
+CFLAGS=-O3 -mavx2 -fPIC -Wall -g -I. -I./include -I$(MODULES)/Entry
+CXXFLAGS=$(CFLAGS)
+LDFLAGS=-lpthread
+
+# The programs that will be built
+PROGRAMS=testdriver
+
+# The name of the library that will be built
+LIBRARY=core
+
+# Build all programs
+all: $(PROGRAMS)
+
+$(OBJS): $(MODULES)/Entry/Entry.c $(MODULES)/Entry/Entry.h
 	mkdir -p $(ODIR)
-	mv $(OBJS) $(TEST)/Entry.test.o $(TEST)/EntryList.test.o $(TEST)/BKTree.test.o $(ODIR)
+	echo "efrewg"
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-mainonly: clean $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o
-	$(CC) $(CFLAGS) $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o -o main
-	mkdir -p $(ODIR)
-	mv $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o $(ODIR)
+# $(CC) $(CFLAGS) $(OBJS)
+lib: $(IMPL_O)
+	$(CXX) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) 
+	
+testdriver: lib $(TEST_O) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so  $(OBJS)
 
-move:
-	mkdir -p $(ODIR)
-	mv $(OBJS) $(ODIR)
-
-test_Entry: clean $(OBJS) $(TEST)/Entry.test.o
-	$(CC) $(CFLAGS) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
-
-test_EntryList: clean $(OBJS) $(TEST)/EntryList.test.o
-	$(CC) $(CFLAGS) $(OBJS) $(TEST)/EntryList.test.o -o test_EntryList
-
-test_BKTree: clean $(OBJS) $(TEST)/BKTree.test.o
-	$(CC) $(CFLAGS) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
-
-run: all
-	./test_Entry
-	./test_EntryList
-	./test_BKTree
-
-valgrind: all
-	valgrind $(VALFLAGS) ./test_Entry
-	valgrind $(VALFLAGS) ./test_EntryList
-	valgrind $(VALFLAGS) ./test_BKTree
-
-# Delete executable & object files
 clean:
-	rm -f test_Entry test_EntryList test_BKTree main
-	rm -rf $(ODIR)
+	rm -f $(PROGRAMS) lib$(LIBRARY).so
+	find . -name '*.o' -print | xargs rm -f
