@@ -98,10 +98,10 @@ ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix) {
     (*ix)->root = NULL;
 
     if (type == MT_EDIT_DIST) {
-        (*ix)->distance_function = EditDistance;
+        (*ix)->distance_function = editDistance;
     }
     else if (type == MT_HAMMING_DIST) {
-        (*ix)->distance_function = HammingDistance;
+        (*ix)->distance_function = hammingDistance;
     }
 
     /* Insert all entry_list's items to the tree iteratively */
@@ -235,7 +235,7 @@ int compare_words(const char* word1, const char* word2) {
 
 // Computes edit distance between a null-terminated string "a" with length "na"
 //  and a null-terminated string "b" with length "nb"
-int EditDistance(const char* a, const char* b)
+int editDistance(const char* a, const char* b)
 {
     int na = strlen(a);
     int nb = strlen(b);
@@ -292,7 +292,7 @@ int EditDistance(const char* a, const char* b)
 
 // Computes Hamming distance between a null-terminated string "a" with length "na"
 //  and a null-terminated string "b" with length "nb"
-int HammingDistance(const char* a, const char* b)
+int hammingDistance(const char* a, const char* b)
 {
     int na = strlen(a);
     int nb = strlen(b);

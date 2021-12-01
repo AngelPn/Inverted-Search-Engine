@@ -63,3 +63,5 @@ dkms.conf
 cmake-build-debug*
 CMakeLists.txt
 build
+libcore.so
+testdriver

@@ -28,44 +28,59 @@
 
 # Paths
 INCL = include
-SRC = src
 MODULES = mylib
 ODIR = build
 TEST = tests
+	
+TEST_O = test_driver/test.o
+IMPL_O = ref_impl/core.o
+OBJS = $(MODULES)/Entry/Entry.o $(MODULES)/EntryList/EntryList.o $(MODULES)/BKTree/BKTree.o 
+OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o
 
-# Build targets (your implementation targets should go in IMPL_O)
-TEST_O=test_driver/test.o 
-IMPL_O=ref_impl/core.o
-OBJS = $(MODULES)/Entry/Entry.o
-
-# Compiler flags
+# Compilers
 CC  = gcc
 CXX = g++
-CFLAGS=-O3 -mavx2 -fPIC -Wall -g -I. -I./include -I$(MODULES)/Entry
-CXXFLAGS=$(CFLAGS)
-LDFLAGS=-lpthread
 
-# The programs that will be built
-PROGRAMS=testdriver
+# Compile flags
+CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/EntryList -I$(MODULES)/Entry -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
+CXXFLAGS = $(CFLAGS)
+LDFLAGS = -lpthread
+# Valgrind flags
+VALFLAGS = --leak-check=full --track-origins=yes -s
 
-# The name of the library that will be built
-LIBRARY=core
+PROGRAMS = test_Entry test_EntryList test_BKTree testdriver 
+LIBRARY = core
 
-# Build all programs
 all: $(PROGRAMS)
-
-$(OBJS): $(MODULES)/Entry/Entry.c $(MODULES)/Entry/Entry.h
 	mkdir -p $(ODIR)
-	echo "efrewg"
-	$(CC) -c -o $@ $< $(CFLAGS)
+	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/EntryList.test.o $(TEST)/BKTree.test.o $(ODIR)
 
-# $(CC) $(CFLAGS) $(OBJS)
-lib: $(IMPL_O)
-	$(CXX) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) 
+test_Entry: clean $(OBJS) $(TEST)/Entry.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
+
+test_EntryList: clean $(OBJS) $(TEST)/EntryList.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/EntryList.test.o -o test_EntryList
+
+test_BKTree: clean $(OBJS) $(TEST)/BKTree.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
+
+run: all
+	./test_Entry
+	./test_EntryList
+	./test_BKTree
+
+valgrind: all
+	valgrind $(VALFLAGS) ./test_Entry
+	valgrind $(VALFLAGS) ./test_EntryList
+	valgrind $(VALFLAGS) ./test_BKTree
+
+lib: $(IMPL_O) $(OBJS)
+	$(CC) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) $(OBJS)
 	
-testdriver: lib $(TEST_O) $(OBJS)
-	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so  $(OBJS)
+testdriver: lib $(TEST_O)
+	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so
 
+# Delete executable & object files
 clean:
-	rm -f $(PROGRAMS) lib$(LIBRARY).so
-	find . -name '*.o' -print | xargs rm -f
+	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_EntryList test_BKTree main
+	rm -rf $(ODIR)

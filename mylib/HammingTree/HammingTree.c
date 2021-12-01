@@ -22,7 +22,7 @@ HammingTree initialize_hamming_tree() {
         res->TreeArray[i] = (BK_tree)malloc(sizeof(struct tree));
         res->TreeArray[i]->root = NULL;
         res->TreeArray[i]->size = 0;
-        res->TreeArray[i]->distance_function = HammingDistance;
+        res->TreeArray[i]->distance_function = hammingDistance;
     }
     return res;
 }
