@@ -28,14 +28,6 @@ BK_tree initialize_BK_tree(int (*distance_func)(const char* word1, const char* w
     return new_tree;
 }
 
-BK_treenode get_root(BK_tree tree){
-    return tree->root;
-}
-
-BK_treenode* get_root_double_p(BK_tree tree){
-    return &(tree->root);
-}
-
 /* Creates and returns BK_treenode */
 BK_treenode make_treenode(const entry e) {
     BK_treenode new_node = (BK_treenode)malloc(sizeof(struct treenode));
@@ -48,6 +40,22 @@ BK_treenode make_treenode(const entry e) {
 }
 
 int compare_words(const char* word1, const char* word2);
+
+BK_treenode get_root(BK_tree tree){
+    return tree->root;
+}
+
+BK_treenode* get_root_double_p(BK_tree tree){
+    return &(tree->root);
+}
+
+entry get_BK_treenode_entry(BK_treenode n){
+    return n->item;
+}
+
+int get_BK_treenode_cost(BK_treenode n){
+    return n->cost;
+}
 
 /* Inserts new node to BK tree */
 ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node) {

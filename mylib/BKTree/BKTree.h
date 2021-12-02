@@ -29,6 +29,8 @@ ErrorCode destroy_entry_index(BK_tree* ix);
 BK_treenode get_root(BK_tree tree);
 /* returns a double pointer to the root (used together with BK_tree_insert that needs double pointer) */
 BK_treenode* get_root_double_p(BK_tree tree);
+int get_BK_treenode_cost(BK_treenode n);
+entry get_BK_treenode_entry(BK_treenode n);
 BK_treenode make_treenode(const entry e);
 ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node);
 int hammingDistance(const char* a, const char* b);
