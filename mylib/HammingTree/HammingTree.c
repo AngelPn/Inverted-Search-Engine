@@ -22,6 +22,7 @@ HammingTree initialize_hamming_tree() {
         res->TreeArray[i] = (BK_tree)malloc(sizeof(struct tree));
         res->TreeArray[i]->root = NULL;
         res->TreeArray[i]->size = 0;
+        //Hamming tree struct will always be used with the hamming distance function
         res->TreeArray[i]->distance_function = hammingDistance;
     }
     return res;
@@ -33,16 +34,19 @@ ErrorCode hamming_tree_insert(HammingTree ht, char* w) {
     if (create_entry(w, &e) == EC_FAIL)
         return EC_FAIL;
     BK_treenode treend = make_treenode(e);
+    //because the trees array are from index 0 to 27 we substract 4 from the length
     er = BK_tree_insert(ht->TreeArray[strlen(w) - 4], &(ht->TreeArray[strlen(w) - 4]->root), treend);
     if (er == EC_FAIL){
         destroy_entry((void**)&e);
         free(treend);
+        return EC_FAIL;
     }
     return EC_SUCCESS;
 }
 
 ErrorCode destroy_hamming_tree(HammingTree ix) {
-    for(int i=0 ; i<28 ; i++) {
+    for(int i = 0 ; i < 28 ; i++) {
+        //using the recursive BK_Tree destroy function for each of the 27 trees
         destroy_entry_index(&(ix->TreeArray[i]));
     }
     free(ix);

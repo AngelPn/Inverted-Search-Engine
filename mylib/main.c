@@ -10,6 +10,34 @@
 
 #include "./HashTable/HashTable.h"
 
+//We insert each word one by one in a big hashtable and at the same time we check if it already exists in the hashtable
+//if it already exists it means it is a duplicate word so it is not in the result string that it is returned
+char* deduplication(char* text){
+    HashT* HT = HashT_init(1000,NULL);
+    const char space[2] = " ";
+    //allocating new char array because strtok() cant be applied on string literals
+    char* new_txt= malloc(strlen(text)+1);
+    strcpy(new_txt,text);
+    //getting the first word from the text
+    char* token = strtok(new_txt,space);
+    //this is the string that we will write the text word by word without the duplicates
+    char* new_str = malloc(strlen(text)+1);
+    new_str[0] = '\0';
+    while(token != NULL){
+        //we insert each word in the hashtable and if it already exists then it is not written in our result string
+        if(HashT_insert(HT,token,NULL)) {
+            strcat(new_str, space);
+            strcat(new_str, token);
+        }
+        //getting the next character
+        token = strtok(NULL,space);
+    }
+    HashT_delete(HT);
+    free(new_txt);
+    //NOTE: the returned string must be freed
+    return new_str;
+}
+
 int main(void){
     HammingTree H = initialize_hamming_tree();
     hamming_tree_insert(H,"hell");
@@ -48,5 +76,11 @@ int main(void){
     printf("hello: %d\n", HashT_exists(exact_matching, "hello"));
 
     HashT_delete(exact_matching);
+
+    char* test_0 = "Hello Hello world this is is a test test";
+    printf("\nBefore deduplication: %s\n",test_0);
+    char* test = deduplication(test_0);
+    printf("After deduplication: %s\n",test);
+    free(test);
 }
 

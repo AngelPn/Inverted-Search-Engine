@@ -55,6 +55,11 @@ all: $(PROGRAMS)
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/EntryList.test.o $(TEST)/BKTree.test.o $(ODIR)
 
+mainonly: clean $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o
+	$(CC) $(CFLAGS) $(OBJS) $(MODULES)/main.o -o main
+	mkdir -p $(ODIR)
+	mv $(OBJS) $(MODULES)/main.o $(ODIR)
+
 test_Entry: clean $(OBJS) $(TEST)/Entry.test.o
 	$(CC) $(CFLAGS) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
 
