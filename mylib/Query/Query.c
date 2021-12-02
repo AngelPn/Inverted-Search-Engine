@@ -20,6 +20,7 @@ Query create_query(QueryID query_id, int size) {
     q->size = size;
     for (int i = 0; i < MAX_QUERY_WORDS; i++)
         q->found[i] = false;
+    return q;
 }
 
 QueryID get_queryID(Query q) {

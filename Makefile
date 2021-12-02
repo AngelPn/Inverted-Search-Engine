@@ -35,7 +35,7 @@ TEST = tests
 TEST_O = test_driver/test.o
 IMPL_O = ref_impl/core.o
 MAIN_O = ref_impl/main.o
-OBJS = $(MODULES)/Entry/Entry.o $(MODULES)/LinkedList/LinkedList.o $(MODULES)/BKTree/BKTree.o 
+OBJS = $(MODULES)/Query/Query.o $(MODULES)/Entry/Entry.o $(MODULES)/LinkedList/LinkedList.o $(MODULES)/BKTree/BKTree.o 
 OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o
 
 # Compilers
@@ -43,7 +43,7 @@ CC  = gcc
 CXX = g++
 
 # Compile flags
-CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
+CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags
