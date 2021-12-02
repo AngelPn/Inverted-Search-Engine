@@ -8,6 +8,9 @@
 typedef struct treenode* BK_treenode;
 typedef struct tree* BK_tree;
 
+/* Returns an empty BK tree */
+BK_tree initialize_BK_tree(int (*distance_func)(const char* word1, const char* word2));
+
 /* Builds BK tree from given entry list */
 ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix);
 
@@ -23,6 +26,9 @@ void BK_tree_toString(BK_tree tree, char *string);
 /* Deallocates of memory of BK tree */
 ErrorCode destroy_entry_index(BK_tree* ix);
 
+BK_treenode get_root(BK_tree tree);
+/* returns a double pointer to the root (used together with BK_tree_insert that needs double pointer) */
+BK_treenode* get_root_double_p(BK_tree tree);
 BK_treenode make_treenode(const entry e);
 ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node);
 int hammingDistance(const char* a, const char* b);

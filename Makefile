@@ -81,7 +81,7 @@ valgrind: all
 
 lib: $(IMPL_O) $(OBJS)
 	$(CC) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) $(OBJS)
-	
+
 testdriver: lib $(TEST_O)
 	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so
 

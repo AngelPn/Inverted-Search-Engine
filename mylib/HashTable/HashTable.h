@@ -17,6 +17,6 @@ void* HashT_get(HashT* hash_table, char* key); /* returns NULL if key is not fou
 void HashT_print(HashT* hash_table, void (*print)(void*));
 void* HashT_getNextEntry(HashT* hash_table); /*First call with a pointer to hash table to get 1st item. For next item call with NULL. If there are no more elements it returns NULL*/
 
-void HashT_stats(HashT* hash_table); /* prints number of items, number of bucketσ and load factor */
+void HashT_stats(HashT* hash_table); /* prints number of items, number of buckets and load factor */
 
 #endif

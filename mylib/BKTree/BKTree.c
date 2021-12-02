@@ -20,6 +20,22 @@ struct tree
     int (*distance_function)(const char* word1, const char* word2);
 };
 
+BK_tree initialize_BK_tree(int (*distance_func)(const char* word1, const char* word2)){
+    BK_tree new_tree = (BK_tree)malloc(sizeof(struct tree));
+    new_tree->size = 0;
+    new_tree->root = NULL;
+    new_tree->distance_function = distance_func;
+    return new_tree;
+}
+
+BK_treenode get_root(BK_tree tree){
+    return tree->root;
+}
+
+BK_treenode* get_root_double_p(BK_tree tree){
+    return &(tree->root);
+}
+
 /* Creates and returns BK_treenode */
 BK_treenode make_treenode(const entry e) {
     BK_treenode new_node = (BK_treenode)malloc(sizeof(struct treenode));
