@@ -2,7 +2,6 @@
 #define HAMMINGTREE_H
 
 #include "core.h"
-#include "../EntryList/EntryList.h"
 #include "../BKTree/BKTree.h"
 #include "../Entry/Entry.h"
 

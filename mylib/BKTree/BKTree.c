@@ -113,12 +113,12 @@ ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node) {
     }
 }
 
-ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix) {
+ErrorCode build_entry_index(const LinkedList el, MatchType type, BK_tree* ix) {
 
 
     if (((*ix) = (BK_tree)malloc(sizeof(struct tree))) == NULL)
         return EC_FAIL;
-    (*ix)->size = get_number_entries(el);
+    (*ix)->size = get_number_items(el);
     (*ix)->root = NULL;
 
     if (type == MT_EDIT_DIST) {
@@ -128,7 +128,7 @@ ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix) {
         (*ix)->distance_function = hammingDistance;
     }
 
-    /* Insert all entry_list's items to the tree iteratively */
+    /* Insert all LinkedList's items to the tree iteratively */
     ListNode current = get_first_node(el);
     for(int i = 0; i < (*ix)->size; i++) {
         if (BK_tree_insert(*ix, &((*ix)->root), make_treenode(get_node_item(current))) == EC_FAIL)
@@ -138,30 +138,30 @@ ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix) {
     return EC_SUCCESS;
 }
 
-ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, entry_list* result) {
-    entry_list candidate_words = NULL; /* actually keeps tree nodes so we can get their children and cost */
-    if (create_entry_list(&candidate_words, NULL) == EC_FAIL) {
+ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, LinkedList* result) {
+    LinkedList candidate_words = NULL; /* actually keeps tree nodes so we can get their children and cost */
+    if (create_list(&candidate_words, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
         return EC_FAIL;
     }
 
-    entry_list found_words = NULL; /* this list is the result and doesn't need the whole node's info */
-    if (create_entry_list(&found_words, NULL) == EC_FAIL) {
+    LinkedList found_words = NULL; /* this list is the result and doesn't need the whole node's info */
+    if (create_list(&found_words, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
         return EC_FAIL;
     }
 
     /* Step 1: Add root to candidate words */
-    add_entry(candidate_words, ix->root);
+    add_item(candidate_words, ix->root);
 
     BK_treenode candidate = NULL;
-    while ((candidate = pop_entry(candidate_words)) != NULL){
+    while ((candidate = pop_item(candidate_words)) != NULL){
 
         /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
 //        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
         int dist = ix->distance_function(get_entry_word(candidate->item), w);
         if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
-            add_entry(found_words, candidate->item);
+            add_item(found_words, candidate->item);
         }
 
         /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
@@ -169,14 +169,14 @@ ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, entry_lis
         while (current!=NULL) {
 //            printf("[%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
             if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
-                add_entry(candidate_words, current);
+                add_item(candidate_words, current);
             }
             current = current->next;
         }
 
     }
     *result = found_words;
-    destroy_entry_list(&candidate_words);
+    destroy_list(&candidate_words);
     return EC_SUCCESS;
 }
 

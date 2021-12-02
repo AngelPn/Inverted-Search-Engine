@@ -34,7 +34,7 @@ TEST = tests
 	
 TEST_O = test_driver/test.o
 IMPL_O = ref_impl/core.o
-OBJS = $(MODULES)/Entry/Entry.o $(MODULES)/EntryList/EntryList.o $(MODULES)/BKTree/BKTree.o 
+OBJS = $(MODULES)/Entry/Entry.o $(MODULES)/LinkedList/LinkedList.o $(MODULES)/BKTree/BKTree.o 
 OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o
 
 # Compilers
@@ -42,18 +42,18 @@ CC  = gcc
 CXX = g++
 
 # Compile flags
-CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/EntryList -I$(MODULES)/Entry -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
+CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/LinkedList -I$(MODULES)/Entry -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags
 VALFLAGS = --leak-check=full --track-origins=yes -s
 
-PROGRAMS = test_Entry test_EntryList test_BKTree testdriver 
+PROGRAMS = test_Entry test_LinkedList test_BKTree testdriver 
 LIBRARY = core
 
 all: $(PROGRAMS)
 	mkdir -p $(ODIR)
-	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/EntryList.test.o $(TEST)/BKTree.test.o $(ODIR)
+	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(ODIR)
 
 mainonly: clean $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o
 	$(CC) $(CFLAGS) $(OBJS) $(MODULES)/main.o -o main
@@ -63,20 +63,20 @@ mainonly: clean $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/
 test_Entry: clean $(OBJS) $(TEST)/Entry.test.o
 	$(CC) $(CFLAGS) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
 
-test_EntryList: clean $(OBJS) $(TEST)/EntryList.test.o
-	$(CC) $(CFLAGS) $(OBJS) $(TEST)/EntryList.test.o -o test_EntryList
+test_LinkedList: clean $(OBJS) $(TEST)/LinkedList.test.o
+	$(CC) $(CFLAGS) $(OBJS) $(TEST)/LinkedList.test.o -o test_LinkedList
 
 test_BKTree: clean $(OBJS) $(TEST)/BKTree.test.o
 	$(CC) $(CFLAGS) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
 
 run: all
 	./test_Entry
-	./test_EntryList
+	./test_LinkedList
 	./test_BKTree
 
 valgrind: all
 	valgrind $(VALFLAGS) ./test_Entry
-	valgrind $(VALFLAGS) ./test_EntryList
+	valgrind $(VALFLAGS) ./test_LinkedList
 	valgrind $(VALFLAGS) ./test_BKTree
 
 lib: $(IMPL_O) $(OBJS)
@@ -87,5 +87,6 @@ testdriver: lib $(TEST_O)
 
 # Delete executable & object files
 clean:
-	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_EntryList test_BKTree main
+	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_LinkedList test_BKTree main
+	find . -name '*.o' -print | xargs rm -f
 	rm -rf $(ODIR)

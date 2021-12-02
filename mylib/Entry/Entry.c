@@ -3,12 +3,12 @@
 #include <stdlib.h>
 
 #include "Entry.h"
-#include "../EntryList/EntryList.h"
+#include "LinkedList.h"
 
 struct entry_struct
 {
     char *w;
-    entry_list pl;
+    void *pl;
 };
 
 struct info_struct {

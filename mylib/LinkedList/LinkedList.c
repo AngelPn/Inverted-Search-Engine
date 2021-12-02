@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "EntryList.h"
+#include "LinkedList.h"
 
 struct list 
 {
@@ -18,9 +18,9 @@ struct list_node
 	ListNode next;
 };
 
-ErrorCode create_entry_list(entry_list *el, DestroyFunc destroy_item) {
+ErrorCode create_list(LinkedList *el, DestroyFunc destroy_item) {
 
-    if (((*el) = (entry_list)malloc(sizeof(struct list))) == NULL)
+    if (((*el) = (LinkedList)malloc(sizeof(struct list))) == NULL)
         return EC_FAIL;
 
     if (((*el)->dummy = (ListNode)malloc(sizeof(struct list_node))) == NULL)
@@ -33,17 +33,17 @@ ErrorCode create_entry_list(entry_list *el, DestroyFunc destroy_item) {
     return EC_SUCCESS;
 }
 
-unsigned int get_number_entries(const entry_list el) {
+unsigned int get_number_items(const LinkedList el) {
     return el->number_entries;
 }
 
-void *get_first(const entry_list el) {
+void *get_first(const LinkedList el) {
     ListNode first_node = el->dummy->next;
     assert(first_node != NULL);
     return first_node->item;
 }
 
-void *get_next(const entry_list el, ListNode node) {
+void *get_next(const LinkedList el, ListNode node) {
     assert(node != NULL);
     ListNode next_node = node->next;
     return next_node->item;
@@ -54,7 +54,7 @@ void *get_node_item(ListNode node) {
     return node->item;
 }
 
-ListNode get_first_node(const entry_list el) {
+ListNode get_first_node(const LinkedList el) {
     return el->dummy->next;
 }
 
@@ -62,7 +62,7 @@ ListNode get_next_node(ListNode node) {
     return node->next;
 }
 
-void *list_insert_next(entry_list el, ListNode node, void *item) {
+void *list_insert_next(LinkedList el, ListNode node, void *item) {
 
     ListNode new_node = NULL;
     if ((new_node = (ListNode)malloc(sizeof(struct list_node))) == NULL) {
@@ -78,13 +78,13 @@ void *list_insert_next(entry_list el, ListNode node, void *item) {
 	return new_node;
 }
 
-ErrorCode add_entry(entry_list el, void *e) {
+ErrorCode add_item(LinkedList el, void *e) {
     if (list_insert_next(el, el->dummy, e) != NULL)
         return EC_SUCCESS;
     else return EC_FAIL;
 }
 
-void *pop_entry(entry_list el) {
+void *pop_item(LinkedList el) {
     ListNode pop = NULL;
     if ((pop = el->dummy->next) == NULL)
         return NULL;
@@ -98,11 +98,11 @@ void *pop_entry(entry_list el) {
     return item;
 }
 
-void list_set_destroy_item(entry_list el, DestroyFunc destroy_item) {
+void list_set_destroy_item(LinkedList el, DestroyFunc destroy_item) {
 	el->destroy_item = destroy_item;
 }
 
-ErrorCode destroy_entry_list(entry_list *el) {
+ErrorCode destroy_list(LinkedList *el) {
     ListNode node = (*el)->dummy;
 	while (node != NULL){
 		ListNode next = node->next;
@@ -120,7 +120,7 @@ ErrorCode destroy_entry_list(entry_list *el) {
     return EC_SUCCESS;
 }
 
-void print_entry_list(entry_list el, PrintItem print) {
+void print_list(LinkedList el, PrintItem print) {
     for (ListNode node = el->dummy->next; node != NULL; node = node->next)
 		print(node->item);
 }

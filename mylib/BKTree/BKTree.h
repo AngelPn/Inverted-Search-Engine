@@ -2,7 +2,7 @@
 #define BK_TREE_H
 
 #include "core.h"
-#include "EntryList.h"
+#include "LinkedList.h"
 #include "Entry.h"
 
 typedef struct treenode* BK_treenode;
@@ -12,10 +12,10 @@ typedef struct tree* BK_tree;
 BK_tree initialize_BK_tree(int (*distance_func)(const char* word1, const char* word2));
 
 /* Builds BK tree from given entry list */
-ErrorCode build_entry_index(const entry_list el, MatchType type, BK_tree* ix);
+ErrorCode build_entry_index(const LinkedList el, MatchType type, BK_tree* ix);
 
 /* Returns an entry list that matches given word */
-ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, entry_list* result);
+ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, LinkedList* result);
 
 /* Prints BK tree: (word of entry) - (number of children) */
 void print_BK_tree(BK_tree tree);
