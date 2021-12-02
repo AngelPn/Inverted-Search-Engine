@@ -37,19 +37,19 @@ char* deduplication(char* text){
 }
 
 int main(void){
-    HammingTree H = initialize_hamming_tree();
-    hamming_tree_insert(H,"hell");
-    hamming_tree_insert(H,"henn");
-    hamming_tree_insert(H,"help");
-    hamming_tree_insert(H,"felt");
-    hamming_tree_insert(H,"athens");
-    hamming_tree_insert(H,"thessaloniki");
-    hamming_tree_insert(H,"whatever");
-    hamming_tree_insert(H,"grapes");
-    hamming_tree_insert(H,"honey");
-    hamming_tree_insert(H,"informatics");
-    hamming_tree_insert(H,"greece");
-    hamming_tree_insert(H,"whatever");
+    HammingTree H = create_HammingTree(HammingDistance);
+    insert_HammingTree(H,"hell");
+    insert_HammingTree(H,"henn");
+    insert_HammingTree(H,"help");
+    insert_HammingTree(H,"felt");
+    insert_HammingTree(H,"athens");
+    insert_HammingTree(H,"thessaloniki");
+    insert_HammingTree(H,"whatever");
+    insert_HammingTree(H,"grapes");
+    insert_HammingTree(H,"honey");
+    insert_HammingTree(H,"informatics");
+    insert_HammingTree(H,"greece");
+    insert_HammingTree(H,"whatever");
     print_hamming_tree(H);
     destroy_hamming_tree(H);
 

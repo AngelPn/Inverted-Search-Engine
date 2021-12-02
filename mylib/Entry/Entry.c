@@ -4,18 +4,16 @@
 
 #include "Entry.h"
 #include "LinkedList.h"
+#include "Query.h"
 
 struct entry_struct
 {
     char *w;
-    void *pl;
+    LinkedList payload[3]; /* index indicates match_dist of query */
 };
 
 struct info_struct {
-    int id;
-    int method;
-    int n;
-    int size;
+    Query q;
     int index;
 };
 
@@ -28,7 +26,8 @@ ErrorCode create_entry(const char *w, entry *e){
         return EC_FAIL;
     strcpy((*e)->w, w);
 
-    (*e)->pl = NULL;
+    for (int i = 0; i < 3; i++)
+        (*e)->payload[i] = NULL;
     
     return EC_SUCCESS;
 }
