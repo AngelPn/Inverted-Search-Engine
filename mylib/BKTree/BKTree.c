@@ -17,19 +17,19 @@ struct tree
 {
     BK_treenode root;
     int size; /* the total number of nodes */
-    int (*distance_function)(const char* word1, const char* word2);
+    DistFunc distance;
 };
 
-BK_tree initialize_BK_tree(int (*distance_func)(const char* word1, const char* word2)){
+BK_tree create_BK_tree(DistFunc distance) {
     BK_tree new_tree = (BK_tree)malloc(sizeof(struct tree));
     new_tree->size = 0;
     new_tree->root = NULL;
-    new_tree->distance_function = distance_func;
+    new_tree->distance = distance;
     return new_tree;
 }
 
 /* Creates and returns BK_treenode */
-BK_treenode make_treenode(const entry e) {
+BK_treenode new_treenode(entry e) {
     BK_treenode new_node = (BK_treenode)malloc(sizeof(struct treenode));
     new_node->item = e;
     new_node->next = NULL;
@@ -38,8 +38,6 @@ BK_treenode make_treenode(const entry e) {
     new_node->no_child = 0;
     return new_node;
 }
-
-int compare_words(const char* word1, const char* word2);
 
 BK_treenode get_root(BK_tree tree){
     return tree->root;
@@ -57,17 +55,19 @@ int get_BK_treenode_cost(BK_treenode n){
     return n->cost;
 }
 
-/* Inserts new node to BK tree */
-ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node) {
+/* Inserts new item to BK tree */
+ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, entry e) {
 
+    BK_treenode new_node = new_treenode(e);
     BK_treenode temp = *root;
     if(temp == NULL) { /* If root is empty */
         *root = new_node;
         return EC_SUCCESS;
     }
     else {
-        /* edit distance function */
-        int dist = ix->distance_function(get_entry_word((*root)->item), get_entry_word(new_node->item));
+        char *a = get_entry_word((*root)->item);
+        char *b = get_entry_word(new_node->item);
+        int dist = ix->distance(a, strlen(a), b, strlen(b));
         /* Rejecting duplicate words */
         if (dist == 0)
             return EC_FAIL;
@@ -99,8 +99,8 @@ ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node) {
                     new_node->cost = dist;
                     (*root)->no_child++;
                     return EC_SUCCESS;
-                } else { /* Root already has a child with the same cost -> Insert the new node in the child's children */
-                    BK_tree_insert(ix, &temp, new_node);
+                } else { /* Root already has a child with the same cost -> Insert entry in the child's children */
+                    BK_tree_insert(ix, &temp, e);
                     return EC_SUCCESS;
                 }
             }
@@ -113,32 +113,7 @@ ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, BK_treenode new_node) {
     }
 }
 
-ErrorCode build_entry_index(const LinkedList el, MatchType type, BK_tree* ix) {
-
-
-    if (((*ix) = (BK_tree)malloc(sizeof(struct tree))) == NULL)
-        return EC_FAIL;
-    (*ix)->size = get_number_items(el);
-    (*ix)->root = NULL;
-
-    if (type == MT_EDIT_DIST) {
-        (*ix)->distance_function = editDistance;
-    }
-    else if (type == MT_HAMMING_DIST) {
-        (*ix)->distance_function = hammingDistance;
-    }
-
-    /* Insert all LinkedList's items to the tree iteratively */
-    ListNode current = get_first_node(el);
-    for(int i = 0; i < (*ix)->size; i++) {
-        if (BK_tree_insert(*ix, &((*ix)->root), make_treenode(get_node_item(current))) == EC_FAIL)
-            return EC_FAIL;
-        current = get_next_node(current);
-    }
-    return EC_SUCCESS;
-}
-
-ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, LinkedList* result) {
+ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* result) {
     LinkedList candidate_words = NULL; /* actually keeps tree nodes so we can get their children and cost */
     if (create_list(&candidate_words, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
@@ -159,7 +134,9 @@ ErrorCode lookup_entry_index(const char* w, BK_tree ix, int threshold, LinkedLis
 
         /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
 //        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
-        int dist = ix->distance_function(get_entry_word(candidate->item), w);
+        char *a = get_entry_word(candidate->item);
+        char *b = w;
+        int dist = ix->distance(a, strlen(a), b, strlen(b));
         if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
             add_item(found_words, candidate->item);
         }
@@ -220,111 +197,10 @@ ErrorCode destroy_tree(BK_treenode root) {
 }
 
 /* Delete function that deletes the tree */
-ErrorCode destroy_entry_index(BK_tree* ix) {
+ErrorCode destroy_BK_tree(BK_tree* ix) {
     if((*ix)->root)
         destroy_tree((*ix)->root);
     free(*ix);
     *ix = NULL;
     return EC_SUCCESS;
-}
-
-/**************************************************************/
-
-int compare_words(const char* word1, const char* word2) {
-
-    int distance = 0;
-
-    /* points to current character */
-    const char *curr1 = word1, *curr2 = word2;
-
-    while (*curr1 && *curr2){
-        if (*curr1 != *curr2){
-            distance++;
-        }
-        curr1++;
-        curr2++;
-    }
-
-    while (*curr1){
-        distance++;
-        curr1++;
-    }
-
-    while (*curr2){
-        distance++;
-        curr2++;
-    }
-    return distance;
-}
-
-// Computes edit distance between a null-terminated string "a" with length "na"
-//  and a null-terminated string "b" with length "nb"
-int editDistance(const char* a, const char* b)
-{
-    int na = strlen(a);
-    int nb = strlen(b);
-    int oo=0x7FFFFFFF;
-
-    static int T[2][MAX_WORD_LENGTH+1];
-
-    int ia, ib;
-
-    int cur=0;
-
-    for(ib=0;ib<=nb;ib++)
-        T[cur][ib]=ib;
-
-    cur=1-cur;
-
-    for(ia=1;ia<=na;ia++)
-    {
-        for(ib=0;ib<=nb;ib++)
-            T[cur][ib]=oo;
-
-        int ib_st=0;
-        int ib_en=nb;
-
-        if(ib_st==0)
-        {
-            ib=0;
-            T[cur][ib]=ia;
-            ib_st++;
-        }
-
-        for(ib=ib_st;ib<=ib_en;ib++)
-        {
-            int ret=oo;
-
-            int d1=T[1-cur][ib]+1;
-            int d2=T[cur][ib-1]+1;
-            int d3=T[1-cur][ib-1]; if(a[ia-1]!=b[ib-1]) d3++;
-
-            if(d1<ret) ret=d1;
-            if(d2<ret) ret=d2;
-            if(d3<ret) ret=d3;
-
-            T[cur][ib]=ret;
-        }
-
-        cur=1-cur;
-    }
-
-    int ret=T[1-cur][nb];
-
-    return ret;
-}
-
-// Computes Hamming distance between a null-terminated string "a" with length "na"
-//  and a null-terminated string "b" with length "nb"
-int hammingDistance(const char* a, const char* b)
-{
-    int na = strlen(a);
-    int nb = strlen(b);
-    int j, oo=0x7FFFFFFF;
-    if(na!=nb) return oo;
-
-    unsigned int num_mismatches=0;
-    for(j=0;j<na;j++) if(a[j]!=b[j]) num_mismatches++;
-
-    return num_mismatches;
 }

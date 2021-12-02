@@ -3,12 +3,10 @@
 #include <stdlib.h>
 
 #include "core.h"
-#include "./EntryList/EntryList.h"
-#include "./BKTree/BKTree.h"
-#include "./Entry/Entry.h"
-#include "./HammingTree/HammingTree.h"
-
-#include "./HashTable/HashTable.h"
+#include "BKTree.h"
+#include "Entry.h"
+#include "HammingTree.h"
+#include "HashTable.h"
 
 //We insert each word one by one in a big hashtable and at the same time we check if it already exists in the hashtable
 //if it already exists it means it is a duplicate word so it is not in the result string that it is returned

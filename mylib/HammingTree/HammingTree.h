@@ -2,14 +2,14 @@
 #define HAMMINGTREE_H
 
 #include "core.h"
-#include "../BKTree/BKTree.h"
-#include "../Entry/Entry.h"
+#include "BKTree.h"
+#include "Entry.h"
 
 typedef struct hamming_tree *HammingTree;
 
-HammingTree initialize_hamming_tree();
-ErrorCode hamming_tree_insert(HammingTree ht, char* w);
-ErrorCode destroy_hamming_tree(HammingTree ix);
-void print_hamming_tree(HammingTree ix);
+HammingTree create_HammingTree(DistFunc distance);
+ErrorCode insert_HammingTree(HammingTree ht, char* w);
+ErrorCode destroy_HammingTree(HammingTree ix);
+void print_HammingTree(HammingTree ix);
 
 #endif

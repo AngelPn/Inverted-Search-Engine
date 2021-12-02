@@ -236,6 +236,14 @@ ErrorCode GetNextAvailRes(DocID*         p_doc_id,
                           QueryID**      p_query_ids);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+
+/* pointer to function that determines the distance function */
+typedef int (*DistFunc)(char* a, int na, char* b, int nb);
+
+int EditDistance(char* a, int na, char* b, int nb);
+int HammingDistance(char* a, int na, char* b, int nb);
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 //*********************************************************************************************
 
 #ifdef __cplusplus

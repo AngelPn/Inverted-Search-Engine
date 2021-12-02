@@ -2,7 +2,7 @@
 main
 searchEngine
 test_Entry
-test_EntryList
+test_LinkedList
 test_BKTree
 
 # Prerequisites

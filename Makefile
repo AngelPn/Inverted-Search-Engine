@@ -34,6 +34,7 @@ TEST = tests
 	
 TEST_O = test_driver/test.o
 IMPL_O = ref_impl/core.o
+MAIN_O = ref_impl/main.o
 OBJS = $(MODULES)/Entry/Entry.o $(MODULES)/LinkedList/LinkedList.o $(MODULES)/BKTree/BKTree.o 
 OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o
 
@@ -42,7 +43,7 @@ CC  = gcc
 CXX = g++
 
 # Compile flags
-CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/LinkedList -I$(MODULES)/Entry -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
+CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags
@@ -55,19 +56,14 @@ all: $(PROGRAMS)
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(ODIR)
 
-mainonly: clean $(OBJS) $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o $(MODULES)/main.o
-	$(CC) $(CFLAGS) $(OBJS) $(MODULES)/main.o -o main
-	mkdir -p $(ODIR)
-	mv $(OBJS) $(MODULES)/main.o $(ODIR)
-
 test_Entry: clean $(OBJS) $(TEST)/Entry.test.o
 	$(CC) $(CFLAGS) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
 
 test_LinkedList: clean $(OBJS) $(TEST)/LinkedList.test.o
 	$(CC) $(CFLAGS) $(OBJS) $(TEST)/LinkedList.test.o -o test_LinkedList
 
-test_BKTree: clean $(OBJS) $(TEST)/BKTree.test.o
-	$(CC) $(CFLAGS) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
+test_BKTree: clean $(IMPL_O) $(OBJS) $(TEST)/BKTree.test.o
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
 
 run: all
 	./test_Entry
@@ -84,6 +80,11 @@ lib: $(IMPL_O) $(OBJS)
 
 testdriver: lib $(TEST_O)
 	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so
+
+mainonly: clean $(OBJS) $(MAIN_O)
+	$(CC) $(CFLAGS) $(OBJS) $(MAIN_O) -o main
+	mkdir -p $(ODIR)
+	mv $(OBJS) $(MAIN_O) $(ODIR)
 
 # Delete executable & object files
 clean:
