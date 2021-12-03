@@ -29,7 +29,7 @@ char* deduplication(char* text){
         }
         //getting the next character
         token = strtok(NULL,space);
-        printf("token: %s\n",token);
+        //printf("token: %s\n",token);
     }
     HashT_delete(HT);
     free(new_txt);
