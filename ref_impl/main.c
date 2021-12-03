@@ -50,8 +50,8 @@ int main(void){
     insert_HammingTree(H,"informatics");
     insert_HammingTree(H,"greece");
     insert_HammingTree(H,"whatever");
-    print_hamming_tree(H);
-    destroy_hamming_tree(H);
+    print_HammingTree(H);
+    destroy_HammingTree(H);
 
     HashT* exact_matching = HashT_init(10, NULL);
     HashT_insert(exact_matching,"hell", NULL); /* Instead of NULL we will insert the payload */

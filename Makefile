@@ -81,10 +81,10 @@ lib: $(IMPL_O) $(OBJS)
 testdriver: lib $(TEST_O)
 	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so
 
-mainonly: clean $(OBJS) $(MAIN_O)
-	$(CC) $(CFLAGS) $(OBJS) $(MAIN_O) -o main
+mainonly: clean $(IMPL_O) $(OBJS) $(MAIN_O)
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(MAIN_O) -o main
 	mkdir -p $(ODIR)
-	mv $(OBJS) $(MAIN_O) $(ODIR)
+	mv $(OBJS) $(IMPL_O) $(MAIN_O) $(ODIR)
 
 # Delete executable & object files
 clean:
