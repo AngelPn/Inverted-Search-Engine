@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "core.h"
+#include "Query.h"
 
 typedef struct entry_struct *entry;
 typedef struct info_struct *info;
@@ -18,5 +19,7 @@ void print_entry_word(void *e);
 
 /* Deallocates memory of entry */
 ErrorCode destroy_entry(void **e);
+
+ErrorCode update_entry_payload(entry e,unsigned int match_dist, Query q, int index);
 
 #endif

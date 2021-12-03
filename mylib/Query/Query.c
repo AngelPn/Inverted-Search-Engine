@@ -12,15 +12,20 @@ struct query_struct
     int size;                       /* number of words in query */
 	// char *words[MAX_QUERY_WORDS];   /* pointers to words of query */
     bool found[MAX_QUERY_WORDS];    /* true if indexed word is found */
+    int counter; /* counting found query words */
 };
 
-Query create_query(QueryID query_id, int size) {
+Query create_query(QueryID query_id) {
     Query q = (Query)malloc(sizeof(struct query_struct));
     q->query_id = query_id;
-    q->size = size;
+    q->counter = 0;
     for (int i = 0; i < MAX_QUERY_WORDS; i++)
         q->found[i] = false;
     return q;
+}
+
+void set_size(Query q,int s){
+    q->size = s;
 }
 
 QueryID get_queryID(Query q) {
@@ -28,7 +33,10 @@ QueryID get_queryID(Query q) {
 }
 
 void found(Query q, int index) {
-    q->found[index] = true;
+    if(q->found[index] == false) {
+        q->counter++;
+        q->found[index] = true;
+    }
 }
 
 void reset_found(Query q) {
@@ -37,11 +45,10 @@ void reset_found(Query q) {
 }
 
 bool returnQuery(Query q) {
-    for (int i = 0; i < q->size; i++) {
-        if (q->found[i] == false)
-            return false;
-    }
-    return true;
+    if(q->size == q->counter)
+        return true;
+    else
+        return false;
 }
 
 ErrorCode destroy_query(void **q) {

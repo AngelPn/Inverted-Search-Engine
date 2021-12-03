@@ -8,7 +8,7 @@
 typedef struct hamming_tree *HammingTree;
 
 HammingTree create_HammingTree(DistFunc distance);
-ErrorCode insert_HammingTree(HammingTree ht, char* w);
+entry insert_HammingTree(HammingTree ht, char* w);
 ErrorCode destroy_HammingTree(HammingTree ix);
 void print_HammingTree(HammingTree ix);
 

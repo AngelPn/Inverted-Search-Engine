@@ -29,6 +29,7 @@ char* deduplication(char* text){
         }
         //getting the next character
         token = strtok(NULL,space);
+        printf("token: %s\n",token);
     }
     HashT_delete(HT);
     free(new_txt);
@@ -75,7 +76,7 @@ int main(void){
 
     HashT_delete(exact_matching);
 
-    char* test_0 = "Hello Hello world this is is a test test";
+    char* test_0 = "Hello                test";
     printf("\nBefore deduplication: %s\n",test_0);
     char* test = deduplication(test_0);
     printf("After deduplication: %s\n",test);

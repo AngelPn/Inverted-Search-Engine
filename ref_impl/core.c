@@ -27,33 +27,74 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "core.h"
 #include "ed.h"
 #include "Entry.h"
 #include "HashTable.h"
 #include "HammingTree.h"
+#include "Query.h"
 
 //Global structs used for the queries
 HashT* ExactHT;
+HashT* QueryHT;
 BK_tree EditTree;
 HammingTree HammingHT;
 
-ErrorCode InitializeIndex(){
+
+ErrorCode InitializeIndex() {
     ExactHT = HashT_init(1000, NULL);
 	EditTree = create_BK_tree(EditDistance);
     HammingHT = create_HammingTree(HammingDistance);
+    QueryHT = NULL;
     return EC_SUCCESS;
 }
 
-ErrorCode DestroyIndex(){
+ErrorCode DestroyIndex() {
 	HashT_delete(ExactHT);
     destroy_BK_tree(&EditTree);
     destroy_HammingTree(HammingHT);
     return EC_SUCCESS;
 }
 
-ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist)
-{
+ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist) {
+    const char space[2] = " ";
+    int size = 0;
+    char* new_query_str= malloc(strlen(query_str)+1);
+    strcpy(new_query_str,query_str);
+    char* token = strtok(new_query_str,space);
+    Query query = create_query(query_id);
+    while(token != NULL){
+        if(match_type == MT_EXACT_MATCH) {
+            entry e = HashT_get(ExactHT, token);
+            if(e == NULL){
+                create_entry(token, &e);
+                HashT_insert(ExactHT, token, e);
+            }
+            else {
+                if(update_entry_payload(e, match_dist, query, size) == EC_FAIL)
+                    return EC_FAIL;
+            }
+        }
+        else if (match_type == MT_HAMMING_DIST){
+           entry e = insert_HammingTree(HammingHT, token);
+           if(update_entry_payload(e, match_dist-1, query, size) == EC_FAIL){
+               printf("fail\n");
+               return EC_FAIL;
+           }
+
+        }
+        else{
+            entry e = BK_tree_insert(EditTree, get_root_double_p(EditTree),token);
+            if(update_entry_payload(e, match_dist-1, query, size) == EC_FAIL){
+                printf("fail\n");
+                return EC_FAIL;
+            }
+        }
+        token = strtok(NULL,space); //getting the next word
+        size++;
+    }
+    set_size(query,size+1);
 	return EC_SUCCESS;
 }
 

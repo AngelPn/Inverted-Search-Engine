@@ -4,7 +4,6 @@
 
 #include "Entry.h"
 #include "LinkedList.h"
-#include "Query.h"
 
 struct entry_struct
 {
@@ -27,14 +26,20 @@ ErrorCode create_entry(const char *w, entry *e){
     strcpy((*e)->w, w);
 
     for (int i = 0; i < 3; i++)
-        (*e)->payload[i] = NULL;
+        create_list(&((*e)->payload[i]), destroy_entry);
     
     return EC_SUCCESS;
 }
 
-ErrorCode update_entry_payload(entry *e,info n){
-    // return add_entry((*e)->pl,n);
-    return EC_SUCCESS;
+info create_info(Query qq, int i) {
+    info inf = malloc(sizeof(struct info_struct));
+    inf->q = qq;
+    inf->index = i;
+    return inf;
+}
+
+ErrorCode update_entry_payload(entry e, unsigned int match_dist, Query q, int index){
+    return add_item(e->payload[match_dist], create_info(q,index));
 }
 
 char *get_entry_word(entry e){
