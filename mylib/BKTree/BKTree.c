@@ -58,15 +58,15 @@ int get_BK_treenode_cost(BK_treenode n){
 /* Inserts new item to BK tree */
 ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, entry e) {
 
-    BK_treenode new_node = new_treenode(e);
     BK_treenode temp = *root;
     if(temp == NULL) { /* If root is empty */
+        BK_treenode new_node = new_treenode(e);
         *root = new_node;
         return EC_SUCCESS;
     }
     else {
         char *a = get_entry_word((*root)->item);
-        char *b = get_entry_word(new_node->item);
+        char *b = get_entry_word(e);
         int dist = ix->distance(a, strlen(a), b, strlen(b));
         /* Rejecting duplicate words */
         if (dist == 0)
@@ -75,6 +75,7 @@ ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, entry e) {
         BK_treenode prev = (*root);
         /* if root doesn't have any children */
         if (temp == NULL) {
+            BK_treenode new_node = new_treenode(e);
             (*root)->child = new_node;
             new_node->cost = dist;
             (*root)->no_child++;
@@ -89,6 +90,7 @@ ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, entry e) {
                     temp = temp->next;
                     continue;
                 } else if (dist < temp->cost) {
+                    BK_treenode new_node = new_treenode(e);
                     /* inserting in the previous position */
                     new_node->next = temp;
                     /* If temp is the first child of our root then we make new_node the new first child */
@@ -105,6 +107,7 @@ ErrorCode BK_tree_insert(BK_tree ix, BK_treenode* root, entry e) {
                 }
             }
             /* If we reached the end of the loop it means new_node must be placed in the last position of the list */
+            BK_treenode new_node = new_treenode(e);
             new_node->cost = dist;
             prev->next = new_node;
             (*root)->no_child++;
