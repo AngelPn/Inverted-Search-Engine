@@ -44,7 +44,7 @@ HammingTree HammingHT;
 
 
 ErrorCode InitializeIndex() {
-    ExactHT = HashT_init(1000, NULL);
+    ExactHT = HashT_init(string, 1000, NULL);
 	EditTree = create_BK_tree(EditDistance);
     HammingHT = create_HammingTree(HammingDistance);
     QueryHT = NULL;

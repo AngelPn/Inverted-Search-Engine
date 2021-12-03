@@ -6,7 +6,7 @@
 #include <math.h>
 
 typedef struct HashT_entry{
-    char* key;
+    void* key;
     void* item;
     struct HashT_entry* next;
 } HashT_entry;
@@ -16,11 +16,16 @@ struct HashT{
     unsigned int nitems; /*number of items stored in hash table*/
     HashT_entry** table; /*pointer to array of hash table entries*/
     void (*destroy_item)(void *); /* function that destroys hash table's entries*/
+    int (*compare_f)(void *, void *); /* function that is used to compare keys depending on type (integer or string) */
+    int (*hash_f)(void *); /* function that is used to hash keys depending on type (integer or string) */
 };
 
 /* declarations for some functions that will be used inside this file */
-static int HashT_HashFunction(char* key); /* returns a positive hash value for this key */
-static HashT_entry* create_entry(char* key, void* item);
+static int str_hash(void* key); /* returns a positive hash value for this key */
+static int int_hash(void* key); /* returns a value for this key */
+int compare_str(void* key1, void* key2);
+int compare_int(void* key1, void* key2);
+static HashT_entry* create_entry(void* key, void* item);
 
 /*
 This algorithm was created for sdbm (a public-domain reimplementation of ndbm) 
@@ -33,18 +38,33 @@ version. The magic constant 65599 was picked out of thin air while experimenting
 with different constants, and turns out to be a prime. this is one of the 
 algorithms used in berkeley db (see sleepycat) and elsewhere.
 */
-static int HashT_HashFunction(char* str){
+static int str_hash(void* str){
     unsigned long hash = 0;
 	int c;
 
-	while ((c = *str++)) {
+	while ((c = *(char*)str++)) {
 		hash = c + (hash << 6) + (hash << 16) - hash;
 	}
 
 	return abs(hash);
 }
 
-static HashT_entry* create_entry(char* key, void* item){
+static int int_hash(void* key){
+    return abs(*(int*)key);
+}
+
+int compare_int(void* key1, void* key2){
+    if (*((int*)key1) == *((int*)key2)) {
+        return 0;
+    }
+    else return 1;
+}
+
+int compare_str(void* key1, void* key2){
+    return strcmp((char*)key1, (char*)key2);
+}
+
+static HashT_entry* create_entry(void* key, void* item){
     HashT_entry* new_entry = malloc(sizeof(HashT_entry));
     new_entry->key = key;
     new_entry->item = item;
@@ -52,12 +72,12 @@ static HashT_entry* create_entry(char* key, void* item){
     return new_entry;
 }
 
-HashT_entry* HashT_getEntry(HashT* hash_table, char* key){
-    int hash_value = HashT_HashFunction(key)%(hash_table->nbuckets);
+HashT_entry* HashT_getEntry(HashT* hash_table, void* key){
+    int hash_value = hash_table->hash_f(key)%(hash_table->nbuckets);
     HashT_entry* curr = (hash_table->table)[hash_value];
     if (curr != NULL) {
         do {
-            if (strcmp(curr->key, key) == 0) {
+            if (hash_table->compare_f(curr->key, key) == 0) {
                 return curr;
             }
             curr = curr->next;
@@ -66,7 +86,7 @@ HashT_entry* HashT_getEntry(HashT* hash_table, char* key){
     return  NULL;
 }
 
-HashT* HashT_init(unsigned int nbuckets, void (*destroy_item)(void *)){
+HashT* HashT_init(key_type kt, unsigned int nbuckets, void (*destroy_item)(void *)){
     HashT* hash_table = malloc(sizeof(HashT));
 
     hash_table->nbuckets = nbuckets;
@@ -76,19 +96,27 @@ HashT* HashT_init(unsigned int nbuckets, void (*destroy_item)(void *)){
     }
     hash_table->nitems = 0;
     hash_table->destroy_item = destroy_item;
+    if (kt == integer) {
+        hash_table->compare_f = compare_int;
+        hash_table->hash_f = int_hash;
+    }
+    else if (kt == string) {
+        hash_table->compare_f = compare_str;
+        hash_table->hash_f = str_hash;
+    }
     return hash_table;
 }
 
-bool HashT_insert(HashT* hash_table, char* key, void* item){
+bool HashT_insert(HashT* hash_table, void* key, void* item){
     if (hash_table == NULL) return false;
 
-    int hash_value = HashT_HashFunction(key)%(hash_table->nbuckets);
+    int hash_value = (hash_table->hash_f(key))%(hash_table->nbuckets);
 
     if ((hash_table->table)[hash_value] != NULL){ 
         HashT_entry* curr = (hash_table->table)[hash_value], *prev = NULL;
         /* parse that list */
         do {
-            if (strcmp(curr->key, key) == 0){
+            if (hash_table->compare_f(curr->key, key) == 0){
                 return false;
             }
             prev = curr;
@@ -104,13 +132,13 @@ bool HashT_insert(HashT* hash_table, char* key, void* item){
     return true;
 }
 
-void HashT_remove(HashT* hash_table, char* key){
+void HashT_remove(HashT* hash_table, void* key){
     /* find bucket */
-    int hash_value = HashT_HashFunction(key)%(hash_table->nbuckets);
+    int hash_value = hash_table->hash_f(key)%(hash_table->nbuckets);
     HashT_entry* curr = (hash_table->table)[hash_value];
     HashT_entry* prev = NULL;
     /* if key is at the start of the list */
-    if (curr != NULL && strcmp(curr->key, key) == 0){
+    if (curr != NULL && hash_table->compare_f(curr->key, key) == 0){
         (hash_table->table)[hash_value] = curr->next;
         hash_table->destroy_item(curr->item);
         free(curr);
@@ -118,7 +146,7 @@ void HashT_remove(HashT* hash_table, char* key){
         return;
     }
     /* else */
-    while (curr != NULL && strcmp(curr->key, key) != 0){
+    while (curr != NULL && hash_table->compare_f(curr->key, key) != 0){
         prev = curr;
         curr = curr->next;
     }
@@ -148,7 +176,7 @@ void HashT_delete(HashT* hash_table){
     hash_table = NULL;
 }
 
-bool HashT_exists(HashT* hash_table, char* key) {
+bool HashT_exists(HashT* hash_table, void* key) {
     HashT_entry* entry = HashT_getEntry(hash_table, key);
     if (entry == NULL){
         return false;
@@ -158,7 +186,7 @@ bool HashT_exists(HashT* hash_table, char* key) {
 }
 
 
-void* HashT_get(HashT* hash_table, char* key){
+void* HashT_get(HashT* hash_table, void* key){
     HashT_entry* entry = HashT_getEntry(hash_table, key);
     if (entry == NULL) {
         return NULL;
@@ -176,7 +204,12 @@ void HashT_print(HashT* hash_table, void (*print)(void*)) {
             HashT_entry* curr = (hash_table->table)[i];
             printf("Index %d\n", i);
             while (curr!=NULL) {
-                printf("\tkey:%s item:", curr->key);
+                if (hash_table->compare_f == compare_str){
+                    printf("\tkey:%s item:", (char*)curr->key);
+                }
+                else {
+                    printf("\tkey:%d item:", *(int*)curr->key);
+                }
                 if (print != NULL){
                     print(curr->item);
                 }
