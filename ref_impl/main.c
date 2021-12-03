@@ -11,7 +11,7 @@
 //We insert each word one by one in a big hashtable and at the same time we check if it already exists in the hashtable
 //if it already exists it means it is a duplicate word so it is not in the result string that it is returned
 char* deduplication(char* text){
-    HashT* HT = HashT_init(1000,NULL);
+    HashT* HT = HashT_init(string,1000,NULL);
     const char space[2] = " ";
     //allocating new char array because strtok() cant be applied on string literals
     char* new_txt= malloc(strlen(text)+1);
@@ -54,7 +54,7 @@ int main(void){
     print_HammingTree(H);
     destroy_HammingTree(H);
 
-    HashT* exact_matching = HashT_init(10, NULL);
+    HashT* exact_matching = HashT_init(string, 10, NULL);
     HashT_insert(exact_matching,"hell", NULL); /* Instead of NULL we will insert the payload */
     HashT_insert(exact_matching,"henn", NULL);
     HashT_insert(exact_matching,"help", NULL);
@@ -81,5 +81,20 @@ int main(void){
     char* test = deduplication(test_0);
     printf("After deduplication: %s\n",test);
     free(test);
+
+
+    HashT* exact_matching2 = HashT_init(integer, 3, NULL);
+    int i=1, i2=2, i3=2;
+    HashT_insert(exact_matching2,&i, NULL); /* Instead of NULL we will insert the payload */
+    HashT_insert(exact_matching2,&i2, NULL);
+    HashT_insert(exact_matching2,&i3, NULL);
+    HashT_stats(exact_matching2);
+
+    printf("1: %d\n", HashT_exists(exact_matching2, &i));
+    printf("2: %d\n", HashT_exists(exact_matching2, &i2));
+    int i7=7;
+    printf("7: %d\n", HashT_exists(exact_matching2, &i7));
+
+    HashT_delete(exact_matching2);
 }
 
