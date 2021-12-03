@@ -34,6 +34,7 @@
 #include "HashTable.h"
 #include "HammingTree.h"
 #include "Query.h"
+#include "BKTree.h"
 
 //Global structs used for the queries
 HashT* ExactHT;
