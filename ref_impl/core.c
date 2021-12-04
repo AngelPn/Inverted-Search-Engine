@@ -74,12 +74,12 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
 
 ErrorCode EndQuery(QueryID query_id)
 {
-    // Query query = NULL;
-    // if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
-    //     return EC_FAIL;
-    // } else {
-    //     return end_query(query);
-    // }
+    Query query = NULL;
+    if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
+        return EC_FAIL;
+    } else {
+        return end_query(query);
+    }
 }
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)

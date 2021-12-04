@@ -14,8 +14,6 @@ struct entry_struct
 struct info_struct {
     Query q;
     int index;
-    ListNode info_node;
-    LinkedList head;
 };
 
 ErrorCode create_entry(const char *w, entry *e){
@@ -33,28 +31,21 @@ ErrorCode create_entry(const char *w, entry *e){
     return EC_SUCCESS;
 }
 
-info create_info(Query q, int i, LinkedList head) {
+info create_info(Query q, int i) {
     info inf = malloc(sizeof(struct info_struct));
     inf->q = q;
     inf->index = i;
-    inf->head = head;
     return inf;
 }
 
 ErrorCode update_entry_payload(entry e, unsigned int match_dist, Query q, int index){
     ListNode node = NULL;
-    info inf = create_info(q, index, e->payload[match_dist]);
-    if ((node = push_item(e->payload[match_dist], inf)) == NULL) {
+    if ((node = push_item(e->payload[match_dist], create_info(q, index))) == NULL) {
         return EC_FAIL;
     } else {
-        inf->info_node = node;
-        set_info_words(q, index, inf);
+        set_info_words(q, index, e->payload[match_dist], node);
         return EC_SUCCESS;
     }
-}
-
-void remove_query_info(info inf) {
-    list_remove(inf->head, inf->info_node);
 }
 
 char *get_entry_word(entry e){

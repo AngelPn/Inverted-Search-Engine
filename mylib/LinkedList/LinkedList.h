@@ -39,7 +39,6 @@ void *push_item(LinkedList el, void *item);
 void *pop_item(LinkedList el);
 
 /* Removes the next node from ListNode node */
-void list_remove_next(LinkedList el, ListNode node);
 void list_remove(LinkedList el, ListNode node);
 
 /* Sets or changes the destroy item */
