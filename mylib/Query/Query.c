@@ -7,12 +7,11 @@
 struct query_struct
 {
 	QueryID query_id;
-    // MatchType match_type;
-	// unsigned int match_dist;
-    int size;                       /* number of words in query */
-	// char *words[MAX_QUERY_WORDS];   /* pointers to words of query */
-    bool found[MAX_QUERY_WORDS];    /* true if indexed word is found */
-    int counter; /* counting found query words */
+    int size;                           /* number of words in query */
+    LinkedList lists[MAX_QUERY_WORDS];  /* pointers to payload lists of query */
+	ListNode nodes[MAX_QUERY_WORDS];    /* pointers to payload nodes of query */
+    bool found[MAX_QUERY_WORDS];        /* true if indexed word is found */
+    int counter;                        /* counting found query words */
 };
 
 Query create_query(QueryID query_id) {
@@ -26,6 +25,11 @@ Query create_query(QueryID query_id) {
 
 void set_size(Query q,int s){
     q->size = s;
+}
+
+void set_info_words(Query q, int index, LinkedList list, ListNode node) {
+    q->lists[index] = list;
+    q->nodes[index] = node;
 }
 
 QueryID get_queryID(Query q) {
@@ -42,6 +46,13 @@ void found(Query q, int index) {
 void reset_found(Query q) {
     for (int i = 0; i < MAX_QUERY_WORDS; i++)
         q->found[i] = false;
+}
+
+ErrorCode end_query(Query q) {
+    for (int i = 0; i < q->size; i++) {
+        list_remove(q->lists[i], q->nodes[i]);
+    }
+    return EC_SUCCESS;
 }
 
 bool returnQuery(Query q) {

@@ -39,12 +39,69 @@ BK_treenode new_treenode(entry e) {
     return new_node;
 }
 
-BK_treenode get_root(BK_tree tree){
-    return tree->root;
+entry insert_node(BK_tree ix, BK_treenode node, char *b) {
+    char *a = get_entry_word((node)->item);
+    int dist = ix->distance(a, strlen(a), b, strlen(b));
+    /* Rejecting duplicate words */
+    if (dist == 0)
+        return (node)->item;
+    BK_treenode temp = (node)->child;
+    BK_treenode prev = (node);
+    /* if node doesn't have any children */
+    if (temp == NULL) {
+        entry e; create_entry(b,&e);
+        BK_treenode new_node = new_treenode(e);
+        (node)->child = new_node;
+        new_node->cost = dist;
+        (node)->no_child++;
+        return e;
+    } else {
+        /*  Looping the node's children while holding a pointer to the previous node,
+            in case we find a node with bigger distance and we must insert the new node in the previous position 
+        */
+        while (temp != NULL) {
+            if (dist > temp->cost) {
+                prev = temp;
+                temp = temp->next;
+                continue;
+            } else if (dist < temp->cost) {
+                entry e; create_entry(b,&e);
+                BK_treenode new_node = new_treenode(e);
+                /* inserting in the previous position */
+                new_node->next = temp;
+                /* If temp is the first child of our root then we make new_node the new first child */
+                if (prev == (node))
+                    prev->child = new_node;
+                else
+                    prev->next = new_node;
+                new_node->cost = dist;
+                (node)->no_child++;
+                return e;
+            } else /* Root already has a child with the same cost -> Insert entry in the child's children */
+                return insert_node(ix, temp, b);
+        }
+        /* If we reached the end of the loop it means new_node must be placed in the last position of the list */
+        entry e; create_entry(b,&e);
+        BK_treenode new_node = new_treenode(e);
+        new_node->cost = dist;
+        prev->next = new_node;
+        (node)->no_child++;
+        return e;
+    }
 }
 
-BK_treenode* get_root_double_p(BK_tree tree){
-    return &(tree->root);
+entry insert_BK_tree(BK_tree ix, char* b) {
+    if (ix->root == NULL) {
+        entry e; create_entry(b, &e);
+        ix->root = new_treenode(e);
+        return e;
+    } else {
+        return insert_node(ix, ix->root, b);
+    }
+}
+
+BK_treenode get_root(BK_tree tree){
+    return tree->root;
 }
 
 entry get_BK_treenode_entry(BK_treenode n){
@@ -53,72 +110,6 @@ entry get_BK_treenode_entry(BK_treenode n){
 
 int get_BK_treenode_cost(BK_treenode n){
     return n->cost;
-}
-
-/* Inserts new item to BK tree */
-entry BK_tree_insert(BK_tree ix, BK_treenode* root, char* b) {
-
-    BK_treenode temp = *root;
-    if(temp == NULL) { /* If root is empty */
-        entry e;
-        create_entry(b,&e);
-        BK_treenode new_node = new_treenode(e);
-        *root = new_node;
-        return e;
-    }
-    else {
-        char *a = get_entry_word((*root)->item);
-        int dist = ix->distance(a, strlen(a), b, strlen(b));
-        /* Rejecting duplicate words */
-        if (dist == 0)
-            return (*root)->item;
-        BK_treenode temp = (*root)->child;
-        BK_treenode prev = (*root);
-        /* if root doesn't have any children */
-        if (temp == NULL) {
-            entry e;
-            create_entry(b,&e);
-            BK_treenode new_node = new_treenode(e);
-            (*root)->child = new_node;
-            new_node->cost = dist;
-            (*root)->no_child++;
-            return e;
-        } else {
-            /*  Looping the root's children while holding a pointer to the previous node,
-                in case we find a node with bigger distance and we must insert the new node in the previous position 
-            */
-            while (temp != NULL) {
-                if (dist > temp->cost) {
-                    prev = temp;
-                    temp = temp->next;
-                    continue;
-                } else if (dist < temp->cost) {
-                    entry e;
-                    create_entry(b,&e);
-                    BK_treenode new_node = new_treenode(e);
-                    /* inserting in the previous position */
-                    new_node->next = temp;
-                    /* If temp is the first child of our root then we make new_node the new first child */
-                    if(prev == (*root))
-                        prev->child = new_node;
-                    else
-                        prev->next = new_node;
-                    new_node->cost = dist;
-                    (*root)->no_child++;
-                    return e;
-                } else /* Root already has a child with the same cost -> Insert entry in the child's children */
-                    return BK_tree_insert(ix, &temp, b);
-            }
-            /* If we reached the end of the loop it means new_node must be placed in the last position of the list */
-            entry e;
-            create_entry(b,&e);
-            BK_treenode new_node = new_treenode(e);
-            new_node->cost = dist;
-            prev->next = new_node;
-            (*root)->no_child++;
-            return e;
-        }
-    }
 }
 
 ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* result) {
@@ -166,17 +157,18 @@ ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* res
 }
 
 void print_BK_tree_helper(BK_treenode root) {
-    printf("%s-%d\n", get_entry_word(root->item),root->no_child);
-    if(root->child)
+    printf("%s-%d\n", get_entry_word(root->item), root->no_child);
+    if (root->child != NULL)
         print_BK_tree_helper(root->child);
-    if(root->next)
+    if (root->next != NULL)
         print_BK_tree_helper(root->next);
     return;
 }
 
 void print_BK_tree(BK_tree tree) {
     printf("Printing BK tree:\n");
-    print_BK_tree_helper(tree->root);
+    if (tree->root != NULL)
+        print_BK_tree_helper(tree->root);
 }
 
 void BK_tree_toString_helper(BK_treenode root, char *string) {

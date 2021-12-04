@@ -31,15 +31,21 @@ ErrorCode create_entry(const char *w, entry *e){
     return EC_SUCCESS;
 }
 
-info create_info(Query qq, int i) {
+info create_info(Query q, int i) {
     info inf = malloc(sizeof(struct info_struct));
-    inf->q = qq;
+    inf->q = q;
     inf->index = i;
     return inf;
 }
 
 ErrorCode update_entry_payload(entry e, unsigned int match_dist, Query q, int index){
-    return add_item(e->payload[match_dist], create_info(q,index));
+    ListNode node = NULL;
+    if ((node = push_item(e->payload[match_dist], create_info(q, index))) == NULL) {
+        return EC_FAIL;
+    } else {
+        set_info_words(q, index, e->payload[match_dist], node);
+        return EC_SUCCESS;
+    }
 }
 
 char *get_entry_word(entry e){

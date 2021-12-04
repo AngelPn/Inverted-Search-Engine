@@ -30,78 +30,56 @@
 #include <string.h>
 #include "core.h"
 #include "ed.h"
-#include "Entry.h"
-#include "HashTable.h"
-#include "HammingTree.h"
-#include "Query.h"
-#include "BKTree.h"
+#include "Index.h"
 
-//Global structs used for the queries
-HashT* ExactHT;
-HashT* QueryHT;
-BK_tree EditTree;
-HammingTree HammingHT;
-
+// Global structs used for the search machine
+Index superdex; /* superdex = super + index, it is our super index */
 
 ErrorCode InitializeIndex() {
-    ExactHT = HashT_init(string, 1000, NULL);
-	EditTree = create_BK_tree(EditDistance);
-    HammingHT = create_HammingTree(HammingDistance);
-    QueryHT = NULL;
-    return EC_SUCCESS;
+    return init_index(&superdex);
 }
 
 ErrorCode DestroyIndex() {
-	HashT_delete(ExactHT);
-    destroy_BK_tree(&EditTree);
-    destroy_HammingTree(HammingHT);
-    return EC_SUCCESS;
+	return destroy_index(&superdex);
 }
 
 ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist) {
-    const char space[2] = " ";
-    int size = 0;
-    char* new_query_str= malloc(strlen(query_str)+1);
-    strcpy(new_query_str,query_str);
-    char* token = strtok(new_query_str,space);
-    Query query = create_query(query_id);
-    while(token != NULL){
-        if(match_type == MT_EXACT_MATCH) {
-            entry e = HashT_get(ExactHT, token);
-            if(e == NULL){
-                create_entry(token, &e);
-                HashT_insert(ExactHT, token, e);
-            }
-            else {
-                if(update_entry_payload(e, match_dist, query, size) == EC_FAIL)
-                    return EC_FAIL;
-            }
-        }
-        else if (match_type == MT_HAMMING_DIST){
-           entry e = insert_HammingTree(HammingHT, token);
-           if(update_entry_payload(e, match_dist-1, query, size) == EC_FAIL){
-               printf("fail\n");
-               return EC_FAIL;
-           }
+    /* Tokenize query_str */
+    char* new_query_str = (char*)malloc(strlen(query_str) + 1);
+    strcpy(new_query_str, query_str);
+    char* token = strtok(new_query_str, " ");
 
-        }
-        else{
-            entry e = BK_tree_insert(EditTree, get_root_double_p(EditTree),token);
-            if(update_entry_payload(e, match_dist-1, query, size) == EC_FAIL){
-                printf("fail\n");
-                return EC_FAIL;
-            }
-        }
-        token = strtok(NULL,space); //getting the next word
-        size++;
+    /* Check if query is already in active set of queries */
+    /* If not, insert query in active set of queries */
+    Query query = NULL;
+    if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
+        query = create_query(query_id);
+        HashT_insert(superdex.Queries, &query_id, query);
     }
-    set_size(query,size+1);
-	return EC_SUCCESS;
+
+    int query_words = 0; /* number of words in query */
+    ErrorCode state = EC_SUCCESS;
+    /* For each word in query, insert it to index */
+    while (token != NULL && state == EC_SUCCESS) {
+        state = insert_index(&superdex, token, match_type, match_dist, query, query_words);
+        token = strtok(NULL, " \n");
+        query_words++;
+    }
+    /* Set the number of words in query */
+    set_size(query, query_words + 1);
+    // print_BK_tree(superdex.EditDist);
+    // print_HammingTree(superdex.HammingDist);
+	return state;
 }
 
 ErrorCode EndQuery(QueryID query_id)
 {
-	return EC_SUCCESS;
+    Query query = NULL;
+    if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
+        return EC_FAIL;
+    } else {
+        return end_query(query);
+    }
 }
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
