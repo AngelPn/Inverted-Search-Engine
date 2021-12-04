@@ -84,6 +84,21 @@ ErrorCode add_item(LinkedList el, void *e) {
     else return EC_FAIL;
 }
 
+void *push_item(LinkedList el, void *item) {
+    ListNode new_node = NULL;
+    if ((new_node = (ListNode)malloc(sizeof(struct list_node))) == NULL) {
+        return NULL;
+    }
+    
+	new_node->item = item;
+	new_node->next = el->dummy->next;
+	el->dummy->next = new_node;
+
+	el->number_entries++;
+
+	return new_node;
+}
+
 void *pop_item(LinkedList el) {
     ListNode pop = NULL;
     if ((pop = el->dummy->next) == NULL)
@@ -96,6 +111,36 @@ void *pop_item(LinkedList el) {
 	(el->number_entries)--;
 
     return item;
+}
+
+void list_remove_next(LinkedList el, ListNode node) {
+    if (node == NULL)
+        node = el->dummy;
+
+	ListNode removed = node->next;
+	assert(removed != NULL);
+
+	if (el->destroy_item != NULL)
+		el->destroy_item(removed->item);
+
+	node->next = removed->next;
+	free(removed);
+
+	(el->number_entries)--;
+	if (el->last == removed)
+		el->last = node;
+}
+
+void list_remove(LinkedList el, ListNode node) {
+    ListNode prev_node = el->dummy;
+
+	for (ListNode curr_node = list_first(el); curr_node != NULL; curr_node = list_next(el, curr_node)){
+		if (curr_node == node){
+			list_remove_next(el, prev_node);
+			return;
+		}
+		prev_node = curr_node;
+	}
 }
 
 void list_set_destroy_item(LinkedList el, DestroyFunc destroy_item) {

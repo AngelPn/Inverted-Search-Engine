@@ -19,7 +19,7 @@ HammingTree create_HammingTree(DistFunc distance) {
 
 entry insert_HammingTree(HammingTree ht, char* w) {
     //because the trees array are from index 0 to 27 we substract 4 from the length
-    return BK_tree_insert(ht->TreeArray[strlen(w) - 4], get_root_double_p(ht->TreeArray[strlen(w) - 4]), w);
+    return insert_BK_tree(ht->TreeArray[strlen(w) - 4], w);
 }
 
 ErrorCode destroy_HammingTree(HammingTree ix) {

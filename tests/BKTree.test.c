@@ -18,13 +18,13 @@ void test_insert_BK_tree_EditDistance(void) {
     TEST_ASSERT(index != NULL);
 
     //add every word mentioned in the example to an entry list
-    BK_tree_insert(index, get_root_double_p(index), "hell");
-    BK_tree_insert(index, get_root_double_p(index), "help");
-    BK_tree_insert(index, get_root_double_p(index), "fall");
-    BK_tree_insert(index, get_root_double_p(index), "felt");
-    BK_tree_insert(index, get_root_double_p(index), "fell");
-    BK_tree_insert(index, get_root_double_p(index), "small");
-    BK_tree_insert(index, get_root_double_p(index), "melt");
+    insert_BK_tree(index, "hell");
+    insert_BK_tree(index, "help");
+    insert_BK_tree(index, "fall");
+    insert_BK_tree(index, "felt");
+    insert_BK_tree(index, "fell");
+    insert_BK_tree(index, "small");
+    insert_BK_tree(index, "melt");
 
     char string[] = "hell-3\nhelp-1\nfell-0\nfall-2\nfelt-0\nmelt-0\nsmall-0\n";  //this is the expected tree
     char* string_res = malloc(strlen(string)+1);
@@ -43,12 +43,12 @@ void test_insert_BK_tree_HammingDistance(void) {
     TEST_ASSERT(index != NULL);
 
     //add every word mentioned in the example to an entry list
-    BK_tree_insert(index, get_root_double_p(index), "book");
-    BK_tree_insert(index, get_root_double_p(index), "look");
-    BK_tree_insert(index, get_root_double_p(index), "lock");
-    BK_tree_insert(index, get_root_double_p(index), "dock");
-    BK_tree_insert(index, get_root_double_p(index), "duck");
-    BK_tree_insert(index, get_root_double_p(index), "move");
+    insert_BK_tree(index, "book");
+    insert_BK_tree(index, "look");
+    insert_BK_tree(index, "lock");
+    insert_BK_tree(index, "dock");
+    insert_BK_tree(index, "duck");
+    insert_BK_tree(index, "move");
 
     char string[] = "book-3\nlook-0\nlock-1\ndock-0\nduck-1\nmove-0\n";  //this is the expected tree
     char* string_res = malloc(strlen(string)+1);
@@ -68,13 +68,13 @@ void test_lookup_entry_index(){
     TEST_ASSERT(index != NULL);
 
     //add every word mentioned in the example to an entry list
-    BK_tree_insert(index, get_root_double_p(index), "hell");
-    BK_tree_insert(index, get_root_double_p(index), "help");
-    BK_tree_insert(index, get_root_double_p(index), "fall");
-    BK_tree_insert(index, get_root_double_p(index), "felt");
-    BK_tree_insert(index, get_root_double_p(index), "fell");
-    BK_tree_insert(index, get_root_double_p(index), "small");
-    BK_tree_insert(index, get_root_double_p(index), "melt");
+    insert_BK_tree(index, "hell");
+    insert_BK_tree(index, "help");
+    insert_BK_tree(index, "fall");
+    insert_BK_tree(index, "felt");
+    insert_BK_tree(index, "fell");
+    insert_BK_tree(index, "small");
+    insert_BK_tree(index, "melt");
 
     //print_BK_tree(index);
 

@@ -32,8 +32,15 @@ ListNode get_next_node(ListNode node);
 /* Adds item as first item to list */
 ErrorCode add_item(LinkedList el, void *e);
 
+/* Pushes item to list and returns it */
+void *push_item(LinkedList el, void *item);
+
 /* Pops item from list and returns it */
 void *pop_item(LinkedList el);
+
+/* Removes the next node from ListNode node */
+void list_remove_next(LinkedList el, ListNode node);
+void list_remove(LinkedList el, ListNode node);
 
 /* Sets or changes the destroy item */
 void list_set_destroy_item(LinkedList el, DestroyFunc destroy_item);

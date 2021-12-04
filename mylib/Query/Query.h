@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "core.h"
+#include "Entry.h"
 
 typedef struct query_struct *Query;
 
@@ -23,5 +24,9 @@ ErrorCode destroy_query(void **q);
 
 /* Size setter*/
 void set_size(Query q,int s);
+
+void set_info_words(Query q, int index, info inf);
+
+ErrorCode end_query(Query q);
 
 #endif
