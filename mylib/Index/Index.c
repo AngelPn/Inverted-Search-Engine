@@ -4,10 +4,10 @@
 #include "Index.h"
 
 ErrorCode init_index(Index *index) {
-    if ((index->ExactMatch = HashT_init(string, 1000, NULL)) == NULL) return EC_FAIL;
+    if ((index->ExactMatch = HashT_init(string, 1000, destroy_entry_void)) == NULL) return EC_FAIL;
     else if ((index->EditDist = create_BK_tree(EditDistance)) == NULL) return EC_FAIL;
     else if ((index->HammingDist = create_HammingTree(HammingDistance)) == NULL) return EC_FAIL;
-    else if ((index->Queries = HashT_init(integer, 1000, NULL)) == NULL) return EC_FAIL;
+    else if ((index->Queries = HashT_init(integer, 1000, destroy_query)) == NULL) return EC_FAIL;
     else if ((index->Docs = HashT_init(integer, 1000, NULL)) == NULL) return EC_FAIL;
     else return EC_SUCCESS;
 }

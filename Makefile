@@ -82,6 +82,9 @@ lib: $(IMPL_O) $(OBJS)
 testdriver: lib $(TEST_O)
 	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so
 
+valgrindmain: mainonly
+	valgrind $(VALFLAGS) ./main
+
 mainonly: clean $(IMPL_O) $(OBJS) $(MAIN_O)
 	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(MAIN_O) -o main
 	mkdir -p $(ODIR)

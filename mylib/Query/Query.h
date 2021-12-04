@@ -20,7 +20,7 @@ void reset_found(Query q);
 bool returnQuery(Query q);
 
 /* Deallocates memory of query */
-ErrorCode destroy_query(void **q);
+void destroy_query(void *q);
 
 /* Size setter*/
 void set_size(Query q,int s);

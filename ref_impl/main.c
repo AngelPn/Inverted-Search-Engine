@@ -7,6 +7,9 @@
 #include "Entry.h"
 #include "HammingTree.h"
 #include "HashTable.h"
+#include "Index.h"
+
+Index superdex; /* superdex = super + index, it is our super index */
 
 //We insert each word one by one in a big hashtable and at the same time we check if it already exists in the hashtable
 //if it already exists it means it is a duplicate word so it is not in the result string that it is returned
@@ -96,5 +99,15 @@ int main(void){
     printf("7: %d\n", HashT_exists(exact_matching2, &i7));
 
     HashT_delete(exact_matching2);
+
+    printf("///////////////////////////////////////////////////////////////////////\n");
+    init_index(&superdex);
+    StartQuery(1,"word wordd worddd",MT_EDIT_DIST,2);
+    printf("1\n");
+    StartQuery(2,"henn hennn hennnn",MT_HAMMING_DIST,1);
+    printf("2\n");
+    StartQuery(3,"hell helll hellll",MT_EXACT_MATCH,0);
+    printf("3\n");
+    destroy_index(&superdex);
 }
 

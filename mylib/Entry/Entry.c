@@ -26,7 +26,7 @@ ErrorCode create_entry(const char *w, entry *e){
     strcpy((*e)->w, w);
 
     for (int i = 0; i < 3; i++)
-        create_list(&((*e)->payload[i]), destroy_entry);
+        create_list(&((*e)->payload[i]), destroy_info);
     
     return EC_SUCCESS;
 }
@@ -36,6 +36,17 @@ info create_info(Query q, int i) {
     inf->q = q;
     inf->index = i;
     return inf;
+}
+
+ErrorCode destroy_info(void** inff) {
+    info inf = *inff;
+    /*if(inf && inf->q) {
+        destroy_query((void**)&(inf->q));
+        inf->q = NULL;
+    }*/
+    free(inf);
+    inf=NULL;
+    return EC_SUCCESS;
 }
 
 ErrorCode update_entry_payload(entry e, unsigned int match_dist, Query q, int index){
@@ -70,4 +81,17 @@ ErrorCode destroy_entry(void **e) {
     ce = NULL;
     *e = NULL;
     return EC_SUCCESS;
+}
+
+void destroy_entry_void(void *e) {
+    entry ce = e;
+    for(int i=0 ; i<3 ; i++) {
+        if(ce->payload[i]) {
+            destroy_list(&(ce->payload[i]));
+            ce->payload[i] = NULL;
+        }
+    }
+    free(ce->w);
+    free(ce);
+    ce = NULL;
 }

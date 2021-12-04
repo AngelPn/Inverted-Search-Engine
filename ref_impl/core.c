@@ -69,6 +69,7 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     set_size(query, query_words + 1);
     // print_BK_tree(superdex.EditDist);
     // print_HammingTree(superdex.HammingDist);
+    free(new_query_str);
 	return state;
 }
 

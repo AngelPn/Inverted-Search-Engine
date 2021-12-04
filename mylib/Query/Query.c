@@ -62,9 +62,10 @@ bool returnQuery(Query q) {
         return false;
 }
 
-ErrorCode destroy_query(void **q) {
-    Query cq = *q;
-    free(cq);
-    *q = NULL;
-    return EC_SUCCESS;
+void destroy_query(void *q) {
+    Query cq = q;
+    if(cq != NULL) {
+        free(cq);
+        cq = NULL;
+    }
 }

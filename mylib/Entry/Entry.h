@@ -21,7 +21,11 @@ void remove_query_info(info inf);
 
 /* Deallocates memory of entry */
 ErrorCode destroy_entry(void **e);
+void destroy_entry_void(void *e);
 
 ErrorCode update_entry_payload(entry e,unsigned int match_dist, Query q, int index);
+
+info create_info(Query q, int i);
+ErrorCode destroy_info(void** inff);
 
 #endif
