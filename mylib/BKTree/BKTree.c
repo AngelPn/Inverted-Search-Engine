@@ -156,6 +156,44 @@ ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* res
     return EC_SUCCESS;
 }
 
+ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList matched_queries) {
+    LinkedList candidate_entries = NULL; /* actually keeps tree nodes so we can get their children and cost */
+    if (create_list(&candidate_entries, NULL) == EC_FAIL) {
+        printf("Error! Create entry list failed\n");
+        return EC_FAIL;
+    }
+
+    /* Step 1: Add root to candidate entries */
+    add_item(candidate_entries, ix->root);
+
+    BK_treenode candidate = NULL;
+    while ((candidate = pop_item(candidate_entries)) != NULL){
+
+        /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
+//        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
+        char *a = get_entry_word(candidate->item);
+        char *b = w;
+        int dist = ix->distance(a, strlen(a), b, strlen(b));
+        if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
+            // add_item(found_words, candidate->item);
+            update_payload(candidate->item, threshold-1, candidate_queries, matched_queries);
+        }
+
+        /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
+        BK_treenode current = candidate->child;
+        while (current!=NULL) {
+//            printf("[%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
+            if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
+                add_item(candidate_entries, current);
+            }
+            current = current->next;
+        }
+
+    }
+    destroy_list(&candidate_entries);
+    return EC_SUCCESS;
+}
+
 void print_BK_tree_helper(BK_treenode root) {
     printf("%s-%d\n", get_entry_word(root->item), root->no_child);
     if (root->child != NULL)

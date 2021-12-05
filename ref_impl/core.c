@@ -31,6 +31,7 @@
 #include "core.h"
 #include "ed.h"
 #include "Index.h"
+#include "Document.h"
 
 // Global structs used for the search machine
 Index superdex; /* superdex = super + index, it is our super index */
@@ -83,13 +84,48 @@ ErrorCode EndQuery(QueryID query_id)
     }
 }
 
+//We insert each word one by one in a big hashtable and at the same time we check if it already exists in the hashtable
+//if it already exists it means it is a duplicate word so it is not in the result string that it is returned
+char* deduplication(char* text){
+    HashT* HT = HashT_init(string,1000,NULL);
+    const char space[2] = " ";
+    //allocating new char array because strtok() cant be applied on string literals
+    char* new_txt= malloc(strlen(text)+1);
+    strcpy(new_txt,text);
+    //getting the first word from the text
+    char* token = strtok(new_txt,space);
+    //this is the string that we will write the text word by word without the duplicates
+    char* new_str = malloc(strlen(text)+1);
+    new_str[0] = '\0';
+    while(token != NULL){
+        //we insert each word in the hashtable and if it already exists then it is not written in our result string
+        if(HashT_insert(HT,token,NULL)) {
+            strcat(new_str, space);
+            strcat(new_str, token);
+        }
+        //getting the next character
+        token = strtok(NULL,space);
+        //printf("token: %s\n",token);
+    }
+    HashT_delete(HT);
+    free(new_txt);
+    //NOTE: the returned string must be freed
+    return new_str;
+}
+
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
     // Create LinkedList of candidate_queries (queries that possibly match the document)
+    HashT* candidate_queries = HashT_init(integer, 50, NULL);
     // Create LinkedList of matched_queries (queries that match the document)
+    LinkedList matched_queries;
+    create_list(&matched_queries, NULL);
 
     // Deduplication of doc_str
-
+    char* doc_str_copy = malloc(strlen(doc_str)+1);
+    strcpy(doc_str_copy, doc_str);
+    char* ded_doc = deduplication(doc_str_copy);
+    free(doc_str_copy);
     // Tokenization of deduplicated doc_str
 
     // For each token of deduplicated doc_str, search token in Index:
@@ -100,11 +136,30 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
         // Insert Query in LinkedList of candidate_queries because we have changed its "found" field
         // If Query's "found" field is all true -> add Query to matched_queries
 
+    char* token = strtok(ded_doc, " ");
+    ErrorCode state = EC_SUCCESS;
+    while (token != NULL && state == EC_SUCCESS) {
+        state = lookup_index(&superdex, token, candidate_queries, matched_queries);
+        token = strtok(NULL, " \n");
+    }
     // Traverse candidate_queries and reset "found" field of queries
+    HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
+    int bucket = 0;
+
+    Query q = NULL;
+    do {
+        q = HashT_parse(candidate_queries, curr_hash_node, &next_hash_node, &bucket);
+        reset_found(q);
+        curr_hash_node = next_hash_node;
+    } while (next_hash_node != NULL);
 
     // Create Document struct
+    Document d = create_document(doc_id);
     // Call match_document given created Document and matched_queries
+    match_document(d, matched_queries);
     // free candidate_queries and matced_queries
+    destroy_list(&matched_queries);
+    HashT_delete(candidate_queries);
 	return EC_SUCCESS;
 }
 

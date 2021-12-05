@@ -13,7 +13,7 @@ Query create_query(QueryID query_id);
 /* Returns the query ID */
 QueryID get_queryID(Query q);
 
-void found(Query q, int index);
+bool found(Query q, int index);
 
 void reset_found(Query q);
 

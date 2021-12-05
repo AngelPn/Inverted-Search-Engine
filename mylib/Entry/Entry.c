@@ -59,6 +59,21 @@ ErrorCode update_entry_payload(entry e, unsigned int match_dist, Query q, int in
     }
 }
 
+void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList matched_queries){
+    LinkedList l = e->payload[threshold];
+    
+    ListNode node = get_first_node(l);
+    for (int i = 0; i < get_number_items(l); i++) {
+        info f = get_node_item(node);
+        if (found(f->q, f->index)){
+            add_item(matched_queries, f->q);
+        }
+        int id = get_queryID(f->q);
+        HashT_insert(candidate_queries, &id, f->q);
+        node = get_next_node(node);
+    }
+}
+
 char *get_entry_word(entry e){
     return e->w;
 }

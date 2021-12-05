@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "core.h"
 #include "Query.h"
+#include "HashTable.h"
 
 typedef struct entry_struct *entry;
 typedef struct info_struct *info;
@@ -24,6 +25,8 @@ ErrorCode destroy_entry(void **e);
 void destroy_entry_void(void *e);
 
 ErrorCode update_entry_payload(entry e,unsigned int match_dist, Query q, int index);
+
+void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList matched_queries);
 
 info create_info(Query q, int i);
 ErrorCode destroy_info(void** inff);

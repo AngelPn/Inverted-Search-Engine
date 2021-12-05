@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "Document.h"
+#include "Query.h"
 
 struct document
 {

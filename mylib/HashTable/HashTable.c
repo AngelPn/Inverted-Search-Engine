@@ -5,11 +5,11 @@
 #include <assert.h>
 #include <math.h>
 
-typedef struct HashT_entry{
+struct HashT_entry{
     void* key;
     void* item;
     struct HashT_entry* next;
-} HashT_entry;
+};
 
 struct HashT{
     unsigned int nbuckets; /*number of buckets*/
@@ -252,6 +252,37 @@ void* HashT_getNextEntry(HashT* hash_table) {
         i++;
     }
     return NULL;
+}
+
+void* HashT_parse(HashT* hash_table, HashT_entry* prev, HashT_entry** next, int* bucket){
+  
+    if (prev!=NULL && prev->next!=NULL){ /* return next item in list */
+        *next = prev->next;
+        return prev->next->item;
+    } else if (prev == NULL) { /* initialize */
+        *bucket = 0;
+        while ((*bucket)<hash_table->nbuckets && (*next = hash_table->table[*bucket]) == NULL){
+            (*bucket)++;
+        }
+        if ((*bucket)==hash_table->nbuckets) {
+            *next = NULL;
+            return NULL;
+        }
+        return hash_table->table[*bucket]->item;
+    }
+    else if (prev!=NULL && prev->next == NULL){ /* end of list in bucket */
+        (*bucket)++;
+        while ((*bucket)<hash_table->nbuckets && (*next = hash_table->table[*bucket]) == NULL){
+            (*bucket)++;
+        }
+        if ((*bucket)==hash_table->nbuckets) {
+            *next = NULL;
+            return NULL;
+        }
+        *next = hash_table->table[*bucket];
+        return hash_table->table[*bucket]->item;
+    }
+    else return NULL;
 }
 
 void HashT_stats(HashT* hash_table){

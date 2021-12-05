@@ -31,6 +31,10 @@ ErrorCode destroy_HammingTree(HammingTree ix) {
     return EC_SUCCESS;
 }
 
+ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, HashT* candidate_queries, LinkedList matched_queries){
+    return lookup_BKtree(word, ix->TreeArray[strlen(word)-4], threshold, candidate_queries, matched_queries);
+}
+
 void print_HammingTree(HammingTree ix) {
     for(int i=0 ; i<28 ; i++) {
         printf("Words of length %d:\n",i+4);

@@ -46,6 +46,18 @@ ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned
     }
 }
 
+ErrorCode lookup_index(Index *index, char* token, HashT *candidate_queries, LinkedList matched_queries){
+    entry e = HashT_get(index->ExactMatch, token);
+    update_payload(e, 0, candidate_queries, matched_queries);
+    for (int threshold = 1; threshold<=3; threshold++){
+        if (lookup_BKtree(token, index->EditDist, threshold, candidate_queries, matched_queries) == EC_FAIL)
+            return EC_FAIL;
+        if (lookup_HammingTree(index->HammingDist, token, threshold, candidate_queries, matched_queries) == EC_FAIL)
+            return EC_FAIL;
+    }
+    return EC_SUCCESS;
+}
+
 ErrorCode destroy_index(Index *index) {
     HashT_delete(index->ExactMatch);
     HashT_delete(index->Queries);

@@ -38,13 +38,14 @@ MAIN_O = ref_impl/main.o
 OBJS = $(MODULES)/Index/Index.o $(MODULES)/Entry/Entry.o $(MODULES)/Query/Query.o
 OBJS += $(MODULES)/LinkedList/LinkedList.o $(MODULES)/BKTree/BKTree.o
 OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o
+OBJS += $(MODULES)/Document/Document.o 
 
 # Compilers
 CC  = gcc
 CXX = g++
 
 # Compile flags
-CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree
+CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree -I$(MODULES)/Document
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags

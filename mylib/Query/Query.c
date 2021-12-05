@@ -36,16 +36,23 @@ QueryID get_queryID(Query q) {
     return q->query_id;
 }
 
-void found(Query q, int index) {
+bool found(Query q, int index) {
     if(q->found[index] == false) {
         q->counter++;
         q->found[index] = true;
+
+        if(q->size == q->counter)
+            return true;
+        else
+            return false;
     }
+    return false;
 }
 
 void reset_found(Query q) {
     for (int i = 0; i < MAX_QUERY_WORDS; i++)
         q->found[i] = false;
+    q->counter = 0;
 }
 
 ErrorCode end_query(Query q) {
