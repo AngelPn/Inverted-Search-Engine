@@ -85,12 +85,34 @@ ErrorCode EndQuery(QueryID query_id)
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
+    // Create LinkedList of candidate_queries (queries that possibly match the document)
+    // Create LinkedList of matched_queries (queries that match the document)
+
+    // Deduplication of doc_str
+
+    // Tokenization of deduplicated doc_str
+
+    // For each token of deduplicated doc_str, search token in Index:
+        // search ExactMatch
+        // search EditDist
+        // search HammingDist
+        // and fill in the "found" field in Query from info_struct
+        // Insert Query in LinkedList of candidate_queries because we have changed its "found" field
+        // If Query's "found" field is all true -> add Query to matched_queries
+
+    // Traverse candidate_queries and reset "found" field of queries
+
+    // Create Document struct
+    // Call match_document given created Document and matched_queries
+    // free candidate_queries and matced_queries
 	return EC_SUCCESS;
 }
 
 
 ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids)
 {
+    // Search hash table of documents and get Document with given doc_id
+    // get the query_ids of Document
 	return EC_SUCCESS;
 }
 
