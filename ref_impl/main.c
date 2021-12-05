@@ -38,6 +38,12 @@
 //     return new_str;
 // }
 
+void insert(HashT* h){
+    int *i = malloc(sizeof(int));
+    *i=24;
+    HashT_insert(h, i, NULL);
+}
+
 int main(void){
     
     HammingTree H = create_HammingTree(HammingDistance);
@@ -94,6 +100,7 @@ int main(void){
 
     HashT* exact_matching2 = HashT_init(integer, 3, NULL);
     int i=1, i2=2, i3=2;
+    insert(exact_matching2);
     HashT_insert(exact_matching2,&i, NULL); /* Instead of NULL we will insert the payload */
     HashT_insert(exact_matching2,&i2, NULL);
     HashT_insert(exact_matching2,&i3, NULL);
@@ -103,6 +110,9 @@ int main(void){
     printf("2: %d\n", HashT_exists(exact_matching2, &i2));
     int i7=7;
     printf("7: %d\n", HashT_exists(exact_matching2, &i7));
+    int i24=24;
+    printf("24: %d\n", HashT_exists(exact_matching2, &i24));
+
 
     HashT_delete(exact_matching2);
 

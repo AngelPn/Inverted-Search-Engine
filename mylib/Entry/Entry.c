@@ -69,6 +69,7 @@ void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList
             add_item(matched_queries, f->q);
         }
         int id = get_queryID(f->q);
+        printf("update payload id %d\n", id);
         HashT_insert(candidate_queries, &id, f->q);
         node = get_next_node(node);
     }

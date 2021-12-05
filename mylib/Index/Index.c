@@ -4,6 +4,7 @@
 #include "Index.h"
 
 ErrorCode init_index(Index *index) {
+    index->cur_doc = 1;
     if ((index->ExactMatch = HashT_init(string, 1000, destroy_entry_void)) == NULL) return EC_FAIL;
     else if ((index->EditDist = create_BK_tree(EditDistance)) == NULL) return EC_FAIL;
     else if ((index->HammingDist = create_HammingTree(HammingDistance)) == NULL) return EC_FAIL;
@@ -16,7 +17,7 @@ ErrorCode insert_ExactMatch(Index *index, char *token, unsigned int match_dist, 
     entry e = HashT_get(index->ExactMatch, token);
     if (e == NULL) {
         create_entry(token, &e);
-        HashT_insert(index->ExactMatch, token, e);
+        HashT_insert(index->ExactMatch, get_entry_word(e), e);
         return EC_SUCCESS;
     } else {
         return update_entry_payload(e, match_dist, query, token_index);
@@ -48,7 +49,9 @@ ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned
 
 ErrorCode lookup_index(Index *index, char* token, HashT *candidate_queries, LinkedList matched_queries){
     entry e = HashT_get(index->ExactMatch, token);
-    update_payload(e, 0, candidate_queries, matched_queries);
+    if (e != NULL) {
+        update_payload(e, 0, candidate_queries, matched_queries);
+    }
     for (int threshold = 1; threshold<=3; threshold++){
         if (lookup_BKtree(token, index->EditDist, threshold, candidate_queries, matched_queries) == EC_FAIL)
             return EC_FAIL;

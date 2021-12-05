@@ -13,6 +13,7 @@ typedef struct index
 
     HashT* Queries;
     HashT* Docs;
+    int cur_doc;
 } Index;
 
 ErrorCode init_index(Index *index);

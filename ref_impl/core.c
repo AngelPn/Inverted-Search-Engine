@@ -70,7 +70,7 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     set_size(query, query_words + 1);
     // print_BK_tree(superdex.EditDist);
     // print_HammingTree(superdex.HammingDist);
-    free(new_query_str);
+    // free(new_query_str);
 	return state;
 }
 
@@ -149,7 +149,7 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     Query q = NULL;
     do {
         q = HashT_parse(candidate_queries, curr_hash_node, &next_hash_node, &bucket);
-        reset_found(q);
+        if (q != NULL) reset_found(q);
         curr_hash_node = next_hash_node;
     } while (next_hash_node != NULL);
 
@@ -157,6 +157,9 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     Document d = create_document(doc_id);
     // Call match_document given created Document and matched_queries
     match_document(d, matched_queries);
+    int id = get_doc_id(d);
+    printf("match dosument doc id %d\n", id);
+    HashT_insert(superdex.Docs, &(id), d);
     // free candidate_queries and matced_queries
     destroy_list(&matched_queries);
     HashT_delete(candidate_queries);
@@ -168,6 +171,17 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
 {
     // Search hash table of documents and get Document with given doc_id
     // get the query_ids of Document
+
+    int doc_id = superdex.cur_doc;
+    printf("doc id %d\n", doc_id);
+    Document d = HashT_get(superdex.Docs, &doc_id);
+    if (d==NULL) return EC_FAIL;
+    *p_num_res = get_num_res(d);
+
+    *p_query_ids = get_query_ids(d);
+
+    superdex.cur_doc++;
+
 	return EC_SUCCESS;
 }
 
