@@ -2,14 +2,15 @@
 #include <stdlib.h>
 
 #include "Index.h"
+#include "Document.h"
 
 ErrorCode init_index(Index *index) {
     index->cur_doc = 1;
     if ((index->ExactMatch = HashT_init(string, 1000, destroy_entry_void)) == NULL) return EC_FAIL;
     else if ((index->EditDist = create_BK_tree(EditDistance)) == NULL) return EC_FAIL;
     else if ((index->HammingDist = create_HammingTree(HammingDistance)) == NULL) return EC_FAIL;
-    else if ((index->Queries = HashT_init(integer, 100, destroy_query)) == NULL) return EC_FAIL;
-    else if ((index->Docs = HashT_init(integer, 100, NULL)) == NULL) return EC_FAIL;
+    else if ((index->Queries = HashT_init(integer, 1000, destroy_query)) == NULL) return EC_FAIL;
+    else if ((index->Docs = HashT_init(integer, 1000, destroy_document)) == NULL) return EC_FAIL;
     else return EC_SUCCESS;
 }
 

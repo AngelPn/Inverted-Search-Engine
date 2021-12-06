@@ -10,6 +10,7 @@ struct document
 	DocID doc_id;
 	unsigned int num_res;
 	QueryID* query_ids;
+    // QueryID** query_ids;
 };
 
 unsigned int get_num_res(Document d){
@@ -42,7 +43,9 @@ ErrorCode match_document(Document d, LinkedList queries) {
 
     ListNode node = get_first_node(queries);
     for (int i = 0; i < d->num_res; i++) {
-        d->query_ids[i] = get_queryID(get_node_item(node));
+        // d->query_ids[i] = get_queryID(get_node_item(node));
+        // d->query_ids[i] = malloc(sizeof(int));
+        memcpy(&(d->query_ids[i]), get_query_key(get_node_item(node)), sizeof(int));
         node = get_next_node(node);
     }
     qsort(d->query_ids, d->num_res, sizeof(QueryID), cmpfunc);
@@ -52,6 +55,11 @@ ErrorCode match_document(Document d, LinkedList queries) {
 
 void destroy_document(void *d) {
     Document dd = d;
+    // for (int i = 0; i<dd->num_res; i++){
+    //     free(dd->query_ids[i]);
+    // }
     free(dd->query_ids);
+    dd->query_ids = NULL;
     free(dd);
+    dd=NULL;
 }
