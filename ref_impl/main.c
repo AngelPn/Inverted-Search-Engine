@@ -119,11 +119,14 @@ int main(void){
     printf("///////////////////////////////////////////////////////////////////////\n");
     InitializeIndex();
     StartQuery(1,"word wordd worddd",MT_EDIT_DIST,2);
-    printf("1\n");
     StartQuery(2,"henn hennn hennnn",MT_HAMMING_DIST,1);
-    printf("2\n");
     StartQuery(3,"hell helll hellll",MT_EXACT_MATCH,0);
-    printf("3\n");
+    end_query(1);
+    MatchDocument(1,"hell henn");
+    unsigned int* query_ids=0;
+    unsigned int doc_id=1;
+    unsigned int num_res=0;
+    ErrorCode err=GetNextAvailRes(&doc_id, &num_res, &query_ids);
     DestroyIndex();
 }
 
