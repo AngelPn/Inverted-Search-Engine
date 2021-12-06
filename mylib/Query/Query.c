@@ -36,6 +36,10 @@ QueryID get_queryID(Query q) {
     return q->query_id;
 }
 
+void* get_query_key(Query q) {
+    return &(q->query_id);
+}
+
 bool found(Query q, int index) {
     if(q->found[index] == false) {
         q->counter++;

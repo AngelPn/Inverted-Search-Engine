@@ -145,7 +145,7 @@ void HashT_remove(HashT* hash_table, void* key){
     /* if key is at the start of the list */
     if (curr != NULL && hash_table->compare_f(curr->key, key) == 0){
         (hash_table->table)[hash_value] = curr->next;
-        hash_table->destroy_item(curr->item);
+        if (hash_table->destroy_item!=NULL) hash_table->destroy_item(curr->item);
         free(curr);
         curr = NULL;
         return;

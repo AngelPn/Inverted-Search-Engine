@@ -55,7 +55,7 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     Query query = NULL;
     if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
         query = create_query(query_id);
-        HashT_insert(superdex.Queries, &query_id, query);
+        HashT_insert(superdex.Queries, get_query_key(query), query);
     }
 
     int query_words = 0; /* number of words in query */
@@ -67,7 +67,7 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
         query_words++;
     }
     /* Set the number of words in query */
-    set_size(query, query_words + 1);
+    set_size(query, query_words);
     // print_BK_tree(superdex.EditDist);
     // print_HammingTree(superdex.HammingDist);
     // free(new_query_str);
@@ -157,9 +157,9 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     Document d = create_document(doc_id);
     // Call match_document given created Document and matched_queries
     match_document(d, matched_queries);
-    int id = get_doc_id(d);
-    printf("match dosument doc id %d\n", id);
-    HashT_insert(superdex.Docs, &(id), d);
+    // int id = *(int*)get_doc_id(d);
+    // printf("match dosument doc id %d\n", id);
+    HashT_insert(superdex.Docs, get_doc_id(d), d);
     // free candidate_queries and matced_queries
     destroy_list(&matched_queries);
     HashT_delete(candidate_queries);
@@ -174,11 +174,19 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
 
     int doc_id = superdex.cur_doc;
     printf("doc id %d\n", doc_id);
-    Document d = HashT_get(superdex.Docs, &doc_id);
-    if (d==NULL) return EC_FAIL;
-    *p_num_res = get_num_res(d);
+    // HashT_print(superdex.Docs, NULL);
+    int* bucket = malloc(4);
+    HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
+    Document d = HashT_parse(superdex.Docs, curr_hash_node, &next_hash_node, bucket);
+    free(bucket);
 
+    if (d==NULL) return EC_FAIL;
+    *p_doc_id = *(int*)get_doc_id(d);
+    *p_num_res = get_num_res(d);
+    
     *p_query_ids = get_query_ids(d);
+    
+    HashT_remove(superdex.Docs, get_doc_id(d));
 
     superdex.cur_doc++;
 

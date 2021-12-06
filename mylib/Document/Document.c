@@ -20,8 +20,8 @@ QueryID* get_query_ids(Document d){
     return d->query_ids;
 }
 
-DocID get_doc_id(Document d){
-    return d->doc_id;
+void* get_doc_id(Document d){
+    return &(d->doc_id);
 }
 
 Document create_document(DocID doc_id) {
