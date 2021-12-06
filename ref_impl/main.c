@@ -125,5 +125,22 @@ int main(void){
     StartQuery(3,"hell helll hellll",MT_EXACT_MATCH,0);
     printf("3\n");
     DestroyIndex();
+
+    printf("///////////////////////////////////////////////////////////////////////\n");
+    InitializeIndex();
+    StartQuery(1,"word wordd worddd",MT_EDIT_DIST,2);
+    StartQuery(2,"henn hennn hennnn",MT_HAMMING_DIST,1);
+    StartQuery(3,"hell helll hellll",MT_EXACT_MATCH,0);
+    EndQuery(1);
+    MatchDocument(1,"hell henn");
+    unsigned int* query_ids=0;
+    unsigned int doc_id=0;
+    unsigned int num_res=0;
+    ErrorCode err=GetNextAvailRes(&doc_id, &num_res, &query_ids);
+    printf("doc_id = %d, num_res = %d\n", doc_id, num_res);
+    for (int i=0; i <num_res; i++) {
+        printf("queryID: %d\n", query_ids[i]);
+    }
+    DestroyIndex();
 }
 

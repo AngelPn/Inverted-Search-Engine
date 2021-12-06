@@ -54,7 +54,7 @@ bool found(Query q, int index) {
 }
 
 void reset_found(Query q) {
-    for (int i = 0; i < MAX_QUERY_WORDS; i++)
+    for (int i = 0; i < q->size; i++)
         q->found[i] = false;
     q->counter = 0;
 }

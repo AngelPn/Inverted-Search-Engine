@@ -88,23 +88,23 @@ ErrorCode EndQuery(QueryID query_id)
 //if it already exists it means it is a duplicate word so it is not in the result string that it is returned
 char* deduplication(char* text){
     HashT* HT = HashT_init(string,1000,NULL);
-    const char space[2] = " ";
+
     //allocating new char array because strtok() cant be applied on string literals
     char* new_txt= malloc(strlen(text)+1);
     strcpy(new_txt,text);
     //getting the first word from the text
-    char* token = strtok(new_txt,space);
+    char* token = strtok(new_txt, " ");
     //this is the string that we will write the text word by word without the duplicates
     char* new_str = malloc(strlen(text)+1);
     new_str[0] = '\0';
     while(token != NULL){
         //we insert each word in the hashtable and if it already exists then it is not written in our result string
         if(HashT_insert(HT,token,NULL)) {
-            strcat(new_str, space);
+            strcat(new_str, " ");
             strcat(new_str, token);
         }
         //getting the next character
-        token = strtok(NULL,space);
+        token = strtok(NULL, " ");
         //printf("token: %s\n",token);
     }
     HashT_delete(HT);
@@ -115,7 +115,7 @@ char* deduplication(char* text){
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
-    // Create LinkedList of candidate_queries (queries that possibly match the document)
+    // Create hash table of candidate_queries (queries that possibly match the document)
     HashT* candidate_queries = HashT_init(integer, 50, NULL);
     // Create LinkedList of matched_queries (queries that match the document)
     LinkedList matched_queries;
@@ -163,6 +163,7 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     // free candidate_queries and matced_queries
     destroy_list(&matched_queries);
     HashT_delete(candidate_queries);
+    free(ded_doc);
 	return EC_SUCCESS;
 }
 
@@ -173,7 +174,7 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
     // get the query_ids of Document
 
     int doc_id = superdex.cur_doc;
-    printf("doc id %d\n", doc_id);
+    // printf("doc id %d\n", doc_id);
     // HashT_print(superdex.Docs, NULL);
     int* bucket = malloc(4);
     HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
@@ -252,7 +253,7 @@ int EditDistance(char* a, int na, char* b, int nb)
 
 	//---------------------------------------------------------
 
-	return editdist(a, na, b, nb);
+	// return editdist(a, na, b, nb);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
