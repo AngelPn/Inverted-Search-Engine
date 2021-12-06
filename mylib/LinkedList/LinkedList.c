@@ -7,7 +7,6 @@
 struct list 
 {
 	ListNode dummy;
-	ListNode last;
 	unsigned int number_entries;
     DestroyFunc destroy_item;
 };
@@ -95,6 +94,10 @@ void *push_item(LinkedList el, void *item) {
     
 	new_node->item = item;
 	new_node->next = el->dummy->next;
+
+    if (el->dummy->next != NULL)
+        el->dummy->next->prev = new_node;
+
     new_node->prev = el->dummy;
 	el->dummy->next = new_node;
 
@@ -109,6 +112,8 @@ void *pop_item(LinkedList el) {
         return NULL;
 
     el->dummy->next = pop->next;
+    if (pop->next != NULL)
+        pop->next->prev = el->dummy;
     void *item = pop->item;
 	free(pop);
 
@@ -126,14 +131,15 @@ void list_remove_next(LinkedList el, ListNode node) {
 	assert(removed != NULL);
 
 	if (el->destroy_item != NULL)
-		el->destroy_item(removed->item);
+		el->destroy_item(&(removed->item));
 
 	node->next = removed->next;
-	free(removed);
+    if (removed->next != NULL) {
+        removed->next->prev = node;
+    }
 
 	(el->number_entries)--;
-	if (el->last == removed)
-		el->last = node;
+    free(removed);
 }
 
 void list_remove(LinkedList el, ListNode node) {

@@ -16,6 +16,6 @@ void destroy_document(void *d);
 
 unsigned int get_num_res(Document d);
 QueryID* get_query_ids(Document d);
-DocID get_doc_id(Document d);
+void* get_doc_id(Document d);
 
 #endif

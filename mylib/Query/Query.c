@@ -36,6 +36,10 @@ QueryID get_queryID(Query q) {
     return q->query_id;
 }
 
+void* get_query_key(Query q) {
+    return &(q->query_id);
+}
+
 bool found(Query q, int index) {
     if(q->found[index] == false) {
         q->counter++;
@@ -50,7 +54,7 @@ bool found(Query q, int index) {
 }
 
 void reset_found(Query q) {
-    for (int i = 0; i < MAX_QUERY_WORDS; i++)
+    for (int i = 0; i < q->size; i++)
         q->found[i] = false;
     q->counter = 0;
 }
