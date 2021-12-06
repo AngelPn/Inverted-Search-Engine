@@ -157,17 +157,17 @@ ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* res
 }
 
 ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList matched_queries) {
-    LinkedList candidate_entries = NULL; /* actually keeps tree nodes so we can get their children and cost */
-    if (create_list(&candidate_entries, NULL) == EC_FAIL) {
+    LinkedList candidate_nodes = NULL; /* actually keeps tree nodes so we can get their children and cost */
+    if (create_list(&candidate_nodes, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
         return EC_FAIL;
     }
 
     /* Step 1: Add root to candidate entries */
-    add_item(candidate_entries, ix->root);
+    add_item(candidate_nodes, ix->root);
 
     BK_treenode candidate = NULL;
-    while ((candidate = pop_item(candidate_entries)) != NULL){
+    while ((candidate = pop_item(candidate_nodes)) != NULL){
 
         /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
 //        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
@@ -184,13 +184,13 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_que
         while (current!=NULL) {
 //            printf("[%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
             if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
-                add_item(candidate_entries, current);
+                add_item(candidate_nodes, current);
             }
             current = current->next;
         }
 
     }
-    destroy_list(&candidate_entries);
+    destroy_list(&candidate_nodes);
     return EC_SUCCESS;
 }
 

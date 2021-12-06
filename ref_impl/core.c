@@ -70,7 +70,7 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     set_size(query, query_words);
     // print_BK_tree(superdex.EditDist);
     // print_HammingTree(superdex.HammingDist);
-    // free(new_query_str);
+    free(new_query_str);
 	return state;
 }
 
@@ -176,10 +176,11 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
     int doc_id = superdex.cur_doc;
     // printf("doc id %d\n", doc_id);
     // HashT_print(superdex.Docs, NULL);
-    int* bucket = malloc(4);
-    HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
-    Document d = HashT_parse(superdex.Docs, curr_hash_node, &next_hash_node, bucket);
-    free(bucket);
+    // int* bucket = malloc(4);
+    // HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
+    // Document d = HashT_parse(superdex.Docs, curr_hash_node, &next_hash_node, bucket);
+    // free(bucket);
+    Document d = HashT_get(superdex.Docs, &superdex.cur_doc);
 
     if (d==NULL) return EC_FAIL;
     *p_doc_id = *(int*)get_doc_id(d);
@@ -187,7 +188,7 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
     
     *p_query_ids = get_query_ids(d);
     
-    HashT_remove(superdex.Docs, get_doc_id(d));
+    // HashT_remove(superdex.Docs, get_doc_id(d));
 
     superdex.cur_doc++;
 
