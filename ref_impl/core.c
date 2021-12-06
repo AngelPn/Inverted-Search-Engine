@@ -95,13 +95,13 @@ char* deduplication(char* text){
     //getting the first word from the text
     char* token = strtok(new_txt, " ");
     //this is the string that we will write the text word by word without the duplicates
-    char* new_str = malloc(strlen(text)+1);
+    char* new_str = malloc(strlen(text)+2);
     new_str[0] = '\0';
     while(token != NULL){
         //we insert each word in the hashtable and if it already exists then it is not written in our result string
         if(HashT_insert(HT,token,NULL)) {
-            strcat(new_str, " ");
-            strcat(new_str, token);
+            new_str = strcat(new_str, " ");
+            new_str = strcat(new_str, token);
         }
         //getting the next character
         token = strtok(NULL, " ");
@@ -116,7 +116,7 @@ char* deduplication(char* text){
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
     // Create hash table of candidate_queries (queries that possibly match the document)
-    HashT* candidate_queries = HashT_init(integer, 50, NULL);
+    HashT* candidate_queries = HashT_init(integer, 1000, NULL);
     // Create LinkedList of matched_queries (queries that match the document)
     LinkedList matched_queries;
     create_list(&matched_queries, NULL);
@@ -173,7 +173,7 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
     // Search hash table of documents and get Document with given doc_id
     // get the query_ids of Document
 
-    int doc_id = superdex.cur_doc;
+    //int doc_id = superdex.cur_doc;
     // printf("doc id %d\n", doc_id);
     // HashT_print(superdex.Docs, NULL);
     // int* bucket = malloc(4);
@@ -186,8 +186,11 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
     *p_doc_id = *(int*)get_doc_id(d);
     *p_num_res = get_num_res(d);
     
-    *p_query_ids = get_query_ids(d);
-    
+    QueryID* query_ids = get_query_ids(d);
+    *p_query_ids = malloc(*p_num_res * sizeof(int));
+    for(int k=0 ; k<*p_num_res ; k++){
+        (*p_query_ids)[k] = query_ids[k];
+    }
     // HashT_remove(superdex.Docs, get_doc_id(d));
 
     superdex.cur_doc++;

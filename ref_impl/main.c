@@ -46,7 +46,7 @@ void insert(HashT* h){
 
 int main(void){
     
-    HammingTree H = create_HammingTree(HammingDistance);
+    /*HammingTree H = create_HammingTree(HammingDistance);
     insert_HammingTree(H,"hell");
     insert_HammingTree(H,"henn");
     insert_HammingTree(H,"help");
@@ -63,7 +63,7 @@ int main(void){
     destroy_HammingTree(H);
 
     HashT* exact_matching = HashT_init(string, 10, NULL);
-    HashT_insert(exact_matching,"hell", NULL); /* Instead of NULL we will insert the payload */
+    HashT_insert(exact_matching,"hell", NULL); *//* Instead of NULL we will insert the payload *//*
     HashT_insert(exact_matching,"henn", NULL);
     HashT_insert(exact_matching,"help", NULL);
     HashT_insert(exact_matching,"felt", NULL);
@@ -101,7 +101,7 @@ int main(void){
     HashT* exact_matching2 = HashT_init(integer, 3, NULL);
     int i=1, i2=2, i3=2;
     insert(exact_matching2);
-    HashT_insert(exact_matching2,&i, NULL); /* Instead of NULL we will insert the payload */
+    HashT_insert(exact_matching2,&i, NULL); *//* Instead of NULL we will insert the payload *//*
     HashT_insert(exact_matching2,&i2, NULL);
     HashT_insert(exact_matching2,&i3, NULL);
     HashT_stats(exact_matching2);
@@ -114,20 +114,7 @@ int main(void){
     printf("24: %d\n", HashT_exists(exact_matching2, &i24));
 
 
-    HashT_delete(exact_matching2);
-
-    printf("///////////////////////////////////////////////////////////////////////\n");
-    InitializeIndex();
-    StartQuery(1,"word wordd worddd",MT_EDIT_DIST,2);
-    StartQuery(2,"henn hennn hennnn",MT_HAMMING_DIST,1);
-    StartQuery(3,"hell helll hellll",MT_EXACT_MATCH,0);
-    end_query(1);
-    MatchDocument(1,"hell henn");
-    unsigned int* query_ids=0;
-    unsigned int doc_id=1;
-    unsigned int num_res=0;
-    ErrorCode err=GetNextAvailRes(&doc_id, &num_res, &query_ids);
-    DestroyIndex();
+    HashT_delete(exact_matching2);*/
 
     printf("///////////////////////////////////////////////////////////////////////\n");
     InitializeIndex();
@@ -135,14 +122,14 @@ int main(void){
     StartQuery(2,"henn hennn hennnn",MT_HAMMING_DIST,1);
     StartQuery(3,"hell helll hellll",MT_EXACT_MATCH,0);
     EndQuery(1);
-    MatchDocument(1,"hell henn");
-    unsigned int* query_ids=0;
-    unsigned int doc_id=0;
-    unsigned int num_res=0;
-    ErrorCode err=GetNextAvailRes(&doc_id, &num_res, &query_ids);
+    MatchDocument(1,"hell helll hellll henn hennn hennnn");
+    unsigned int* query_ids;
+    unsigned int doc_id;
+    unsigned int num_res;
+    GetNextAvailRes(&doc_id, &num_res, &query_ids);
     printf("doc_id = %d, num_res = %d\n", doc_id, num_res);
-    for (int i=0; i <num_res; i++) {
-        printf("queryID: %d\n", query_ids[i]);
+    for (int kk=0; kk <num_res; kk++) {
+        printf("queryID: %d\n", query_ids[kk]);
     }
     DestroyIndex();
 }
