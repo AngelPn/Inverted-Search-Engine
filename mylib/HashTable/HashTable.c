@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <math.h>
 
+#define MAX_LOAD_FACTOR 1.7
+
 struct HashT_entry{
     void* key;
     void* item;
@@ -26,7 +28,7 @@ static int int_hash(void* key); /* returns a value for this key */
 int compare_str(void* key1, void* key2);
 int compare_int(void* key1, void* key2);
 static HashT_entry* create_entry(void* key, void* item);
-
+void HashT_resize(HashT* hash_table); /* duplicates the buckets and rearranges items for extendible hashing */
 /*
 This algorithm was created for sdbm (a public-domain reimplementation of ndbm) 
 database library. it was found to do well in scrambling bits, causing better 
@@ -69,6 +71,53 @@ int compare_str(void* key1, void* key2){
     return strcmp((char*)key1, (char*)key2);
 }
 
+void HashT_resize(HashT* hash_table){
+    int new_nbuckets = hash_table->nbuckets<<1;
+    // printf("Hash Table resizing new size is %d\n", new_nbuckets);
+    HashT_entry** new_table = malloc(sizeof(HashT_entry)*new_nbuckets);
+    int new_index;
+    HashT_entry* curr = NULL, *prev = NULL;
+    for (int i=0; i < hash_table->nbuckets; i++){ /*for every bucket in the old hash table*/
+
+        /*initialize the new_table's buckets (to which old bucket's element will move) with NULL*/
+        new_table[i] = NULL;
+        new_table[i+hash_table->nbuckets] = NULL;
+
+        if ((hash_table->table)[i] != NULL){ /*if this old bucket isn't empty*/
+            /*take each item and rehash it into the new hash table*/
+            curr = (hash_table->table)[i];
+            prev = NULL;
+            do {
+                new_index = (hash_table->hash_f(curr->key))%new_nbuckets;
+                /*insert to new hash_table[new_index]*/
+                if (new_table[new_index] != NULL){ 
+                    HashT_entry* curr2 = new_table[new_index], *prev2 = NULL;
+                    
+                    do {
+                        prev2 = curr2;
+                        curr2 = curr2->next;
+                    } while (curr2!= NULL);
+                    prev2->next = create_entry(curr->key, curr->item); /*curr is the pointer to the old bucket's entry*/
+                }
+                else {
+                    new_table[new_index] = create_entry(curr->key, curr->item); /*curr is the pointer to the old bucket's entry*/
+                }
+
+                /*move to the next item in this bucket*/
+                prev = curr;
+                curr = curr->next;
+                free(prev);
+            } while (curr!= NULL);
+            
+        }
+    } 
+    /**/
+    hash_table->nbuckets= new_nbuckets;
+    free(hash_table->table); /* delete old hash table*/
+    hash_table->table = new_table;
+    
+}
+
 static HashT_entry* create_entry(void* key, void* item){
     HashT_entry* new_entry = malloc(sizeof(HashT_entry));
     new_entry->key = key;
@@ -93,8 +142,17 @@ HashT_entry* HashT_getEntry(HashT* hash_table, void* key){
 
 HashT* HashT_init(key_type kt, unsigned int nbuckets, void (*destroy_item)(void *)){
     HashT* hash_table = malloc(sizeof(HashT));
-
-    hash_table->nbuckets = nbuckets;
+    unsigned int v = nbuckets;
+    /* this calculates the next higher power of 2 for nbuckets */
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    /**/
+    hash_table->nbuckets = v;
     hash_table->table = malloc(sizeof(HashT_entry)*nbuckets);
     for (int i=0; i < hash_table->nbuckets; i++){
         (hash_table->table)[i] = NULL;
@@ -134,6 +192,9 @@ bool HashT_insert(HashT* hash_table, void* key, void* item){
         (hash_table->table)[hash_value] = create_entry(key, item);
     }
     (hash_table->nitems)++;
+    if ( (float)(hash_table->nitems)/(float)(hash_table->nbuckets) > MAX_LOAD_FACTOR){ /* check load factor for resizing */
+        HashT_resize(hash_table);
+    }
     return true;
 }
 
