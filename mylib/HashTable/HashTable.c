@@ -68,7 +68,13 @@ int compare_int(void * a, void * b) {
 
 
 int compare_str(void* key1, void* key2){
-    return strcmp((char*)key1, (char*)key2);
+    char *a = key1, *b = key2;
+	while (*a){
+        if ((*a ^ *b) > 0 ? 1 : 0) return 1;
+        a++; b++;
+    }
+	
+	return 0;
 }
 
 void HashT_resize(HashT* hash_table){
@@ -322,11 +328,11 @@ void* HashT_getNextEntry(HashT* hash_table) {
 
 void* HashT_parse(HashT* hash_table, HashT_entry* prev, HashT_entry** next, int* bucket){
   
-    if (prev!=NULL && prev->next!=NULL){ /* return next item in list */
+    if (prev!=NULL && prev->next!=NULL){ /* case that prev and prev->next nodes exist: return next item found */
         *next = prev->next;
         return prev->next->item;
-    } else if (prev == NULL) { /* initialize */
-        *bucket = 0;
+    } else if (prev == NULL) { /* case prev does not exist */
+        *bucket = 0; /**/
         while ((*bucket)<hash_table->nbuckets && (*next = hash_table->table[*bucket]) == NULL){
             (*bucket)++;
         }
@@ -352,5 +358,19 @@ void* HashT_parse(HashT* hash_table, HashT_entry* prev, HashT_entry** next, int*
 }
 
 void HashT_stats(HashT* hash_table){
-    printf("Number of buckets is: %d\number of items is: %d\nCurrent load factor is: %f\n", hash_table->nbuckets, hash_table->nitems, (float)(hash_table->nitems)/(float)(hash_table->nbuckets));
+    unsigned int max_items_in_bucket = 0;
+    for (int i = 0; i < hash_table->nbuckets; i++){
+        int items = 0;
+        if ((hash_table->table)[i] != NULL) {
+            HashT_entry* curr = (hash_table->table)[i];
+            while (curr!=NULL) {
+                items++;
+                curr = curr->next;
+            }
+            if (items>max_items_in_bucket){
+                max_items_in_bucket = items;
+            }
+        }
+    }
+    printf("Number of buckets is: %d\nNumber of items is: %d\nCurrent load factor is: %f\nMax items in one bucket is %d\n", hash_table->nbuckets, hash_table->nitems, (float)(hash_table->nitems)/(float)(hash_table->nbuckets), max_items_in_bucket);
 }
