@@ -27,7 +27,7 @@ void set_size(Query q,int s){
     q->size = s;
 }
 
-void set_info_words(Query q, int index, LinkedList list, ListNode node) {
+void set_info_location(Query q, int index, LinkedList list, ListNode node) {
     q->lists[index] = list;
     q->nodes[index] = node;
 }
@@ -40,17 +40,25 @@ void* get_query_key(Query q) {
     return &(q->query_id);
 }
 
-bool found(Query q, int index) {
-    if(q->found[index] == false) {
+bool found(Query q, int index, bool *found_first_time) {
+    if (q->found[index] == false) {
         q->counter++;
         q->found[index] = true;
 
-        if(q->size == q->counter)
+        if (q->size == q->counter) {
+            if (q->counter == 1) {
+                *found_first_time = true;
+            }
             return true;
-        else
+        } else {
+            if (q->counter == 1) {
+                *found_first_time = true;
+            }
             return false;
+        }   
+    } else {
+        return false;
     }
-    return false;
 }
 
 void reset_found(Query q) {

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "Entry.h"
 #include "LinkedList.h"
@@ -8,13 +9,31 @@
 struct entry_struct
 {
     char *w;
-    LinkedList payload[3]; /* index indicates match_dist of query */
+    LinkedList payload[3]; /* payload's index indicates match_dist of query */
 };
 
+/* ------------------- Item of entry's payload's list ----------------------- */
+typedef struct info_struct *info;
+
 struct info_struct {
-    Query q;
-    int index;
+    Query q;    /* Point to query */
+    int index;  /* Keep the order of the word in query's words */
 };
+
+info create_info(Query q, int index) {
+    info inf = malloc(sizeof(struct info_struct));
+    inf->q = q;
+    inf->index = index;
+    return inf;
+}
+
+ErrorCode destroy_info(void** inff) {
+    info inf = *inff;
+    free(inf);
+    inf = NULL;
+    return EC_SUCCESS;
+}
+/* -------------------------------------------------------------------------- */
 
 ErrorCode create_entry(const char *w, entry *e){
 
@@ -25,54 +44,11 @@ ErrorCode create_entry(const char *w, entry *e){
         return EC_FAIL;
     strcpy((*e)->w, w);
 
+    /* Payload is a list of info struct */
     for (int i = 0; i < 3; i++)
         create_list(&((*e)->payload[i]), destroy_info);
     
     return EC_SUCCESS;
-}
-
-info create_info(Query q, int i) {
-    info inf = malloc(sizeof(struct info_struct));
-    inf->q = q;
-    inf->index = i;
-    return inf;
-}
-
-ErrorCode destroy_info(void** inff) {
-    info inf = *inff;
-    /*if(inf && inf->q) {
-        destroy_query((void**)&(inf->q));
-        inf->q = NULL;
-    }*/
-    free(inf);
-    inf=NULL;
-    return EC_SUCCESS;
-}
-
-ErrorCode update_entry_payload(entry e, unsigned int match_dist, Query q, int index){
-    ListNode node = NULL;
-    if ((node = push_item(e->payload[match_dist], create_info(q, index))) == NULL) {
-        return EC_FAIL;
-    } else {
-        set_info_words(q, index, e->payload[match_dist], node);
-        return EC_SUCCESS;
-    }
-}
-
-void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList matched_queries){
-    LinkedList l = e->payload[threshold];
-    
-    ListNode node = get_first_node(l);
-    for (int i = 0; i < get_number_items(l); i++) {
-        info f = get_node_item(node);
-        if (found(f->q, f->index)){
-            add_item(matched_queries, f->q);
-        }
-        // int id = *(int*)get_query_key(f->q);
-        // printf("update payload id %d\n", id);
-        HashT_insert(candidate_queries, get_query_key(f->q), f->q);
-        node = get_next_node(node);
-    }
 }
 
 char *get_entry_word(entry e){
@@ -82,6 +58,40 @@ char *get_entry_word(entry e){
 void print_entry_word(void *e){
     entry ce = e;
     printf("%s\n", ce->w);
+}
+
+ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int index){
+    /* Create info and push it to entry's payload's list */
+    ListNode node = NULL;
+    if ((node = push_item(e->payload[match_dist], create_info(q, index))) == NULL) {
+        return EC_FAIL;
+    } else {
+        /* Get list and node and insert it to query */
+        set_info_location(q, index, e->payload[match_dist], node);
+        return EC_SUCCESS;
+    }
+}
+
+void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList candidates, LinkedList matched_queries){
+    LinkedList l = e->payload[threshold];
+    
+    bool found_first_time = false;
+    ListNode node = get_first_node(l);
+    for (int i = 0; i < get_number_items(l); i++) {
+        info f = get_node_item(node);
+        /* If all words of query match to document's words, add query to document's matched_queries list */
+        if (found(f->q, f->index, &found_first_time)){
+            add_item(matched_queries, f->q);
+        }
+        /* Insert query to candidate_queries */
+        if (found_first_time == true) {
+            // add_item(candidates, f->q);
+            HashT_insert(candidate_queries, get_query_key(f->q), f->q);
+            found_first_time = false;
+        }
+        
+        node = get_next_node(node);
+    }
 }
 
 ErrorCode destroy_entry(void **e) {

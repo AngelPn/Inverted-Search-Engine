@@ -19,20 +19,20 @@ ErrorCode insert_ExactMatch(Index *index, char *token, unsigned int match_dist, 
     if (e == NULL) {
         create_entry(token, &e);
         HashT_insert(index->ExactMatch, get_entry_word(e), e);
-        return update_entry_payload(e, match_dist, query, token_index);
+        return insert_info_payload(e, match_dist, query, token_index);
     } else {
-        return update_entry_payload(e, match_dist, query, token_index);
+        return insert_info_payload(e, match_dist, query, token_index);
     }
 }
 
 ErrorCode insert_EditDist(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
     // entry e = BK_tree_insert(index->EditDist, get_root_double_p(index->EditDist), token);
     entry e = insert_BK_tree(index->EditDist, token);
-    return update_entry_payload(e, match_dist-1, query, token_index);
+    return insert_info_payload(e, match_dist-1, query, token_index);
 }
 
 ErrorCode insert_HammingDist(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
-    return update_entry_payload(insert_HammingTree(index->HammingDist, token), match_dist-1, query, token_index);
+    return insert_info_payload(insert_HammingTree(index->HammingDist, token), match_dist-1, query, token_index);
 }
 
 ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned int match_dist, Query query, int token_index) {
@@ -48,15 +48,15 @@ ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned
     }
 }
 
-ErrorCode lookup_index(Index *index, char* token, HashT *candidate_queries, LinkedList matched_queries){
+ErrorCode lookup_index(Index *index, char* token, HashT *candidate_queries, LinkedList candidates, LinkedList matched_queries){
     entry e = HashT_get(index->ExactMatch, token);
     if (e != NULL) {
-        update_payload(e, 0, candidate_queries, matched_queries);
+        update_payload(e, 0, candidate_queries, candidates, matched_queries);
     }
     for (int threshold = 1; threshold<=3; threshold++){
-        if (lookup_BKtree(token, index->EditDist, threshold, candidate_queries, matched_queries) == EC_FAIL)
+        if (lookup_BKtree(token, index->EditDist, threshold, candidate_queries, candidates, matched_queries) == EC_FAIL)
             return EC_FAIL;
-        if (lookup_HammingTree(index->HammingDist, token, threshold, candidate_queries, matched_queries) == EC_FAIL)
+        if (lookup_HammingTree(index->HammingDist, token, threshold, candidate_queries, candidates, matched_queries) == EC_FAIL)
             return EC_FAIL;
     }
     return EC_SUCCESS;

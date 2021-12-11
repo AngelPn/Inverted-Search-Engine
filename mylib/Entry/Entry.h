@@ -1,15 +1,13 @@
-#ifndef ENTRY_H
-#define ENTRY_H
+#ifndef ENTRY_INFO_H
+#define ENTRY_INFO_H
 
-#include <stdbool.h>
 #include "core.h"
 #include "Query.h"
 #include "HashTable.h"
 
 typedef struct entry_struct *entry;
-typedef struct info_struct *info;
 
-/* Creates entry */
+/* Creates entry struct */
 ErrorCode create_entry(const char *w, entry *e);
 
 /* Returns the word of entry */
@@ -18,17 +16,13 @@ char *get_entry_word(entry e);
 /* Prints the word of entry */
 void print_entry_word(void *e);
 
-void remove_query_info(info inf);
+/* Inserts info to entry's payload */
+ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int index);
+
+void update_payload(entry e, int threshold, HashT* candidate_queries,  LinkedList candidates, LinkedList matched_queries);
 
 /* Deallocates memory of entry */
 ErrorCode destroy_entry(void **e);
 void destroy_entry_void(void *e);
-
-ErrorCode update_entry_payload(entry e,unsigned int match_dist, Query q, int index);
-
-void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList matched_queries);
-
-info create_info(Query q, int i);
-ErrorCode destroy_info(void** inff);
 
 #endif

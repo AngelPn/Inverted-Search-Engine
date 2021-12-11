@@ -117,8 +117,10 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
     // Create hash table of candidate_queries (queries that possibly match the document)
     HashT* candidate_queries = HashT_init(integer, 1000, NULL);
+    LinkedList candidates = NULL;
+    create_list(&candidates, NULL);
     // Create LinkedList of matched_queries (queries that match the document)
-    LinkedList matched_queries;
+    LinkedList matched_queries = NULL;
     create_list(&matched_queries, NULL);
 
     // Deduplication of doc_str
@@ -139,7 +141,7 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     char* token = strtok(ded_doc, " ");
     ErrorCode state = EC_SUCCESS;
     while (token != NULL && state == EC_SUCCESS) {
-        state = lookup_index(&superdex, token, candidate_queries, matched_queries);
+        state = lookup_index(&superdex, token, candidate_queries, candidates, matched_queries);
         token = strtok(NULL, " \n");
     }
     // Traverse candidate_queries and reset "found" field of queries
@@ -153,6 +155,12 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
         curr_hash_node = next_hash_node;
     } while (next_hash_node != NULL);
 
+    // ListNode node = get_first_node(candidates);
+    // while (node != NULL) {
+    //     reset_found(get_node_item(node));
+    //     node = get_next_node(node);
+    // }
+
     // Create Document struct
     Document d = create_document(doc_id);
     // Call match_document given created Document and matched_queries
@@ -161,8 +169,9 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     // printf("match dosument doc id %d\n", id);
     HashT_insert(superdex.Docs, get_doc_id(d), d);
     // free candidate_queries and matced_queries
-    destroy_list(&matched_queries);
+    // destroy_list(&matched_queries);
     HashT_delete(candidate_queries);
+    destroy_list(&candidates);
     free(ded_doc);
 	return EC_SUCCESS;
 }
@@ -170,32 +179,14 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 
 ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids)
 {
-    // Search hash table of documents and get Document with given doc_id
-    // get the query_ids of Document
-
-    //int doc_id = superdex.cur_doc;
-    // printf("doc id %d\n", doc_id);
-    // HashT_print(superdex.Docs, NULL);
-    // int* bucket = malloc(4);
-    // HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
-    // Document d = HashT_parse(superdex.Docs, curr_hash_node, &next_hash_node, bucket);
-    // free(bucket);
-    Document d = HashT_get(superdex.Docs, &superdex.cur_doc);
-
-    if (d==NULL) return EC_FAIL;
-    *p_doc_id = *(int*)get_doc_id(d);
-    *p_num_res = get_num_res(d);
-    
-    QueryID* query_ids = get_query_ids(d);
-    *p_query_ids = malloc(*p_num_res * sizeof(int));
-    for(int k=0 ; k<*p_num_res ; k++){
-        (*p_query_ids)[k] = query_ids[k];
+    /* Search hash table of documents and get Document with given doc_id */
+    Document d = NULL;
+    if ((d = HashT_get(superdex.Docs, &superdex.cur_doc)) == NULL) {
+        return EC_FAIL;
+    } else {
+        superdex.cur_doc++;
+        return get_next_avail_result(d, p_doc_id, p_num_res, p_query_ids);
     }
-    // HashT_remove(superdex.Docs, get_doc_id(d));
-
-    superdex.cur_doc++;
-
-	return EC_SUCCESS;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -31,8 +31,8 @@ ErrorCode destroy_HammingTree(HammingTree ix) {
     return EC_SUCCESS;
 }
 
-ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, HashT* candidate_queries, LinkedList matched_queries){
-    return lookup_BKtree(word, ix->TreeArray[strlen(word)-4], threshold, candidate_queries, matched_queries);
+ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, HashT* candidate_queries, LinkedList candidates, LinkedList matched_queries){
+    return lookup_BKtree(word, ix->TreeArray[strlen(word)-4], threshold, candidate_queries, candidates, matched_queries);
 }
 
 void print_HammingTree(HammingTree ix) {

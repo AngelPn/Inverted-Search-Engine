@@ -22,7 +22,7 @@ entry get_BK_treenode_entry(BK_treenode n);
 ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* result);
 
 /* Same as above but */
-ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList matched_queries);
+ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList candidates, LinkedList matched_queries);
 
 /* Prints BK tree: (word of entry) - (number of children) */
 void print_BK_tree(BK_tree tree);

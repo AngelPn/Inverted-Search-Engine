@@ -156,7 +156,7 @@ ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* res
     return EC_SUCCESS;
 }
 
-ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList matched_queries) {
+ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList candidates, LinkedList matched_queries) {
     LinkedList candidate_nodes = NULL; /* actually keeps tree nodes so we can get their children and cost */
     if (create_list(&candidate_nodes, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
@@ -176,7 +176,7 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_que
         int dist = ix->distance(a, strlen(a), b, strlen(b));
         if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
             // add_item(found_words, candidate->item);
-            update_payload(candidate->item, threshold-1, candidate_queries, matched_queries);
+            update_payload(candidate->item, threshold-1, candidate_queries, candidates, matched_queries);
         }
 
         /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */

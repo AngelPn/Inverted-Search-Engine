@@ -10,12 +10,16 @@ typedef struct document *Document;
 /* Creates document */
 Document create_document(DocID doc_id);
 
-ErrorCode match_document(Document d, LinkedList queries);
-
-void destroy_document(void *d);
-
-unsigned int get_num_res(Document d);
-QueryID* get_query_ids(Document d);
+/* Gets document's ID */
 void* get_doc_id(Document d);
+
+/* Sets matched queries to document */
+void match_document(Document d, LinkedList matched_queries);
+
+/* Gets matched queries of document and returns query IDs sorted */
+ErrorCode get_next_avail_result(Document d, DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids);
+
+/* Deallocated memory of document */
+void destroy_document(void *d);
 
 #endif

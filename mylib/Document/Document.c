@@ -8,18 +8,8 @@
 struct document
 {
 	DocID doc_id;
-	unsigned int num_res;
-	QueryID* query_ids;
-    // QueryID** query_ids;
+    LinkedList matched_queries;
 };
-
-unsigned int get_num_res(Document d){
-    return d->num_res;
-}
-
-QueryID* get_query_ids(Document d){
-    return d->query_ids;
-}
 
 void* get_doc_id(Document d){
     return &(d->doc_id);
@@ -28,38 +18,36 @@ void* get_doc_id(Document d){
 Document create_document(DocID doc_id) {
     Document d = (Document)malloc(sizeof(struct document));
     d->doc_id = doc_id;
-    d->num_res = 0;
-    d->query_ids = NULL;
+    d->matched_queries = NULL;
     return d;
 }
 
-int cmpfunc (const void * a, const void * b) {
+void match_document(Document d, LinkedList matched_queries) {
+    d->matched_queries = matched_queries;
+}
+
+int cmpfunc(const void * a, const void * b) {
    return ( *(int*)a - *(int*)b );
 }
 
-ErrorCode match_document(Document d, LinkedList queries) {
-    d->num_res = get_number_items(queries);
-    d->query_ids = (QueryID *)malloc((d->num_res) * sizeof(QueryID));
+ErrorCode get_next_avail_result(Document d, DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids) {
+    *p_doc_id = d->doc_id;
+    LinkedList matched_queries = d->matched_queries;
+    *p_num_res = get_number_items(matched_queries);
+    if ((*p_query_ids = (QueryID *)malloc((*p_num_res) * sizeof(QueryID))) == NULL) return EC_FAIL;
 
-    ListNode node = get_first_node(queries);
-    for (int i = 0; i < d->num_res; i++) {
-        // d->query_ids[i] = get_queryID(get_node_item(node));
-        // d->query_ids[i] = malloc(sizeof(int));
-        memcpy(&(d->query_ids[i]), get_query_key(get_node_item(node)), sizeof(int));
+    ListNode node = get_first_node(matched_queries);
+    for (int i = 0; i < (*p_num_res); i++) {
+        (*p_query_ids)[i] = get_queryID(get_node_item(node));
         node = get_next_node(node);
     }
-    qsort(d->query_ids, d->num_res, sizeof(QueryID), cmpfunc);
-
+    qsort(*p_query_ids, *p_num_res, sizeof(QueryID), cmpfunc);
     return EC_SUCCESS;
 }
 
 void destroy_document(void *d) {
     Document dd = d;
-    // for (int i = 0; i<dd->num_res; i++){
-    //     free(dd->query_ids[i]);
-    // }
-    free(dd->query_ids);
-    dd->query_ids = NULL;
+    destroy_list(&(dd->matched_queries));
     free(dd);
     dd=NULL;
 }

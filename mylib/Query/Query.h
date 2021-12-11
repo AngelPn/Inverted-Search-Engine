@@ -1,7 +1,6 @@
 #ifndef QUERY_H
 #define QUERY_H
 
-#include <stdbool.h>
 #include "core.h"
 #include "LinkedList.h"
 
@@ -14,7 +13,7 @@ Query create_query(QueryID query_id);
 QueryID get_queryID(Query q);
 void* get_query_key(Query q);
 
-bool found(Query q, int index);
+bool found(Query q, int index, bool *found_first_time);
 
 void reset_found(Query q);
 
@@ -26,7 +25,7 @@ void destroy_query(void *q);
 /* Size setter*/
 void set_size(Query q,int s);
 
-void set_info_words(Query q, int index, LinkedList list, ListNode node);
+void set_info_location(Query q, int index, LinkedList list, ListNode node);
 
 ErrorCode end_query(Query q);
 
