@@ -50,13 +50,9 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     strcpy(new_query_str, query_str);
     char* token = strtok(new_query_str, " ");
 
-    /* Check if query is already in active set of queries */
-    /* If not, insert query in active set of queries */
-    Query query = NULL;
-    if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
-        query = create_query(query_id);
-        HashT_insert(superdex.Queries, get_query_key(query), query);
-    }
+    /* Insert query in active set of queries */
+    Query query = create_query(query_id);
+    HashT_insert(superdex.Queries, get_query_key(query), query);
 
     int query_words = 0; /* number of words in query */
     ErrorCode state = EC_SUCCESS;
@@ -68,8 +64,6 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     }
     /* Set the number of words in query */
     set_size(query, query_words);
-    // print_BK_tree(superdex.EditDist);
-    // print_HammingTree(superdex.HammingDist);
     free(new_query_str);
 	return state;
 }
@@ -77,103 +71,43 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
 ErrorCode EndQuery(QueryID query_id)
 {
     Query query = NULL;
-    if ((query = HashT_get(superdex.Queries, &query_id)) == NULL) {
-        return EC_FAIL;
-    } else {
+    if ((query = HashT_get(superdex.Queries, &query_id)) != NULL) {
         return end_query(query);
+    } else {
+        return EC_FAIL;
     }
-}
-
-//We insert each word one by one in a big hashtable and at the same time we check if it already exists in the hashtable
-//if it already exists it means it is a duplicate word so it is not in the result string that it is returned
-char* deduplication(char* text){
-    HashT* HT = HashT_init(string,1000,NULL);
-
-    //allocating new char array because strtok() cant be applied on string literals
-    char* new_txt= malloc(strlen(text)+1);
-    strcpy(new_txt,text);
-    //getting the first word from the text
-    char* token = strtok(new_txt, " ");
-    //this is the string that we will write the text word by word without the duplicates
-    char* new_str = malloc(strlen(text)+2);
-    new_str[0] = '\0';
-    while(token != NULL){
-        //we insert each word in the hashtable and if it already exists then it is not written in our result string
-        if(HashT_insert(HT,token,NULL)) {
-            new_str = strcat(new_str, " ");
-            new_str = strcat(new_str, token);
-        }
-        //getting the next character
-        token = strtok(NULL, " ");
-        //printf("token: %s\n",token);
-    }
-    HashT_delete(HT);
-    free(new_txt);
-    //NOTE: the returned string must be freed
-    return new_str;
 }
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
-    // Create hash table of candidate_queries (queries that possibly match the document)
-    HashT* candidate_queries = HashT_init(integer, 1000, NULL);
-    LinkedList candidates = NULL;
-    create_list(&candidates, NULL);
-    // Create LinkedList of matched_queries (queries that match the document)
-    LinkedList matched_queries = NULL;
-    create_list(&matched_queries, NULL);
+    LinkedList candidate_queries = NULL, matched_queries = NULL;
+    /* Create list of candidate queries: queries that possibly match the document */
+    if (create_list(&candidate_queries, NULL) == EC_FAIL) return EC_FAIL;
+    /* Create list of matched queries: queries that match the document */
+    if (create_list(&matched_queries, NULL) == EC_FAIL) return EC_FAIL;
 
-    // Deduplication of doc_str
-    char* doc_str_copy = malloc(strlen(doc_str)+1);
-    strcpy(doc_str_copy, doc_str);
-    char* ded_doc = deduplication(doc_str_copy);
-    free(doc_str_copy);
-    // Tokenization of deduplicated doc_str
+    /* Create document */
+    Document d = create_document(doc_id);
 
-    // For each token of deduplicated doc_str, search token in Index:
-        // search ExactMatch
-        // search EditDist
-        // search HammingDist
-        // and fill in the "found" field in Query from info_struct
-        // Insert Query in LinkedList of candidate_queries because we have changed its "found" field
-        // If Query's "found" field is all true -> add Query to matched_queries
-
+    /* For each token of deduplicated doc_str, search token in Index */
+    char* ded_doc = deduplicate_doc_str(d, doc_str);
     char* token = strtok(ded_doc, " ");
     ErrorCode state = EC_SUCCESS;
     while (token != NULL && state == EC_SUCCESS) {
-        state = lookup_index(&superdex, token, candidate_queries, candidates, matched_queries);
+        state = lookup_index(&superdex, token, candidate_queries, matched_queries);
         token = strtok(NULL, " \n");
     }
-    // Traverse candidate_queries and reset "found" field of queries
-    HashT_entry* curr_hash_node = NULL, *next_hash_node = NULL;
-    int bucket = 0;
 
-    Query q = NULL;
-    do {
-        q = HashT_parse(candidate_queries, curr_hash_node, &next_hash_node, &bucket);
-        if (q != NULL) reset_found(q);
-        curr_hash_node = next_hash_node;
-    } while (next_hash_node != NULL);
-
-    // ListNode node = get_first_node(candidates);
-    // while (node != NULL) {
-    //     reset_found(get_node_item(node));
-    //     node = get_next_node(node);
-    // }
-
-    // Create Document struct
-    Document d = create_document(doc_id);
-    // Call match_document given created Document and matched_queries
+    /* Match queries with document */
     match_document(d, matched_queries);
-    // int id = *(int*)get_doc_id(d);
-    // printf("match dosument doc id %d\n", id);
+
+    /* Traverse candidate_queries and reset "found" field of queries */
+    reset_candidate_queries(d, candidate_queries);
+
+    /* Insert document to hash table of documents */
     HashT_insert(superdex.Docs, get_doc_id(d), d);
-    // free candidate_queries and matced_queries
-    // destroy_list(&matched_queries);
-    HashT_delete(candidate_queries);
-    destroy_list(&candidates);
-    free(ded_doc);
-	return EC_SUCCESS;
+    
+	return state;
 }
 
 
@@ -181,11 +115,11 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
 {
     /* Search hash table of documents and get Document with given doc_id */
     Document d = NULL;
-    if ((d = HashT_get(superdex.Docs, &superdex.cur_doc)) == NULL) {
-        return EC_FAIL;
-    } else {
+    if ((d = HashT_get(superdex.Docs, &superdex.cur_doc)) != NULL) {
         superdex.cur_doc++;
         return get_next_avail_result(d, p_doc_id, p_num_res, p_query_ids);
+    } else {
+        return EC_FAIL;
     }
 }
 

@@ -48,15 +48,16 @@ ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned
     }
 }
 
-ErrorCode lookup_index(Index *index, char* token, HashT *candidate_queries, LinkedList candidates, LinkedList matched_queries){
+ErrorCode lookup_index(Index *index, char* token, LinkedList candidate_queries, LinkedList matched_queries){
     entry e = HashT_get(index->ExactMatch, token);
     if (e != NULL) {
-        update_payload(e, 0, candidate_queries, candidates, matched_queries);
+        if (update_payload(e, 0, candidate_queries, matched_queries) == EC_FAIL)
+            return EC_FAIL;
     }
     for (int threshold = 1; threshold<=3; threshold++){
-        if (lookup_BKtree(token, index->EditDist, threshold, candidate_queries, candidates, matched_queries) == EC_FAIL)
+        if (lookup_BKtree(token, index->EditDist, threshold, candidate_queries, matched_queries) == EC_FAIL)
             return EC_FAIL;
-        if (lookup_HammingTree(index->HammingDist, token, threshold, candidate_queries, candidates, matched_queries) == EC_FAIL)
+        if (lookup_HammingTree(index->HammingDist, token, threshold, candidate_queries, matched_queries) == EC_FAIL)
             return EC_FAIL;
     }
     return EC_SUCCESS;

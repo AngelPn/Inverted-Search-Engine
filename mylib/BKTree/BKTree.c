@@ -112,51 +112,7 @@ int get_BK_treenode_cost(BK_treenode n){
     return n->cost;
 }
 
-ErrorCode lookup_entry_index(char* w, BK_tree ix, int threshold, LinkedList* result) {
-    LinkedList candidate_words = NULL; /* actually keeps tree nodes so we can get their children and cost */
-    if (create_list(&candidate_words, NULL) == EC_FAIL) {
-        printf("Error! Create entry list failed\n");
-        return EC_FAIL;
-    }
-
-    LinkedList found_words = NULL; /* this list is the result and doesn't need the whole node's info */
-    if (create_list(&found_words, NULL) == EC_FAIL) {
-        printf("Error! Create entry list failed\n");
-        return EC_FAIL;
-    }
-
-    /* Step 1: Add root to candidate words */
-    add_item(candidate_words, ix->root);
-
-    BK_treenode candidate = NULL;
-    while ((candidate = pop_item(candidate_words)) != NULL){
-
-        /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
-//        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
-        char *a = get_entry_word(candidate->item);
-        char *b = w;
-        int dist = ix->distance(a, strlen(a), b, strlen(b));
-        if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
-            add_item(found_words, candidate->item);
-        }
-
-        /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
-        BK_treenode current = candidate->child;
-        while (current!=NULL) {
-//            printf("[%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
-            if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
-                add_item(candidate_words, current);
-            }
-            current = current->next;
-        }
-
-    }
-    *result = found_words;
-    destroy_list(&candidate_words);
-    return EC_SUCCESS;
-}
-
-ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList candidates, LinkedList matched_queries) {
+ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate_queries, LinkedList matched_queries) {
     LinkedList candidate_nodes = NULL; /* actually keeps tree nodes so we can get their children and cost */
     if (create_list(&candidate_nodes, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");
@@ -170,21 +126,18 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_que
     while ((candidate = pop_item(candidate_nodes)) != NULL){
 
         /* Step 2: Pop a word from candidate words' list and find the distance between this and query's word */
-//        printf("candidate %s cost %d\n", get_entry_word(candidate->item), candidate->cost);
         char *a = get_entry_word(candidate->item);
         char *b = w;
         int dist = ix->distance(a, strlen(a), b, strlen(b));
         if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
-            // add_item(found_words, candidate->item);
-            update_payload(candidate->item, threshold-1, candidate_queries, candidates, matched_queries);
+            if (update_payload(candidate->item, threshold-1, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
         }
 
         /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
         BK_treenode current = candidate->child;
         while (current!=NULL) {
-//            printf("[%d,%d] Current cost %d\n", dist - threshold, dist + threshold, current->cost);
             if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
-                add_item(candidate_nodes, current);
+                if (add_item(candidate_nodes, current) == EC_FAIL) return EC_FAIL;
             }
             current = current->next;
         }

@@ -72,7 +72,7 @@ ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int ind
     }
 }
 
-void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList candidates, LinkedList matched_queries){
+ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, LinkedList matched_queries){
     LinkedList l = e->payload[threshold];
     
     bool found_first_time = false;
@@ -81,17 +81,16 @@ void update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList
         info f = get_node_item(node);
         /* If all words of query match to document's words, add query to document's matched_queries list */
         if (found(f->q, f->index, &found_first_time)){
-            add_item(matched_queries, f->q);
+            if (add_item(matched_queries, f->q) == EC_FAIL) return EC_FAIL;
         }
         /* Insert query to candidate_queries */
         if (found_first_time == true) {
-            // add_item(candidates, f->q);
-            HashT_insert(candidate_queries, get_query_key(f->q), f->q);
-            found_first_time = false;
+            if (add_item(candidate_queries, f->q) == EC_FAIL) return EC_FAIL;
+            add_item(candidate_queries, f->q);
         }
-        
         node = get_next_node(node);
     }
+    return EC_SUCCESS;
 }
 
 ErrorCode destroy_entry(void **e) {
