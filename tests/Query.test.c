@@ -21,7 +21,8 @@ void test_get_queryID(void) {
 
 void test_found(void) {
     Query q = create_query(1);
-    bool temp;
+    set_size(q, MAX_QUERY_WORDS);
+    bool temp = 0;
     for(int i=0 ; i<MAX_QUERY_WORDS ; i++){
         found(q,i,&temp);
         TEST_ASSERT(get_index_found(q,i) == 1);
@@ -32,7 +33,7 @@ void test_found(void) {
 void test_reset_found(void) {
     Query q = create_query(1);
     set_size(q, MAX_QUERY_WORDS);
-    bool temp;
+    bool temp = 0;
     for(int i=0 ; i < MAX_QUERY_WORDS ; i++){
         found(q,i,&temp);
     }
@@ -47,7 +48,7 @@ void test_reset_found(void) {
 void test_return_query(void) {
     Query q = create_query(1);
     set_size(q, MAX_QUERY_WORDS);
-    bool temp;
+    bool temp = 0;
     for(int i=0 ; i < MAX_QUERY_WORDS ; i++){
         found(q,i,&temp);
     }

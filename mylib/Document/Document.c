@@ -23,6 +23,7 @@ Document create_document(DocID doc_id) {
     Document d = (Document)malloc(sizeof(struct document));
     d->doc_id = doc_id;
     d->ded_doc_str = NULL;
+    d->deduplication = NULL;
     d->candidate_queries = NULL;
     d->matched_queries = NULL;
     return d;

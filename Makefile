@@ -83,11 +83,17 @@ run: all
 	./test_HammingTree
 	./test_Query
 	./test_Document
+	./testdriver
 
 valgrind: all
 	valgrind $(VALFLAGS) ./test_Entry
 	valgrind $(VALFLAGS) ./test_LinkedList
 	valgrind $(VALFLAGS) ./test_BKTree
+	valgrind $(VALFLAGS) ./test_Query
+	valgrind $(VALFLAGS) ./test_Document
+	valgrind $(VALFLAGS) ./test_HammingTree
+	valgrind $(VALFLAGS) ./testdriver
+
 
 lib: $(IMPL_O) $(OBJS)
 	$(CC) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) $(OBJS)
@@ -105,6 +111,6 @@ mainonly: clean $(IMPL_O) $(OBJS) $(MAIN_O)
 
 # Delete executable & object files
 clean:
-	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_LinkedList test_BKTree main
+	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_LinkedList test_BKTree test_Document test_HammingTree test_Query main
 	find . -name '*.o' -print | xargs rm -f
 	rm -rf $(ODIR)
