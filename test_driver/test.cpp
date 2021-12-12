@@ -275,6 +275,8 @@ void TestSigmod(const char* test_file_str)
 	DestroyIndex();
 
 	fclose(test_file);
+	
+	for(i=0;i<num_cur_results;i++) {free(cur_results[i]); cur_results[i]=0; cur_results_size[i]=0; cur_results_ret[i]=false;}
 
 	printf("Your program has successfully passed all tests.\n");
 	printf("Time="); PrintTime(v); printf("\n");
