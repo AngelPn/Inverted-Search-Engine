@@ -19,8 +19,11 @@
   ```
   $ make
   $ ./test_Entry
-  $ ./test_EntryList
+  $ ./test_LinkedList
   $ ./test_BKTree
+  $ ./test_HammingTree
+	$ ./test_Query
+	$ ./test_Document
   ```
 * Εκκαθάριση
   ```
