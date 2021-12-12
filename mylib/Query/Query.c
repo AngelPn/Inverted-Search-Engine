@@ -88,3 +88,7 @@ void destroy_query(void *q) {
         cq = NULL;
     }
 }
+
+bool get_index_found(Query q, int index){
+    return q->found[index];
+}

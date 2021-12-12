@@ -12,6 +12,7 @@ Query create_query(QueryID query_id);
 /* Returns the query ID */
 QueryID get_queryID(Query q);
 void* get_query_key(Query q);
+bool get_index_found(Query q, int index);
 
 bool found(Query q, int index, bool *found_first_time);
 

@@ -13,7 +13,7 @@ void test_create_HammingTree(void) {
     HammingTree H_T = create_HammingTree(HammingDistance);
     TEST_ASSERT(H_T != NULL);
     for(int i = 0 ; i < 28 ; i++) {
-        TEST_ASSERT(H_T->TreeArray[i] != NULL);
+        TEST_ASSERT(get_specific_BKTree(H_T,i) != NULL);
     }
     destroy_HammingTree(H_T);
 }

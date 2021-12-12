@@ -5,6 +5,10 @@
 #include "HammingTree.h"
 #include "BKTree.h"
 
+struct hamming_tree {
+    BK_tree TreeArray[28];
+};
+
 HammingTree create_HammingTree(DistFunc distance) {
     HammingTree res = malloc(sizeof(struct hamming_tree));
     for(int i=0 ; i<28 ; i++){
@@ -41,4 +45,8 @@ void print_HammingTree(HammingTree ix) {
         else
             printf("(null)\n");
     }
+}
+
+BK_tree get_specific_BKTree(HammingTree H_T,int index){
+    return H_T->TreeArray[index];
 }
