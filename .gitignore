@@ -4,6 +4,9 @@ searchEngine
 test_Entry
 test_LinkedList
 test_BKTree
+test_Document
+test_HammingTree
+test_Query
 
 # Prerequisites
 *.d
