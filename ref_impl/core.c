@@ -125,59 +125,67 @@ ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
- static const unsigned long int masks[64] = {
-     0x0000000000000001, 0x0000000000000003, 0x0000000000000007, 0x000000000000000f,
-     0x000000000000001f, 0x000000000000003f, 0x000000000000007f, 0x00000000000000ff,
-     0x00000000000001ff, 0x00000000000003ff, 0x00000000000007ff, 0x0000000000000fff,
-     0x0000000000001fff, 0x0000000000003fff, 0x0000000000007fff, 0x000000000000ffff,
-     0x000000000001ffff, 0x000000000003ffff, 0x000000000007ffff, 0x00000000000fffff,
-     0x00000000001fffff, 0x00000000003fffff, 0x00000000007fffff, 0x0000000000ffffff,
-     0x0000000001ffffff, 0x0000000003ffffff, 0x0000000007ffffff, 0x000000000fffffff,
-     0x000000001fffffff, 0x000000003fffffff, 0x000000007fffffff, 0x00000000ffffffff,
-     0x00000001ffffffff, 0x00000003ffffffff, 0x00000007ffffffff, 0x0000000fffffffff,
-     0x0000001fffffffff, 0x0000003fffffffff, 0x0000007fffffffff, 0x000000ffffffffff,
-     0x000001ffffffffff, 0x000003ffffffffff, 0x000007ffffffffff, 0x00000fffffffffff,
-     0x00001fffffffffff, 0x00003fffffffffff, 0x00007fffffffffff, 0x0000ffffffffffff,
-     0x0001ffffffffffff, 0x0003ffffffffffff, 0x0007ffffffffffff, 0x000fffffffffffff,
-     0x001fffffffffffff, 0x003fffffffffffff, 0x007fffffffffffff, 0x00ffffffffffffff,
-     0x01ffffffffffffff, 0x03ffffffffffffff, 0x07ffffffffffffff, 0x0fffffffffffffff,
-     0x1fffffffffffffff, 0x3fffffffffffffff, 0x7fffffffffffffff, 0xffffffffffffffff,
- };
-
 // Computes edit distance between a null-terminated string "a" with length "na"
 //  and a null-terminated string "b" with length "nb"
+
+/* Using bit-vector algorithm: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.142.1245&rep=rep1&type=pdf p.5 */
+/* Instead of explicitly computing the values D[i,j] for i = {1...na} and j = {1...nb} */
+/* the following length-(na) binary valued delta vectors are computed for j = {1...na} */
+/* The vertical positive delta vector VP:   VP_i = 1 iff D[i,j] - D[i-1,j] = 1   */
+/* The vertical negative delta vector VN:   VN_i = 1 iff D[i,j] - D[i-1,j] = -1  */
+/* The horizontal positive delta vector HP: HP_i = 1 iff D[i,j] - D[i,j-1] = 1   */
+/* The horizontal negative delta vector HN: HN_i = 1 iff D[i,j] - D[i,j-1] = -1  */
+/* The diagonal zero delta vector D0:       D0_i = 1 iff D[i,j] = D[i-1,j-1]     */
+/* The match vector X */
 int EditDistance(char* a, int na, char* b, int nb)
 {
+    /* masks for each of the word length */
+    /* For example: mask for a word with length = 4 is masks[3] = 0x0000000f = 0...01111 */
+    /* For example: mask for a word with length = 5 is masks[4] = 0x0000001f = 0...011111 */
+    unsigned int masks[MAX_WORD_LENGTH] = {
+        0x00000001, 0x00000003, 0x00000007, 0x0000000f,
+        0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff,
+        0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff,
+        0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff,
+        0x0001ffff, 0x0003ffff, 0x0007ffff, 0x000fffff,
+        0x001fffff, 0x003fffff, 0x007fffff, 0x00ffffff,
+        0x01ffffff, 0x03ffffff, 0x07ffffff, 0x0fffffff,
+        0x1fffffff, 0x3fffffff,
+    };
 
+    /* C uses char type to store characters and letters. */ 
+    /* However, the char type is integer type because underneath C stores integer numbers instead of characters.*/
+    /* In C, char values are stored in 1 byte in memory and value range from -128 to 127 or 0 to 255. */
+    /* posbits (position bits) index is unsigned char value (range from 0 to 255) */
+    unsigned int posbits[256] = {0};
 
-	 int len_a = na, len_b = nb;
-	 if (len_a > 64) {
-       return -1;
-     }
+    /* For each of char value in string `a` */
+    for (int i = 0; i < na; i++){
+        /* Bitwise OR on the operands: a[i] and (1 << i) */
+        /* (1 << i): shift left 1 with the integer i -> (1*2^i) */
+        posbits[(unsigned char)a[i]] |= 1 << i;
+    }
 
-     unsigned long int posbits[256] = {0};
+    int dist = na;
+    unsigned int mask = 1 << (na - 1);   /* mask is left shifting of 1 with (na-1) */
+    unsigned int VP   = masks[na - 1];   /* VP initialized as mask of word length of `a` */
+    unsigned int VN   = 0;
 
-     for (int i=0; i < len_a; i++){
-         posbits[(unsigned char)a[i]] |= 1ull << i;
-     }
-    
-     int dist = len_a;
-     unsigned long int mask = 1ull << (len_a - 1);
-     unsigned long int VP   = masks[len_a - 1];
-     unsigned long int VN   = 0;
+    for (int i = 0; i < nb; i++) { /* Computing the j-th column */
+        /* Build the appropriate match vector into X */
+        unsigned int y = posbits[(unsigned char)b[i]];  /* y is position bits of unsigned char value of b at index i */
+        unsigned int X  = y | VN;                       /* X is bitwise OR of y and VN */
+        unsigned int D0 = (((X & VP) + VP) ^ VP) | X;
+        unsigned int HP = VN | ~(D0|VP);                /* HP is bitwise OR of VN and NOT(VP bitwise OR D0) */
+        unsigned int HN = D0 & VP;                      /* HN is bitwise AND of VP and D0 */
 
-     for (int i=0; i < len_b; i++){
-       unsigned long int y = posbits[(unsigned char)b[i]];
-       unsigned long int X  = y | VN;
-       unsigned long int D0 = ((VP + (X & VP)) ^ VP) | X;
-       unsigned long int HN = VP & D0;
-       unsigned long int HP = VN | ~(VP|D0);
-       X  = (HP << 1) | 1;
-       VN =  X & D0;
-       VP = (HN << 1) | ~(X | D0);
-       if (HP & mask) { dist++; }
-       if (HN & mask) { dist--; }
-     }
+        if (HP & mask) { dist++; }
+        if (HN & mask) { dist--; }
+
+        /* Update the appropriate cell value */
+        VN = D0 & ((HP << 1) | 1);
+        VP = (HN << 1) | ~(D0 | ((HP << 1) | 1));
+    }
     return dist;
 
 	//---------------------------------------------------------
