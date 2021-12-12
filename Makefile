@@ -51,12 +51,12 @@ LDFLAGS = -lpthread
 # Valgrind flags
 VALFLAGS = --leak-check=full --track-origins=yes -s
 
-PROGRAMS = test_Entry test_LinkedList test_BKTree test_HammingTree test_Query testdriver
+PROGRAMS = test_Entry test_LinkedList test_BKTree test_HammingTree test_Query test_Document testdriver
 LIBRARY = core
 
 all: $(PROGRAMS)
 	mkdir -p $(ODIR)
-	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(TEST)/HammingTree.test.o $(TEST)/Query.test.o $(ODIR)
+	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(TEST)/HammingTree.test.o $(TEST)/Query.test.o $(TEST)/Document.test.o $(ODIR)
 
 test_Entry: clean $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o
 	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
@@ -73,12 +73,16 @@ test_HammingTree: clean $(IMPL_O) $(OBJS) $(TEST)/HammingTree.test.o
 test_Query: clean $(IMPL_O) $(OBJS) $(TEST)/Query.test.o
 	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Query.test.o -o test_Query
 
+test_Document: clean $(IMPL_O) $(OBJS) $(TEST)/Document.test.o
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Document.test.o -o test_Document
+
 run: all
 	./test_Entry
 	./test_LinkedList
 	./test_BKTree
 	./test_HammingTree
 	./test_Query
+	./test_Document
 
 valgrind: all
 	valgrind $(VALFLAGS) ./test_Entry

@@ -38,7 +38,12 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
     d->ded_doc_str = malloc(strlen(doc_str) + 2);
     d->ded_doc_str[0] = '\0';
 
+    /* The first loop happens outside because the first word doesn't need a space and a boolean flag would increase complexity */
     char* token = strtok(new_txt, " ");
+    if (HashT_insert(d->deduplication, token, NULL)) {
+        d->ded_doc_str = strcat(d->ded_doc_str, token);
+    }
+    token = strtok(NULL, " ");
     while(token != NULL){
         /* Insert each unique word in the hashtable and in the ded_doc_str */
         /* If word found, get next token*/
@@ -49,6 +54,7 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
         token = strtok(NULL, " ");
     }
     // HashT_delete(d->deduplication);
+    free(new_txt);
     return d->ded_doc_str;
 }
 
@@ -85,11 +91,17 @@ ErrorCode get_next_avail_result(Document d, DocID* p_doc_id, unsigned int* p_num
 }
 
 void destroy_document(void *d) {
+    if(!d)
+        return;
     Document dd = d;
-    free(dd->ded_doc_str);
-    HashT_delete(dd->deduplication);
-    destroy_list(&(dd->candidate_queries));
-    destroy_list(&(dd->matched_queries));
+    if(dd->ded_doc_str)
+        free(dd->ded_doc_str);
+    if(dd->deduplication)
+        HashT_delete(dd->deduplication);
+    if(dd->candidate_queries)
+        destroy_list(&(dd->candidate_queries));
+    if(dd->matched_queries)
+        destroy_list(&(dd->matched_queries));
     free(dd);
     dd=NULL;
 }
