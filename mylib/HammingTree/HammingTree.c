@@ -5,10 +5,6 @@
 #include "HammingTree.h"
 #include "BKTree.h"
 
-struct hamming_tree {
-    BK_tree TreeArray[28];
-};
-
 HammingTree create_HammingTree(DistFunc distance) {
     HammingTree res = malloc(sizeof(struct hamming_tree));
     for(int i=0 ; i<28 ; i++){
@@ -26,8 +22,10 @@ ErrorCode destroy_HammingTree(HammingTree ix) {
     for(int i = 0 ; i < 28 ; i++) {
         //using the recursive BK_Tree destroy function for each of the 27 trees
         destroy_BK_tree(&(ix->TreeArray[i]));
+        ix->TreeArray[i] = NULL;
     }
     free(ix);
+    ix = NULL;
     return EC_SUCCESS;
 }
 

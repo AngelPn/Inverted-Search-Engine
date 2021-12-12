@@ -5,6 +5,10 @@
 #include "BKTree.h"
 #include "Entry.h"
 
+struct hamming_tree {
+    BK_tree TreeArray[28];
+};
+
 typedef struct hamming_tree *HammingTree;
 
 HammingTree create_HammingTree(DistFunc distance);
