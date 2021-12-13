@@ -17,9 +17,11 @@ bool HashT_exists(HashT* hash_table, void* key);
 void* HashT_get(HashT* hash_table, void* key); /* returns NULL if key is not found*/
 
 void HashT_print(HashT* hash_table, void (*print)(void*));
-void* HashT_getNextEntry(HashT* hash_table); /*First call with a pointer to hash table to get 1st item. For next item call with NULL. If there are no more elements it returns NULL*/
 void* HashT_parse(HashT* hash_table, HashT_entry* prev, HashT_entry** next, int* bucket);
 
 void HashT_stats(HashT* hash_table); /* prints number of items, number of buckets and load factor */
+
+int HashT_get_nbuckets(HashT* hash_table);
+int HashT_get_nitems(HashT* hash_table);
 
 #endif

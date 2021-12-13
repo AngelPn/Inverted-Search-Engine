@@ -293,39 +293,6 @@ void HashT_print(HashT* hash_table, void (*print)(void*)) {
     return;
 }
 
-void* HashT_getNextEntry(HashT* hash_table) {
-    /* static variables keep their values between calls and initialize if hash_table == NULL*/
-    static int i;
-    static HashT_entry* curr;
-    static HashT* static_ht;
-    static bool ret; /* return flag */
-    
-    if (hash_table != NULL) {  /*reset*/
-        i=0;
-        curr = NULL;
-        static_ht = hash_table;
-        ret = true;
-    }
-    /* for each bucket parse the list and return one item at a time */
-    while (i < static_ht->nbuckets){ 
-        if ((static_ht->table)[i] != NULL){
-            if (curr == NULL){
-                curr = (static_ht->table)[i];
-            }
-            while (curr!=NULL) {
-                if (ret == true){
-                    ret = false;
-                    return curr->item;
-                }
-                ret = true;
-                curr = curr->next;
-            }
-        }
-        i++;
-    }
-    return NULL;
-}
-
 void* HashT_parse(HashT* hash_table, HashT_entry* prev, HashT_entry** next, int* bucket){
   
     if (prev!=NULL && prev->next!=NULL){ /* case that prev and prev->next nodes exist: return next item found */
@@ -374,3 +341,6 @@ void HashT_stats(HashT* hash_table){
     }
     printf("Number of buckets is: %d\nNumber of items is: %d\nCurrent load factor is: %f\nMax items in one bucket is %d\n", hash_table->nbuckets, hash_table->nitems, (float)(hash_table->nitems)/(float)(hash_table->nbuckets), max_items_in_bucket);
 }
+
+int HashT_get_nbuckets(HashT* hash_table) { return hash_table->nbuckets; }
+int HashT_get_nitems(HashT* hash_table) { return hash_table->nitems; }
