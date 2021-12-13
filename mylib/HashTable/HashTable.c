@@ -29,6 +29,7 @@ int compare_str(void* key1, void* key2);
 int compare_int(void* key1, void* key2);
 static HashT_entry* create_entry(void* key, void* item);
 void HashT_resize(HashT* hash_table); /* duplicates the buckets and rearranges items for extendible hashing */
+
 /*
 This algorithm was created for sdbm (a public-domain reimplementation of ndbm) 
 database library. it was found to do well in scrambling bits, causing better 
@@ -69,7 +70,7 @@ int compare_int(void * a, void * b) {
 
 int compare_str(void* key1, void* key2){
     char *a = key1, *b = key2;
-	while (*a){
+	while (*a || *b){
         if ((*a ^ *b) > 0 ? 1 : 0) return 1;
         a++; b++;
     }
@@ -215,6 +216,7 @@ void HashT_remove(HashT* hash_table, void* key){
         if (hash_table->destroy_item!=NULL) hash_table->destroy_item(curr->item);
         free(curr);
         curr = NULL;
+        hash_table->nitems--;
         return;
     }
     /* else */
@@ -225,6 +227,7 @@ void HashT_remove(HashT* hash_table, void* key){
     prev->next = curr->next;
     free(curr);
     curr = NULL;
+    hash_table->nitems--;
 }
 
 void HashT_delete(HashT* hash_table){
