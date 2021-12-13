@@ -56,7 +56,7 @@ LIBRARY = core
 
 all: $(PROGRAMS)
 	mkdir -p $(ODIR)
-	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(TEST)/HammingTree.test.o $(TEST)/Query.test.o $(TEST)/Document.test.o $(ODIR)
+	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(TEST)/HammingTree.test.o $(TEST)/Query.test.o $(TEST)/Document.test.o $(TEST)/HashTable.test.o $(ODIR)
 
 test_Entry: clean $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o
 	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
