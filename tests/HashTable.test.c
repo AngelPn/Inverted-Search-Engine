@@ -99,10 +99,6 @@ void test_HashT_remove(){
     HashT_delete(ht);
 }
 
-void test_HashT_parse(){
-
-}
-
 void test_HashT_extend(){
     HashT* ht = HashT_init(string, 4, str_delete);
     TEST_CHECK(HashT_get_nbuckets(ht)==4);
@@ -132,29 +128,12 @@ void test_HashT_extend(){
     }
 }
 
-void test_HashT_delete(){
-
-    HashT* ht = HashT_init(string, 10, str_delete);
-
-    char* item1 = malloc(strlen("hello there")+1);
-    strcpy(item1, "hello there");
-
-    char* item2 = malloc(strlen("general kenobi")+1);
-    strcpy(item2, "general kenobi");
-
-    HashT_insert(ht,"henn", item1);
-    HashT_insert(ht,"hello", item2);
-
-    HashT_delete(ht);
-    // TEST_CHECK(ht == NULL);
-}
+/* For hash table delete test run these tests with valgrind */
 
 TEST_LIST = {
         { "hash table create",  test_HashT_init},
         { "hash table insert and get item",  test_HashT_insert_get},
         { "hash table remove item",  test_HashT_remove},
-        { "hash table parse",  test_HashT_parse},
         { "hash table extend",  test_HashT_extend},
-        { "hash table delete",  test_HashT_delete},
         { NULL, NULL }
 };
