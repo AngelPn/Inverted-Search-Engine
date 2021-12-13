@@ -51,7 +51,7 @@ LDFLAGS = -lpthread
 # Valgrind flags
 VALFLAGS = --leak-check=full --track-origins=yes -s
 
-PROGRAMS = test_Entry test_LinkedList test_BKTree test_HammingTree test_Query test_Document testdriver
+PROGRAMS = test_Entry test_LinkedList test_BKTree test_HammingTree test_Query test_Document test_HashTable testdriver
 LIBRARY = core
 
 all: $(PROGRAMS)
@@ -69,6 +69,9 @@ test_BKTree: clean $(IMPL_O) $(OBJS) $(TEST)/BKTree.test.o
 
 test_HammingTree: clean $(IMPL_O) $(OBJS) $(TEST)/HammingTree.test.o
 	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/HammingTree.test.o -o test_HammingTree
+	
+test_HashTable: clean $(IMPL_O) $(OBJS) $(TEST)/HashTable.test.o
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/HashTable.test.o -o test_HashTable
 
 test_Query: clean $(IMPL_O) $(OBJS) $(TEST)/Query.test.o
 	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Query.test.o -o test_Query
@@ -83,6 +86,7 @@ run: all
 	./test_HammingTree
 	./test_Query
 	./test_Document
+	./test_HashTable
 	./testdriver
 
 valgrind: all
@@ -92,6 +96,7 @@ valgrind: all
 	valgrind $(VALFLAGS) ./test_Query
 	valgrind $(VALFLAGS) ./test_Document
 	valgrind $(VALFLAGS) ./test_HammingTree
+	valgrind $(VALFLAGS) ./test_HashTable
 	valgrind $(VALFLAGS) ./testdriver
 
 
@@ -111,6 +116,6 @@ mainonly: clean $(IMPL_O) $(OBJS) $(MAIN_O)
 
 # Delete executable & object files
 clean:
-	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_LinkedList test_BKTree test_Document test_HammingTree test_Query main
+	rm -f testdriver lib$(LIBRARY).so result.txt test_Entry test_LinkedList test_BKTree test_Document test_HammingTree test_Query test_HashTable main
 	find . -name '*.o' -print | xargs rm -f
 	rm -rf $(ODIR)
