@@ -22,10 +22,10 @@ entry get_BK_treenode_entry(BK_treenode n);
 ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate_queries, LinkedList matched_queries);
 
 /* Prints BK tree: (word of entry) - (number of children) */
-void print_BK_tree(BK_tree tree);
+// void print_BK_tree(BK_tree tree);
 
 /* Items of BK tree as string */
-void BK_tree_toString(BK_tree tree, char *string);
+// void BK_tree_toString(BK_tree tree, char *string);
 
 /* Deallocates of memory of BK tree */
 ErrorCode destroy_BK_tree(BK_tree* ix);

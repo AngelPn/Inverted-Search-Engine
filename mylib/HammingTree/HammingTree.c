@@ -37,15 +37,15 @@ ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, LinkedLi
     return lookup_BKtree(word, ix->TreeArray[strlen(word)-4], threshold, candidate_queries, matched_queries);
 }
 
-void print_HammingTree(HammingTree ix) {
-    for(int i=0 ; i<28 ; i++) {
-        printf("Words of length %d:\n",i+4);
-        if(get_root(ix->TreeArray[i]) != NULL)
-            print_BK_tree(ix->TreeArray[i]);
-        else
-            printf("(null)\n");
-    }
-}
+// void print_HammingTree(HammingTree ix) {
+//     for(int i=0 ; i<28 ; i++) {
+//         printf("Words of length %d:\n",i+4);
+//         if(get_root(ix->TreeArray[i]) != NULL)
+//             print_BK_tree(ix->TreeArray[i]);
+//         else
+//             printf("(null)\n");
+//     }
+// }
 
 BK_tree get_specific_BKTree(HammingTree H_T,int index){
     return H_T->TreeArray[index];
