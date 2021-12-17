@@ -13,6 +13,8 @@ typedef struct index
 
     HashT* Queries;
     HashT* Docs;
+    LinkedList Documents;
+    ListNode curr_doc;
     int cur_doc;
 } Index;
 

@@ -28,9 +28,12 @@ void *get_node_item(ListNode node);
 /* Returns the first and the next node of list */
 ListNode get_first_node(const LinkedList el);
 ListNode get_next_node(ListNode node);
+ListNode get_dummy_node(const LinkedList el);
 
 /* Adds item as first item to list */
 ErrorCode add_item(LinkedList el, void *e);
+
+void add_item_last(LinkedList el, void *item);
 
 /* Pushes item to list and returns it */
 void *push_item(LinkedList el, void *item);

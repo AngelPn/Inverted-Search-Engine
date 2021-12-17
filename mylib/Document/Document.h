@@ -27,4 +27,6 @@ ErrorCode get_next_avail_result(Document d, DocID* p_doc_id, unsigned int* p_num
 /* Deallocated memory of document */
 void destroy_document(void *d);
 
+ErrorCode destroy_document_double(void **d);
+
 #endif

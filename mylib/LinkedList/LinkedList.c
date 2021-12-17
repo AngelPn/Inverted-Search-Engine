@@ -7,6 +7,7 @@
 struct list 
 {
 	ListNode dummy;
+    ListNode last;
 	unsigned int number_entries;
     DestroyFunc destroy_item;
 };
@@ -27,6 +28,7 @@ ErrorCode create_list(LinkedList *el, DestroyFunc destroy_item) {
         return EC_FAIL;
     (*el)->dummy->next = NULL;
     (*el)->dummy->prev = NULL;
+    (*el)->last = (*el)->dummy;
 
     (*el)->number_entries = 0;
     (*el)->destroy_item = destroy_item;
@@ -59,6 +61,10 @@ ListNode get_first_node(const LinkedList el) {
     return el->dummy->next;
 }
 
+ListNode get_dummy_node(const LinkedList el) {
+    return el->dummy;
+}
+
 ListNode get_next_node(ListNode node) {
     return node->next;
 }
@@ -74,6 +80,9 @@ void *list_insert_next(LinkedList el, ListNode node, void *item) {
 	new_node->next = node->next;
     new_node->prev = node;
 	node->next = new_node;
+    if (el->last == node) {
+        el->last = new_node;
+    }
 
 	el->number_entries++;
 
@@ -84,6 +93,10 @@ ErrorCode add_item(LinkedList el, void *e) {
     if (list_insert_next(el, el->dummy, e) != NULL)
         return EC_SUCCESS;
     else return EC_FAIL;
+}
+
+void add_item_last(LinkedList el, void *item) {
+    list_insert_next(el, el->last, item);
 }
 
 void *push_item(LinkedList el, void *item) {
@@ -100,6 +113,10 @@ void *push_item(LinkedList el, void *item) {
 
     new_node->prev = el->dummy;
 	el->dummy->next = new_node;
+
+    if (el->last == NULL) {
+        el->last = new_node;
+    }
 
 	el->number_entries++;
 
@@ -137,6 +154,9 @@ void list_remove_next(LinkedList el, ListNode node) {
     if (removed->next != NULL) {
         removed->next->prev = node;
     }
+    if (el->last == removed) {
+        el->last = node;
+    }
 
 	(el->number_entries)--;
     free(removed);
@@ -144,15 +164,6 @@ void list_remove_next(LinkedList el, ListNode node) {
 
 void list_remove(LinkedList el, ListNode node) {
     list_remove_next(el, node->prev);
-    // ListNode prev_node = el->dummy;
-
-	// for (ListNode curr_node = list_first(el); curr_node != NULL; curr_node = list_next(el, curr_node)){
-	// 	if (curr_node == node){
-	// 		list_remove_next(el, prev_node);
-	// 		return;
-	// 	}
-	// 	prev_node = curr_node;
-	// }
 }
 
 void list_set_destroy_item(LinkedList el, DestroyFunc destroy_item) {
