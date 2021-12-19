@@ -12,11 +12,10 @@ typedef struct tree* BK_tree;
 /* Returns an empty BK tree */
 BK_tree create_BK_tree(DistFunc distance);
 
+/* Inserts word as entry to BK tree and returns the entry */
 entry insert_BK_tree(BK_tree ix, char* b);
 
 BK_treenode get_root(BK_tree tree);
-int get_BK_treenode_cost(BK_treenode n);
-entry get_BK_treenode_entry(BK_treenode n);
 
 /* Same as above but */
 ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate_queries, LinkedList matched_queries);

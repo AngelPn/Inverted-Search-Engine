@@ -104,14 +104,6 @@ BK_treenode get_root(BK_tree tree){
     return tree->root;
 }
 
-entry get_BK_treenode_entry(BK_treenode n){
-    return n->item;
-}
-
-int get_BK_treenode_cost(BK_treenode n){
-    return n->cost;
-}
-
 ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate_queries, LinkedList matched_queries) {
     LinkedList candidate_nodes = NULL; /* actually keeps tree nodes so we can get their children and cost */
     if (create_list(&candidate_nodes, NULL) == EC_FAIL) {
