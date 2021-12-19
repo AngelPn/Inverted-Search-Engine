@@ -26,15 +26,14 @@
  */
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 #include "core.h"
-#include "ed.h"
 #include "Index.h"
 #include "Document.h"
 
-// Global structs used for the search machine
-Index superdex; /* superdex = super + index, it is our super index */
+// Struct used for the search machine
+static Index superdex; /* superdex = super + index, it is our super index */
 
 ErrorCode InitializeIndex() {
     return init_index(&superdex);
@@ -104,8 +103,8 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     /* Traverse candidate_queries and reset "found" field of queries */
     reset_candidate_queries(d, candidate_queries);
 
-    /* Insert document to hash table of documents */
-    HashT_insert(superdex.Docs, get_doc_id(d), d);
+    /* Insert document to list of documents */
+    add_item_last(superdex.Documents, d);
     
 	return state;
 }
@@ -113,14 +112,8 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 
 ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids)
 {
-    /* Search hash table of documents and get Document with given doc_id */
-    Document d = NULL;
-    if ((d = HashT_get(superdex.Docs, &superdex.cur_doc)) != NULL) {
-        superdex.cur_doc++;
-        return get_next_avail_result(d, p_doc_id, p_num_res, p_query_ids);
-    } else {
-        return EC_FAIL;
-    }
+    superdex.curr_doc = get_next_node(superdex.curr_doc);
+    return get_next_avail_result(get_node_item(superdex.curr_doc), p_doc_id, p_num_res, p_query_ids);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,10 +180,6 @@ int EditDistance(char* a, int na, char* b, int nb)
         VP = (HN << 1) | ~(D0 | ((HP << 1) | 1));
     }
     return dist;
-
-	//---------------------------------------------------------
-
-	// return editdist(a, na, b, nb);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +192,6 @@ int HammingDistance(char* a, int na, char* b, int nb)
 	if(na!=nb) return oo;
 	
 	int num_mismatches=0;
-	// for(j=0;j<na;j++) if(a[j]!=b[j]) num_mismatches++;
 
 	for(j = 0; j < na; j++)
         num_mismatches += (a[j] ^ b[j]) > 0 ? 1 : 0;
