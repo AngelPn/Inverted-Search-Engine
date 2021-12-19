@@ -112,7 +112,7 @@ void test_HashT_extend(){
         
         key[i] = malloc(strlen("key")+3);
         strcpy(key[i], "key");
-        char i_str[3];
+        char i_str[4];
         sprintf(i_str, "%d", i);
         strcat(key[i], i_str);
 
