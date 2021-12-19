@@ -49,7 +49,7 @@ CFLAGS = -O3 -fPIC -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags
-VALFLAGS = --leak-check=full --track-origins=yes -s
+VALFLAGS = --leak-check=full --track-origins=yes
 
 PROGRAMS = test_Entry test_LinkedList test_BKTree test_HammingTree test_Query test_Document test_HashTable testdriver
 LIBRARY = core
