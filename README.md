@@ -90,6 +90,9 @@
   Απελευθερώνει αναδρομικά όλη την μνήμη όλων των ΒΚ-δέντρων καλώντας την `destroy_BK_tree()`.
 
 ### [Entry](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Entry)
+  Αποτελεί τη δομή που εισάγεται ως στοιχείο στα ευρετήρια. Περιέχει τη λέξη και το [`payload`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L12). Το `payload` ορίζεται ως ένας πίνακας μεγέθους 3 από λίστες με στοιχεία [`info`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L18). Το index του πίνακα payload δείχνει το `match_dist`, για παράδειγμα `payload[2]` δίνει τη λίστα από `info` τα οποία περιέχουν queries με `match_dist = 3`. Τα ευρετήρια BK tree/Hamming tree θα έχουν λέξεις από queries με `match_dist = {1, 2, 3}`, ενώ το ευρετήριο ExactMatch θα έχει λέξεις από queries μόνο με `match_dist = {0}` και άρα χρησιμοποιείται μόνο το `payload[0]`. Η δομή `info` περιέχει δείκτη στο `Query` και το `index` της λέξης του `entry` στις λέξεις του `Query`, δηλαδή τη σειρά με την οποία η λέξη αυτη εμφανίζεται στις λέξεις του ερωτήματος. Έχουν δημιουργηθεί οι κατάλληλες δομές δημιουργίας και καταστροφής των δομών αυτών. Ενδιαφέρον παρουσιάζουν οι παρακάτω συναρτήσεις:
+  * [`insert_info_payload()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L63-L73)
+  * [`update_payload()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L75-L94)
 
 ### [Query](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Query)
 
