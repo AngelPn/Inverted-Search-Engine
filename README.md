@@ -106,5 +106,8 @@
 ### [Index](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Index)
 Το Index είναι μία super δομή που περιέχει όλες τις υπόλοιπες απαραίτητες δομές για το project. Περιέχει ένα hamming_tree για τα queries της hamming distance, ένα BK_tree για τα queries της edit distance, ένα Hashtable για τα queries της exact_match, μία λίστα δομών Documents που κρατάει τα αποτελέσματα για κάθε document και άλλο ένα hashtable δομών Query το οποίο συγκρατά τις απαραίτητες πληροφορίες για τα query του αρχείου.
 
+### Σύνδεση των δομών κάθε κόμβου λέξης
+![](include/diagram.PNG)
+
 ## [Tests](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/tests)
 Τα tests υλοποιήθηκαν με την χρήση του εργαλείου [acutest](https://github.com/mity/acutest). Γίνονται tests στις βασικές συναρτήσεις των δομών δεδομένων που περιγράφηκαν παραπάνω. Η διαπίστωση για την απελευθέρωση της μνήμης μπορεί να γίνει μέσω valgrind, όπως αναφέρεται στις εντολές μεταγλώττισης και εκτέλεσης πιο πάνω. Μπορείτε να δείτε τα αποτέλεσματα των τεστ στo [Github Actions](https://github.com/AngelPn/Inverted-Search-Engine/actions).
