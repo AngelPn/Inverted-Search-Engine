@@ -97,8 +97,10 @@
 ### [Query](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Query)
 
 ### [Document](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Document)
+Η δομή document συγκρατά το id του document, το text του document deduplicated, ένα hashtable που χρησιμοποιείται για να κάνει το deduplication κρατόντας κάθε λέξη του κειμένου μία φορά, μία λίστα με τα υποψήφια queries η οποία επεφεργάζεται κατα την εκτέλεση της match document και μία λίστα matched queries που είναι το τελικό αποτέλεσμα και χρησιμοποιείται στην get_next_avail_res.
 
 ### [Index](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Index)
+Το Index είναι μία super δομή που περιέχει όλες τις υπόλοιπες απαραίτητες δομές για το project. Περιέχει ένα hamming_tree για τα queries της hamming distance, ένα BK_tree για τα queries της edit distance, ένα Hashtable για τα queries της exact_match, μία λίστα δομών Documents που κρατάει τα αποτελέσματα για κάθε document και άλλο ένα hashtable δομών Query το οποίο συγκρατά τις απαραίτητες πληροφορίες για τα query του αρχείου.
 
 ## [Tests](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/tests)
   
