@@ -40,6 +40,10 @@ void* get_query_key(Query q) {
     return &(q->query_id);
 }
 
+bool get_index_found(Query q, int index){
+    return q->found[index];
+}
+
 bool found(Query q, int index, bool *found_first_time) {
     if (q->found[index] == false) {
         q->counter++;
@@ -74,21 +78,10 @@ ErrorCode end_query(Query q) {
     return EC_SUCCESS;
 }
 
-bool returnQuery(Query q) {
-    if(q->size == q->counter)
-        return true;
-    else
-        return false;
-}
-
 void destroy_query(void *q) {
     Query cq = q;
     if(cq != NULL) {
         free(cq);
         cq = NULL;
     }
-}
-
-bool get_index_found(Query q, int index){
-    return q->found[index];
 }

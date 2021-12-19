@@ -86,7 +86,6 @@ ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, L
         /* Insert query to candidate_queries */
         if (found_first_time == true) {
             if (add_item(candidate_queries, f->q) == EC_FAIL) return EC_FAIL;
-            add_item(candidate_queries, f->q);
         }
         node = get_next_node(node);
     }

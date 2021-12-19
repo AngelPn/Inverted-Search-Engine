@@ -9,25 +9,29 @@ typedef struct query_struct *Query;
 /* Creates query */
 Query create_query(QueryID query_id);
 
-/* Returns the query ID */
-QueryID get_queryID(Query q);
-void* get_query_key(Query q);
-bool get_index_found(Query q, int index);
-
-bool found(Query q, int index, bool *found_first_time);
-
-void reset_found(Query q);
-
-bool returnQuery(Query q);
-
-/* Deallocates memory of query */
-void destroy_query(void *q);
-
 /* Size setter*/
 void set_size(Query q,int s);
 
+/* Sets pointers to payload's list and node of list */
 void set_info_location(Query q, int index, LinkedList list, ListNode node);
 
+/* Returns the query ID */
+QueryID get_queryID(Query q);
+void* get_query_key(Query q);
+
+/* Returns found[index] */
+bool get_index_found(Query q, int index);
+
+/* Sets found[index] to true and returns true if all words of query are found */
+bool found(Query q, int index, bool *found_first_time);
+
+/* Sets found field to false */
+void reset_found(Query q);
+
+/* Removes the nodes of lists in query */
 ErrorCode end_query(Query q);
+
+/* Deallocates memory of query */
+void destroy_query(void *q);
 
 #endif

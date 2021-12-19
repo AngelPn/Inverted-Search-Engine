@@ -45,23 +45,11 @@ void test_reset_found(void) {
     destroy_query(q);
 }
 
-void test_return_query(void) {
-    Query q = create_query(1);
-    set_size(q, MAX_QUERY_WORDS);
-    bool temp = 0;
-    for(int i=0 ; i < MAX_QUERY_WORDS ; i++){
-        found(q,i,&temp);
-    }
-    TEST_ASSERT(returnQuery(q) == 1);
-    destroy_query(q);
-}
-
 TEST_LIST = {
         { "test_create_query", test_create_query },
         { "test_get_queryID", test_get_queryID },
         { "test_found", test_found },
         { "test_reset_found", test_reset_found },
-        { "test_return_query", test_return_query },
         { NULL, NULL }
 };
 
