@@ -17,7 +17,7 @@ entry insert_BK_tree(BK_tree ix, char* b);
 
 BK_treenode get_root(BK_tree tree);
 
-/* Same as above but */
+/* Search in BKtree given word */
 ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate_queries, LinkedList matched_queries);
 
 /* Prints BK tree: (word of entry) - (number of children) */

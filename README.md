@@ -45,12 +45,12 @@
   
 ## Implementation
 
-### [`Linked List`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/LinkedList)
+### [Linked List](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/LinkedList)
   Διπλή λίστα γενικού τύπου που συγκρατεί τα στοιχεία μέσω δείκτη και τα καταστρέφει με συνάρτηση καταστροφής που δίνεται κατά τη δημιουργία της λίστας. Συγκρατεί επιπλέον δείκτη στον τελευταίο κόμβο για υλοποίηση FIFO. 
 
-### [`Hash Table`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/HashTable)
+### [Hash Table](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/HashTable)
   
-### [`BK Tree`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/BKTree)
+### [BK Tree](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/BKTree)
 
   ΒΚ δέντρο που τα παιδιά κάθε κόμβου είναι υλοποιημένα με ταξινομημένη λίστα. Ο δείκτης child δείχνει στο πρώτο παιδί του αντίστοιχου κόμβου και ο δείκτης next δείχνει στον επόμενο κόμβο - παιδί του γονέα.
 
@@ -60,14 +60,14 @@
   * [`insert_BK_tree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/BKTree/BKTree.c#L93)
   Εισάγει τη λέξη ως στοιχείο του δέντρου στη κατάλληλη θέση και επιστρέφει το στοιχείο.
 
-  * [`lookup_BKtree`()](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/BKTree/BKTree.c#L107-L140)
+  * [`lookup_BKtree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/BKTree/BKTree.c#L107-L140)
   Εκτελεί αναζήτηση στο ΒΚ-δέντρο λέξεις που ταιριάζουν με τη λέξη στο όρισμα `w` με βάση το `threshold` που δίνεται ως παράμετρος και την συνάρτηση απόστασης λέξεων που δόθηκε στην `create_BK_tree()`. Σε περίπτωση που μια λέξη-στοιχείο του δέντρου ταιριάζει, τότε καλεί την `update_payload()` για να ενημερώσει τις κατάλληλες δομές.
   Η αναζήτηση γίνεται με τον αλγόριθμο των τριών βημάτων: 
     1. Δημιούργησε μία λίστα υποψήφιων λέξεων-στοιχείων του δέντρου και πρόσθεσε τη ρίζα σε αυτή τη λίστα.
     2. Βγάλε μία υποψήφια λέξη από τη λίστα, υπολόγισε την απόστασή της 𝑑 από τη λέξη της ερώτησης και σύγκρινε την απόσταση με την ακτίνα. Αν είναι μικρότερη, κάλεσε την `update_payload()`.
     3. Κριτήριο επιλογής: πρόσθεσε στη λίστα υποψήφιων λέξεων όλα τα παιδιά του συγκεκριμένου κόμβου που έχουν απόσταση από τον γονέα στο διάστημα [𝑑 − 𝑛, 𝑑 + 𝑛].
 
-  * [`Print_BK_tree`()](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/BKTree/BKTree.c#L151)
+  * [`print_BK_tree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/BKTree/BKTree.c#L151)
   Βοηθητική συνάρτηση που εκτυπώνει αναδρομικά ένα ΒΚ δέντρο από πάνω προς τα κάτω και από τα αριστερά προς τα δεξιά και μαζί με τις λέξεις τυπώνει και έναν αριθμό που είναι το   πόσα παιδία έχει ένας κόμβος. Αν αυτός ο αριθμός είναι πχ 1 τότε αυτό σημαίνει ότι η ακριβώς απο κάτω λέξη της εκτύπβσης είναι το παιδί της. Παράδειγμα:  
   hell-2  
   help-1  
@@ -79,16 +79,24 @@
   * [`destroy_BK_tree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/BKTree/BKTree.c#L183)
   Απελευθερώνει αναδρομικά όλη την μνήμη ενός δέντρου.
 
-### [`Hamming Tree`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/HammingTree)
+### [Hamming Tree](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/HammingTree)
+  * [`create_HammingTree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/HammingTree/HammingTree.c#L12-L18)
+  Δημιουργεί ένα BK tree για κάθε μήκος λέξης στο διάστημα [4, 31]. Στο δέντρο δίνεται δείκτης στη συνάρτηση που θα υπολογίζει την απόσταση, δηλαδη η HammingDist.
 
-### [`Entry`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Entry)
+  * [`insert_HammingTree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/HammingTree/HammingTree.c#L24)/[`lookup_HammingTree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/HammingTree/HammingTree.c#L29)
+  Καλεί τις μεθόδους `insert_BK_tree()`/`lookup_BKtree()` για το ΒΚ-δέντρο που περιέχει λέξεις με το ίδιο μήκος με τη λέξη που δίνεται ως παράμετρος στη συνάρτηση.
 
-### [`Query`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Query)
+  * [`destroy_HammingTree()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/HammingTree/HammingTree.c#L43)
+  Απελευθερώνει αναδρομικά όλη την μνήμη όλων των ΒΚ-δέντρων καλώντας την `destroy_BK_tree()`.
 
-### [`Document`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Document)
+### [Entry](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Entry)
 
-### [`Index`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Index)
+### [Query](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Query)
 
-## [`tests`](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/tests)
+### [Document](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Document)
+
+### [Index](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Index)
+
+## [Tests](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/tests)
   
-  Τα tests υλοποιήθηκαν με την χρήση του εργαλείου [acutest](https://github.com/mity/acutest). Γίνονται tests στις βασικές συναρτήσεις των δομών δεδομένων που περιγράφηκαν παραπάνω. Η διαπίστωση για την απελευθέρωση της μνήμης μπορεί να γίνει μέσω valgrind, όπως αναφέρεται στις εντολές μεταγλώττισης και εκτέλεσης πιο πάνω. Μπορείτε να δείτε και τα αποτέλεσματα των τεστ στα [Github Actions](https://github.com/AngelPn/Inverted-Search-Engine/actions).
+  Τα tests υλοποιήθηκαν με την χρήση του εργαλείου [acutest](https://github.com/mity/acutest). Γίνονται tests στις βασικές συναρτήσεις των δομών δεδομένων που περιγράφηκαν παραπάνω. Η διαπίστωση για την απελευθέρωση της μνήμης μπορεί να γίνει μέσω valgrind, όπως αναφέρεται στις εντολές μεταγλώττισης και εκτέλεσης πιο πάνω. Μπορείτε να δείτε τα αποτέλεσματα των τεστ στo [Github Actions](https://github.com/AngelPn/Inverted-Search-Engine/actions).
