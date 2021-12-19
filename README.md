@@ -90,17 +90,21 @@
   Απελευθερώνει αναδρομικά όλη την μνήμη όλων των ΒΚ-δέντρων καλώντας την `destroy_BK_tree()`.
 
 ### [Entry](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Entry)
-  Αποτελεί τη δομή που εισάγεται ως στοιχείο στα ευρετήρια. Περιέχει τη λέξη και το [`payload`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L12). Το `payload` ορίζεται ως ένας πίνακας μεγέθους 3 από λίστες με στοιχεία [`info`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L18). Το index του πίνακα payload δείχνει το `match_dist`, για παράδειγμα `payload[2]` δίνει τη λίστα από `info` τα οποία περιέχουν queries με `match_dist = 3`. Τα ευρετήρια BK tree/Hamming tree θα έχουν λέξεις από queries με `match_dist = {1, 2, 3}`, ενώ το ευρετήριο ExactMatch θα έχει λέξεις από queries μόνο με `match_dist = {0}` και άρα χρησιμοποιείται μόνο το `payload[0]`. Η δομή `info` περιέχει δείκτη στο `Query` και το `index` της λέξης του `entry` στις λέξεις του `Query`, δηλαδή τη σειρά με την οποία η λέξη αυτη εμφανίζεται στις λέξεις του ερωτήματος. Έχουν δημιουργηθεί οι κατάλληλες δομές δημιουργίας και καταστροφής των δομών αυτών. Ενδιαφέρον παρουσιάζουν οι παρακάτω συναρτήσεις:
+Αποτελεί τη δομή που εισάγεται ως στοιχείο στα ευρετήρια. Περιέχει τη λέξη και το [`payload`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L12). Το `payload` ορίζεται ως ένας πίνακας μεγέθους 3 από λίστες με στοιχεία [`info`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L18). Το index του πίνακα payload δείχνει το `match_dist`, για παράδειγμα `payload[2]` δίνει τη λίστα από `info` τα οποία περιέχουν queries με `match_dist = 3`. Τα ευρετήρια BK tree/Hamming tree θα έχουν λέξεις από queries με `match_dist = {1, 2, 3}`, ενώ το ευρετήριο ExactMatch θα έχει λέξεις από queries μόνο με `match_dist = {0}` και άρα χρησιμοποιείται μόνο το `payload[0]`. Η δομή `info` περιέχει δείκτη στο `Query` και το `index` της λέξης του `entry` στις λέξεις του `Query`, δηλαδή τη σειρά με την οποία η λέξη αυτη εμφανίζεται στις λέξεις του ερωτήματος. Έχουν δημιουργηθεί οι κατάλληλες δομές δημιουργίας και καταστροφής των δομών αυτών. Ενδιαφέρον παρουσιάζουν οι παρακάτω συναρτήσεις:
   * [`insert_info_payload()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L63-L73)
   * [`update_payload()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Entry/Entry.c#L75-L94)
 
 ### [Query](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Query)
+Αποτελεί τη δομή του ερωτήματος και περιέχει το `query ID`, το `size` που είναι το πλήθος των λέξεων που υπάρχουν στο ερώτημα και τα βοηθητικά πεδία:
+  - `lists` και `nodes`: Συγκρατούν για κάθε λέξη του ερωτήματος, δείκτη στη λίστα `payload` του `entry` στο κατάλληλο ευρετήριο και δείκτη στον κόμβο της λίστας αυτής που έχει ως στοιχείο του το `info` που έχει ως στοιχείο του το συγκεκριμένο query. Οι δείκτες αυτοί υπάρχουν για γρήγορη αφαίρεση των ερωτημάτων από τη λίστα `payload`, σε περίπτωση εντολής `EndQuery`.
+  - `found`: Αν κατά την αναζήτηση στα ευρετήρια, βρεθεί αυτή η λέξη του ερωτήματος, θέτει με `true` το πεδίο `found` με το συγκεκριμένο index της λέξης.
+  - `counter`: Μετρητής των μοναδικών λέξεων του ερωτήματος που βρέθηκαν κατά τη διαδικασία της αναζήτησης στα ευρετήρια.
+Έχουν δημιουργηθεί οι κατάλληλες δομές δημιουργίας και καταστροφής της δομής Query. Ενδιαφέρον παρουσιάζουν οι παρακάτων συναρτήσεις:
+  * [`found()`]().
 
 ### [Document](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Document)
-Η δομή document συγκρατά το id του document, το text του document deduplicated, ένα hashtable που χρησιμοποιείται για να κάνει το deduplication κρατόντας κάθε λέξη του κειμένου μία φορά, μία λίστα με τα υποψήφια queries η οποία επεφεργάζεται κατα την εκτέλεση της match document και μία λίστα matched queries που είναι το τελικό αποτέλεσμα και χρησιμοποιείται στην get_next_avail_res.
 
 ### [Index](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Index)
-Το Index είναι μία super δομή που περιέχει όλες τις υπόλοιπες απαραίτητες δομές για το project. Περιέχει ένα hamming_tree για τα queries της hamming distance, ένα BK_tree για τα queries της edit distance, ένα Hashtable για τα queries της exact_match, μία λίστα δομών Documents που κρατάει τα αποτελέσματα για κάθε document και άλλο ένα hashtable δομών Query το οποίο συγκρατά τις απαραίτητες πληροφορίες για τα query του αρχείου.
 
 ## [Tests](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/tests)
   
