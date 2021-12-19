@@ -12,8 +12,8 @@ typedef struct index
     HammingTree HammingDist;
 
     HashT* Queries;
-    HashT* Docs;
-    int cur_doc;
+    LinkedList Documents;
+    ListNode curr_doc;
 } Index;
 
 ErrorCode init_index(Index *index);

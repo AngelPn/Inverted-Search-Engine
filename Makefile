@@ -45,7 +45,7 @@ CC  = gcc
 CXX = g++
 
 # Compile flags
-CFLAGS = -O3 -fPIC -mavx2 -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree -I$(MODULES)/Document
+CFLAGS = -O3 -fPIC -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree -I$(MODULES)/Document
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags

@@ -106,3 +106,20 @@ void destroy_document(void *d) {
     free(dd);
     dd=NULL;
 }
+
+ErrorCode destroy_document_double(void **d) {
+    if(!(*d))
+        return EC_SUCCESS;
+    Document dd = *d;
+    if(dd->ded_doc_str)
+        free(dd->ded_doc_str);
+    if(dd->deduplication)
+        HashT_delete(dd->deduplication);
+    if(dd->candidate_queries)
+        destroy_list(&(dd->candidate_queries));
+    if(dd->matched_queries)
+        destroy_list(&(dd->matched_queries));
+    free(dd);
+    dd=NULL;
+    return EC_SUCCESS;
+}

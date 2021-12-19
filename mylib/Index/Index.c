@@ -5,13 +5,13 @@
 #include "Document.h"
 
 ErrorCode init_index(Index *index) {
-    index->cur_doc = 1;
     if ((index->ExactMatch = HashT_init(string, 1000, destroy_entry_void)) == NULL) return EC_FAIL;
     else if ((index->EditDist = create_BK_tree(EditDistance)) == NULL) return EC_FAIL;
     else if ((index->HammingDist = create_HammingTree(HammingDistance)) == NULL) return EC_FAIL;
     else if ((index->Queries = HashT_init(integer, 1000, destroy_query)) == NULL) return EC_FAIL;
-    else if ((index->Docs = HashT_init(integer, 1000, destroy_document)) == NULL) return EC_FAIL;
-    else return EC_SUCCESS;
+    else if ((create_list(&(index->Documents), destroy_document_double)) == EC_FAIL) return EC_FAIL;
+    index->curr_doc = get_dummy_node(index->Documents);
+    return EC_SUCCESS;
 }
 
 ErrorCode insert_ExactMatch(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
@@ -26,7 +26,6 @@ ErrorCode insert_ExactMatch(Index *index, char *token, unsigned int match_dist, 
 }
 
 ErrorCode insert_EditDist(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
-    // entry e = BK_tree_insert(index->EditDist, get_root_double_p(index->EditDist), token);
     entry e = insert_BK_tree(index->EditDist, token);
     return insert_info_payload(e, match_dist-1, query, token_index);
 }
@@ -66,8 +65,8 @@ ErrorCode lookup_index(Index *index, char* token, LinkedList candidate_queries, 
 ErrorCode destroy_index(Index *index) {
     HashT_delete(index->ExactMatch);
     HashT_delete(index->Queries);
-    HashT_delete(index->Docs);
     if (destroy_BK_tree(&(index->EditDist)) == EC_FAIL) return EC_FAIL;
     else if (destroy_HammingTree(index->HammingDist) == EC_FAIL) return EC_FAIL;
+    else if (destroy_list(&(index->Documents)) == EC_FAIL) return EC_FAIL;
     else return EC_SUCCESS;
 }
