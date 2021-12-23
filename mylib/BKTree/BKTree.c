@@ -123,6 +123,14 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate
         int dist = ix->distance(a, strlen(a), b, strlen(b));
         if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
             if (update_payload(candidate->item, threshold-1, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
+            
+            if (dist <= 2) {
+                if (update_payload(candidate->item, 1, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
+
+                if (dist <= 1) {
+                    if (update_payload(candidate->item, 0, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
+                }
+            }
         }
 
         /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
