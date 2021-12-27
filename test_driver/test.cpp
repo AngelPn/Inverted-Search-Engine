@@ -26,6 +26,7 @@
  */
 
 #include "../include/core.h"
+#include "JobScheduler.h"
 #include <cstdlib>
 #include <cstdio>
 using namespace std;
@@ -286,6 +287,7 @@ void TestSigmod(const char* test_file_str)
 
 int main(int argc, char* argv[])
 {
+    job_scheduler = initialize_scheduler(NUM_THREADS);
 	if(argc<=1) TestSigmod("./test_data/small_test.txt");
 	else TestSigmod(argv[1]);
 	return 0;
