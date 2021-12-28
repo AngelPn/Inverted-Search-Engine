@@ -16,6 +16,7 @@ typedef struct job_scheduler
     pthread_mutex_t candidate_queries_mtx;
     pthread_mutex_t matched_queries_mtx;
     pthread_cond_t nonempty;
+    pthread_barrier_t barrier;
     bool quit;
 } JobScheduler;
 

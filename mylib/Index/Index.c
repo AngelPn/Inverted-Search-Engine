@@ -3,6 +3,8 @@
 
 #include "Index.h"
 #include "Document.h"
+#include "JobScheduler.h"
+#include "common_types.h"
 
 ErrorCode init_index(Index *index) {
     if ((index->ExactMatch = HashT_init(string, 1000, destroy_entry_void)) == NULL) return EC_FAIL;
@@ -48,15 +50,33 @@ ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned
 }
 
 ErrorCode lookup_index(Index *index, char* token, LinkedList candidate_queries, LinkedList matched_queries){
-    entry e = HashT_get(index->ExactMatch, token);
-    if (e != NULL) {
-        if (update_payload(e, 0, candidate_queries, matched_queries) == EC_FAIL)
-            return EC_FAIL;
-    }
-    if (lookup_BKtree(token, index->EditDist, 3, candidate_queries, matched_queries) == EC_FAIL)
-        return EC_FAIL;
-    if (lookup_HammingTree(index->HammingDist, token, 3, candidate_queries, matched_queries) == EC_FAIL)
-        return EC_FAIL;
+
+    void* arg[5];
+    arg[0] = index->ExactMatch;
+    arg[1] = token;
+    arg[2] = candidate_queries;
+    arg[3] = matched_queries;
+    Job j = create_job(HASH_TABLE_GET, arg);
+    submit_job(&job_scheduler, &j);
+    
+    arg[0] = token;
+    arg[1] = index->EditDist;
+    int threshold = 3;
+    arg[2] = &threshold;
+    arg[3] = candidate_queries;
+    arg[4] = matched_queries;
+    j = create_job(LOOKUP_BKTREE, arg);
+    submit_job(&job_scheduler, &j);
+
+    arg[0] = index->HammingDist;
+    arg[1] = token;
+    threshold = 3;
+    arg[2] = &threshold;
+    arg[3] = candidate_queries;
+    arg[4] = matched_queries;
+    j = create_job(LOOKUP_HAMMING_TREE, arg);
+    submit_job(&job_scheduler, &j);
+
     return EC_SUCCESS;
 }
 

@@ -11,8 +11,8 @@ typedef enum {
 
 typedef struct job_struct *Job;
 
+Job create_job(job_type jt, void* args[5]);
 void run(Job j);
-
 ErrorCode destroy_job(void **j);
 
 #endif

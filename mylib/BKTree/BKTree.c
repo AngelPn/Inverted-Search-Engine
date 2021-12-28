@@ -121,7 +121,7 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate
         char *a = get_entry_word(candidate->item);
         char *b = w;
         int dist = ix->distance(a, strlen(a), b, strlen(b));
-        if (dist <= threshold) { /* if distance is smaller than the threshold add word to found words */
+        if (dist <= 3) { /* if distance is smaller than the threshold add word to found words */
             if (update_payload(candidate->item, threshold-1, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
             
             if (dist <= 2) {
