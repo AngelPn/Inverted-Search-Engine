@@ -1,14 +1,18 @@
-#ifndef INVERTED_SEARCH_ENGINE_JOB_H
-#define INVERTED_SEARCH_ENGINE_JOB_H
+#ifndef JOB_H
+#define JOB_H
 
-typedef enum{
-    HashT_get,
-    lookup_BKtree,
-    lookup_HammingTree
+#include "core.h"
+
+typedef enum {
+    HASH_TABLE_GET,
+    LOOKUP_BKTREE,
+    LOOKUP_HAMMING_TREE
 } job_type;
 
-typedef struct Job* Job;
+typedef struct job_struct *Job;
 
-void destroy_job(void* j);
+void run(Job j);
+
+ErrorCode destroy_job(void **j);
 
 #endif

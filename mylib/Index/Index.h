@@ -5,7 +5,7 @@
 #include "HammingTree.h"
 #include "Query.h"
 
-typedef struct index
+typedef struct index 
 {
     HashT* ExactMatch;
     BK_tree EditDist;

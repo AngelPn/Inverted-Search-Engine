@@ -38,14 +38,15 @@ MAIN_O = ref_impl/main.o
 OBJS = $(MODULES)/Index/Index.o $(MODULES)/Entry/Entry.o $(MODULES)/Query/Query.o
 OBJS += $(MODULES)/LinkedList/LinkedList.o $(MODULES)/BKTree/BKTree.o
 OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/HammingTree/HammingTree.o
-OBJS += $(MODULES)/Document/Document.o 
+OBJS += $(MODULES)/Document/Document.o $(MODULES)/Job/Job.o $(MODULES)/JobScheduler/JobScheduler.o 
 
 # Compilers
 CC  = gcc
 CXX = g++
 
 # Compile flags
-CFLAGS = -O3 -fPIC -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable -I$(MODULES)/BKTree -I$(MODULES)/HammingTree -I$(MODULES)/Document
+CFLAGS = -O3 -fPIC -Wall -g -I$(INCL) -I$(MODULES)/Entry -I$(MODULES)/Index -I$(MODULES)/Query -I$(MODULES)/LinkedList -I$(MODULES)/HashTable 
+CFLAGS += -I$(MODULES)/BKTree -I$(MODULES)/HammingTree -I$(MODULES)/Document -I$(MODULES)/Job -I$(MODULES)/JobScheduler 
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -lpthread
 # Valgrind flags
@@ -59,25 +60,25 @@ all: $(PROGRAMS)
 	mv $(OBJS) $(IMPL_O) $(TEST_O) $(TEST)/Entry.test.o $(TEST)/LinkedList.test.o $(TEST)/BKTree.test.o $(TEST)/HammingTree.test.o $(TEST)/Query.test.o $(TEST)/Document.test.o $(TEST)/HashTable.test.o $(ODIR)
 
 test_Entry: clean $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o -o test_Entry
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Entry.test.o -o test_Entry $(LDFLAGS)
 
 test_LinkedList: clean $(IMPL_O) $(OBJS) $(TEST)/LinkedList.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/LinkedList.test.o -o test_LinkedList
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/LinkedList.test.o -o test_LinkedList $(LDFLAGS)
 
 test_BKTree: clean $(IMPL_O) $(OBJS) $(TEST)/BKTree.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/BKTree.test.o -o test_BKTree $(LDFLAGS)
 
 test_HammingTree: clean $(IMPL_O) $(OBJS) $(TEST)/HammingTree.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/HammingTree.test.o -o test_HammingTree
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/HammingTree.test.o -o test_HammingTree $(LDFLAGS)
 	
 test_HashTable: clean $(IMPL_O) $(OBJS) $(TEST)/HashTable.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/HashTable.test.o -o test_HashTable
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/HashTable.test.o -o test_HashTable $(LDFLAGS)
 
 test_Query: clean $(IMPL_O) $(OBJS) $(TEST)/Query.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Query.test.o -o test_Query
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Query.test.o -o test_Query $(LDFLAGS)
 
 test_Document: clean $(IMPL_O) $(OBJS) $(TEST)/Document.test.o
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Document.test.o -o test_Document
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(TEST)/Document.test.o -o test_Document $(LDFLAGS)
 
 run: all
 	./test_Entry
@@ -101,16 +102,16 @@ valgrind: all
 
 
 lib: $(IMPL_O) $(OBJS)
-	$(CC) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) $(OBJS)
+	$(CC) $(CXXFLAGS) -shared -o lib$(LIBRARY).so $(IMPL_O) $(OBJS) $(LDFLAGS)
 
 testdriver: lib $(TEST_O)
-	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so
+	$(CXX) $(CXXFLAGS) -o testdriver $(TEST_O) ./lib$(LIBRARY).so $(LDFLAGS)
 
 valgrindmain: mainonly
 	valgrind $(VALFLAGS) ./main
 
 mainonly: clean $(IMPL_O) $(OBJS) $(MAIN_O)
-	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(MAIN_O) -o main
+	$(CC) $(CFLAGS) $(IMPL_O) $(OBJS) $(MAIN_O) -o main $(LDFLAGS)
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(IMPL_O) $(MAIN_O) $(ODIR)
 

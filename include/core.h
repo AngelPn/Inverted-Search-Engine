@@ -46,9 +46,6 @@ extern "C" {
 ///Number of threads
 #define NUM_THREADS 8
 
-#include "JobScheduler.h"
-JobScheduler job_scheduler;
-
 /// Maximum document length in characters.
 #define MAX_DOC_LENGTH (1<<22)
 

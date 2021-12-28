@@ -1,37 +1,40 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "Job.h"
-#include "core.h"
-#include "HashTable.h"
+#include "HammingTree.h"
 
-struct Job{
+struct job_struct{
     /*void (*func)(void*);*/
     void* args[5];
     job_type jobType;
 };
 
-Job create_job(job_type jt, void* args[5]){
-    Job j = malloc(sizeof(struct Job));
-    for(int i = 0;i < 5;i++){
+Job create_job(job_type jt, void* args[5]) {
+    Job j = (Job)malloc(sizeof(struct job_struct));
+    for(int i = 0; i < 5; i++){
         j->args[i] = args[i];
     }
     return j;
 }
 
-void run(Job j){
+void run(Job j) {
     switch(j->jobType){
-        case HashT_get:
-            HashT_get(j->args[0],j->args[1]);
+        case HASH_TABLE_GET:
+            HashT_get(j->args[0], j->args[1]);
             break;
-        case lookup_BKtree:
-            lookup_BKtree(j->args[0],j->args[1],j->args[2],j->args[3],j->args[4]);
+        case LOOKUP_BKTREE:
+            lookup_BKtree(j->args[0], j->args[1], *(int *)j->args[2], j->args[3], j->args[4]);
             break;
-        case lookup_HammingTree:
-            lookup_HammingTree(j->args[0],j->args[1],j->args[2],j->args[3],j->args[4]);
+        case LOOKUP_HAMMING_TREE:
+            lookup_HammingTree(j->args[0], j->args[1], *(int *)j->args[2], j->args[3], j->args[4]);
             break;
     }
 }
 
-void destroy_job(void* j){
-    free(j);
+ErrorCode destroy_job(void **j) {
+    Job jj = *j;
+    free(jj);
+    *j = NULL;
+    return EC_SUCCESS;
 }
