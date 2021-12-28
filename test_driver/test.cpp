@@ -285,7 +285,7 @@ void TestSigmod(const char* test_file_str)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // extern JobScheduler job_scheduler;
-#include "JobScheduler.h"
+
 int main(int argc, char* argv[])
 {
     initialize_scheduler(&job_scheduler, NUM_THREADS);

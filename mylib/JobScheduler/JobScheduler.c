@@ -62,6 +62,7 @@ int wait_all_tasks_finish(JobScheduler* js){
 
 int destroy_scheduler(JobScheduler* js){
     js->quit = true;
+    pthread_cond_broadcast(&(js->nonempty));
     for (int i=0 ; i<NUM_THREADS ; i++) {
         int err;
         if ((err = pthread_join(js->tids[i], NULL))) {
