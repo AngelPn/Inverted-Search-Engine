@@ -31,6 +31,7 @@
 #include "core.h"
 #include "Index.h"
 #include "Document.h"
+#include "common_types.h"
 
 // Struct used for the search machine
 static Index superdex; /* superdex = super + index, it is our super index */
@@ -96,7 +97,9 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
         state = lookup_index(&superdex, token, candidate_queries, matched_queries);
         token = strtok(NULL, " \n");
     }
-
+    
+    while (wait_all_jobs_finish(&job_scheduler));
+    
     /* Match queries with document */
     match_document(d, matched_queries);
 

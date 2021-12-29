@@ -3,6 +3,7 @@
 
 #include "Job.h"
 #include "HammingTree.h"
+#include "common_types.h"
 
 struct job_struct{
     /*void (*func)(void*);*/
@@ -31,12 +32,12 @@ void run(Job j) {
         }
         case LOOKUP_BKTREE:
         {
-            lookup_BKtree(j->args[0], j->args[1], *(int *)j->args[2], j->args[3], j->args[4]);
+            lookup_BKtree(j->args[0], j->args[1], 3, j->args[3], j->args[4]);
             break;
         }
         case LOOKUP_HAMMING_TREE:
         {
-            lookup_HammingTree(j->args[0], j->args[1], *(int *)j->args[2], j->args[3], j->args[4]);
+            lookup_HammingTree(j->args[0], j->args[1], 3, j->args[3], j->args[4]);
             break;
         }
     }

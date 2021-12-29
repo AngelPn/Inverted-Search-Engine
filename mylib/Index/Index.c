@@ -59,22 +59,20 @@ ErrorCode lookup_index(Index *index, char* token, LinkedList candidate_queries, 
     Job j = create_job(HASH_TABLE_GET, arg);
     submit_job(&job_scheduler, &j);
     
-    arg[0] = token;
-    arg[1] = index->EditDist;
-    int threshold = 3;
-    arg[2] = &threshold;
-    arg[3] = candidate_queries;
-    arg[4] = matched_queries;
-    j = create_job(LOOKUP_BKTREE, arg);
+    void* arg2[5];
+    arg2[0] = token;
+    arg2[1] = index->EditDist;
+    arg2[3] = candidate_queries;
+    arg2[4] = matched_queries;
+    j = create_job(LOOKUP_BKTREE, arg2);
     submit_job(&job_scheduler, &j);
 
-    arg[0] = index->HammingDist;
-    arg[1] = token;
-    threshold = 3;
-    arg[2] = &threshold;
-    arg[3] = candidate_queries;
-    arg[4] = matched_queries;
-    j = create_job(LOOKUP_HAMMING_TREE, arg);
+    void* arg3[5];
+    arg3[0] = index->HammingDist;
+    arg3[1] = token;
+    arg3[3] = candidate_queries;
+    arg3[4] = matched_queries;
+    j = create_job(LOOKUP_HAMMING_TREE, arg3);
     submit_job(&job_scheduler, &j);
 
     return EC_SUCCESS;

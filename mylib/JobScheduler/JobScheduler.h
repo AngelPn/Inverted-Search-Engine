@@ -15,15 +15,22 @@ typedef struct job_scheduler
     pthread_mutex_t job_mtx;
     pthread_mutex_t candidate_queries_mtx;
     pthread_mutex_t matched_queries_mtx;
+
+    pthread_mutex_t em_mtx;
+    pthread_mutex_t ed_mtx;
+    pthread_mutex_t hd_mtx;
+
     pthread_cond_t nonempty;
+
     pthread_barrier_t barrier;
+
     bool quit;
 } JobScheduler;
 
 void initialize_scheduler(JobScheduler *js, int execution_threads);
 int submit_job(JobScheduler* js, Job* j);
 int execute_all_jobs(JobScheduler* js);
-int wait_all_tasks_finish(JobScheduler* js);
+int wait_all_jobs_finish(JobScheduler* js);
 int destroy_scheduler(JobScheduler* js);
 
 #endif

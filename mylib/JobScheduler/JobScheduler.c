@@ -15,7 +15,11 @@ void initialize_scheduler(JobScheduler *js, int execution_threads) {
     js->matched_queries_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->nonempty = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     
-    pthread_barrier_init(&(js->barrier), NULL, execution_threads);
+    js->em_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    js->ed_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    js->hd_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    
+    pthread_barrier_init(&(js->barrier), NULL, 3);
 
     for (int i = 0; i < js->execution_threads; i++) {
         /* Create threads */
@@ -40,10 +44,11 @@ void* thread_code(void *arg){
             break;
         }
         job = pop_item(js->jobs);
-        pthread_mutex_unlock(&(js->job_mtx));
-        run(job);
 
-        destroy_job((void**)(&job));
+        run(job);
+        destroy_job((void**)(&job)); //FIXME
+
+        pthread_mutex_unlock(&(js->job_mtx));
     }
 
     return NULL;
@@ -61,8 +66,12 @@ int execute_all_jobs(JobScheduler* js){
     return 0;
 }
 
-int wait_all_tasks_finish(JobScheduler* js){
-    return 0;
+int wait_all_jobs_finish(JobScheduler* js){
+    pthread_mutex_lock(&(js->job_mtx));
+    int n = get_number_items(js->jobs);
+    
+    pthread_mutex_unlock(&(js->job_mtx));
+    return n;
 }
 
 int destroy_scheduler(JobScheduler* js){

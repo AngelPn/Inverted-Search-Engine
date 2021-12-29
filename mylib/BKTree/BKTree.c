@@ -122,7 +122,7 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate
         char *b = w;
         int dist = ix->distance(a, strlen(a), b, strlen(b));
         if (dist <= 3) { /* if distance is smaller than the threshold add word to found words */
-            if (update_payload(candidate->item, threshold-1, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
+            if (update_payload(candidate->item, 2, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
             
             if (dist <= 2) {
                 if (update_payload(candidate->item, 1, candidate_queries, matched_queries) == EC_FAIL) return EC_FAIL;
@@ -136,7 +136,7 @@ ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate
         /* Step 3: Add to candidate words list all children of this node that have distance from parent node in (d-n, d+n) */
         BK_treenode current = candidate->child;
         while (current!=NULL) {
-            if (current->cost >= dist - threshold && current->cost <= dist + threshold) {
+            if (current->cost >= dist - 3 && current->cost <= dist + 3) {
                 if (add_item(candidate_nodes, current) == EC_FAIL) return EC_FAIL;
             }
             current = current->next;
