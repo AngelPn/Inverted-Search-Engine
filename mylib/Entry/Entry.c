@@ -76,7 +76,7 @@ ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int ind
 }
 
 ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, LinkedList matched_queries){
-    // pthread_mutex_lock(&(job_scheduler.matched_queries_mtx));
+    pthread_mutex_lock(&(job_scheduler.matched_queries_mtx));
     
     LinkedList l = e->payload[threshold];
     
@@ -97,7 +97,7 @@ ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, L
         node = get_next_node(node);
     }
 
-    // pthread_mutex_unlock(&(job_scheduler.matched_queries_mtx));
+    pthread_mutex_unlock(&(job_scheduler.matched_queries_mtx));
     return EC_SUCCESS;
 }
 

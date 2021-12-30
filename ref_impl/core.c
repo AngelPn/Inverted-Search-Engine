@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "core.h"
 #include "Index.h"
 #include "Document.h"
@@ -97,10 +98,12 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
         state = lookup_index(&superdex, token, candidate_queries, matched_queries);
         token = strtok(NULL, " \n");
     }
-    
-    while (wait_all_jobs_finish(&job_scheduler));
-    
+
+    while (wait_all_jobs_finish(&job_scheduler)){;}
+
+    usleep(50);
     /* Match queries with document */
+    //printf("d: %d\n", *(int*)get_doc_id(d));
     match_document(d, matched_queries);
 
     /* Traverse candidate_queries and reset "found" field of queries */

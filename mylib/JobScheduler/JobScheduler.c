@@ -45,10 +45,9 @@ void* thread_code(void *arg){
         }
         job = pop_item(js->jobs);
 
+        pthread_mutex_unlock(&(js->job_mtx));
         run(job);
         destroy_job((void**)(&job)); //FIXME
-
-        pthread_mutex_unlock(&(js->job_mtx));
     }
 
     return NULL;
@@ -67,10 +66,10 @@ int execute_all_jobs(JobScheduler* js){
 }
 
 int wait_all_jobs_finish(JobScheduler* js){
-    pthread_mutex_lock(&(js->job_mtx));
+
     int n = get_number_items(js->jobs);
-    
-    pthread_mutex_unlock(&(js->job_mtx));
+
+
     return n;
 }
 

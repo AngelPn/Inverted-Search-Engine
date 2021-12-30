@@ -23,21 +23,27 @@ Job create_job(job_type jt, void* args[5]) {
 void run(Job j) {
     switch(j->jobType){
         case HASH_TABLE_GET:
-        {   
+        {
+
             entry e = HashT_get(j->args[0], j->args[1]);
             if (e != NULL) {
                 update_payload(e, 0, j->args[2], j->args[3]);
             }
+
             break;
         }
         case LOOKUP_BKTREE:
         {
+
             lookup_BKtree(j->args[0], j->args[1], 3, j->args[3], j->args[4]);
+
             break;
         }
         case LOOKUP_HAMMING_TREE:
         {
+
             lookup_HammingTree(j->args[0], j->args[1], 3, j->args[3], j->args[4]);
+
             break;
         }
     }
