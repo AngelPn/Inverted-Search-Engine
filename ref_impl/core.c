@@ -99,11 +99,11 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
         token = strtok(NULL, " \n");
     }
 
-    while (wait_all_jobs_finish(&job_scheduler)){;}
+    wait_all_jobs_finish(&job_scheduler);
 
-    usleep(50);
+    // usleep(50);
     /* Match queries with document */
-    //printf("d: %d\n", *(int*)get_doc_id(d));
+    // printf("d: %d\n", *(int*)get_doc_id(d));
     match_document(d, matched_queries);
 
     /* Traverse candidate_queries and reset "found" field of queries */

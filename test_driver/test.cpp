@@ -289,6 +289,7 @@ void TestSigmod(const char* test_file_str)
 int main(int argc, char* argv[])
 {
     initialize_scheduler(&job_scheduler, NUM_THREADS);
+	// while (true) {}
 
 	if(argc<=1) TestSigmod("./test_data/small_test.txt");
 	else TestSigmod(argv[1]);

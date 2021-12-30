@@ -9,11 +9,18 @@ void initialize_scheduler(JobScheduler *js, int execution_threads) {
     js->execution_threads = execution_threads;
     create_list(&(js->jobs), destroy_job);
     js->quit = false;
+    js->job_counter = 0;
     js->tids = malloc(sizeof(pthread_t) * execution_threads);
+
+
     js->job_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->candidate_queries_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->matched_queries_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    js->job_count_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+
+
     js->nonempty = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
+    js->empty = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     
     js->em_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->ed_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
@@ -36,7 +43,8 @@ void* thread_code(void *arg){
     Job job = NULL;
     while(1){
         pthread_mutex_lock(&(js->job_mtx));
-        while(get_number_items(js->jobs) == 0 && !(js->quit)) {
+
+        while((get_number_items(js->jobs) == 0) && !(js->quit)) {
             pthread_cond_wait(&(js->nonempty), &(js->job_mtx)); //if jobs Q is empty wait for the non-empty signal
         }
         if(js->quit){
@@ -46,7 +54,18 @@ void* thread_code(void *arg){
         job = pop_item(js->jobs);
 
         pthread_mutex_unlock(&(js->job_mtx));
+
         run(job);
+
+        // printf("before lock job count mtx in thread code\n");
+        pthread_mutex_lock(&(js->job_mtx));
+        (js->job_counter)--;
+        // printf("THREAD CODE job_counter: %d\n", js->job_counter);
+        if (js->job_counter == 0) {
+            pthread_cond_signal(&(js->empty));
+        }
+        pthread_mutex_unlock(&(js->job_mtx));
+        
         destroy_job((void**)(&job)); //FIXME
     }
 
@@ -54,10 +73,21 @@ void* thread_code(void *arg){
 }
 
 int submit_job(JobScheduler* js, Job* j){
+
     pthread_mutex_lock(&(js->job_mtx));
     ErrorCode err = add_item(js->jobs, *j);
+
+    // printf("job count mtx is locked\n");
+    // pthread_mutex_lock(&(js->job_count_mtx));
+    (js->job_counter)++;
+    // printf("SUB job_counter: %d\n", js->job_counter);
+    // pthread_mutex_unlock(&(js->job_count_mtx));
+
     pthread_cond_signal(&(js->nonempty));
     pthread_mutex_unlock(&(js->job_mtx));
+
+
+
     return err;
 }
 
@@ -66,11 +96,14 @@ int execute_all_jobs(JobScheduler* js){
 }
 
 int wait_all_jobs_finish(JobScheduler* js){
-
-    int n = get_number_items(js->jobs);
-
-
-    return n;
+    // printf("before lock job count mtx in wait\n");
+    pthread_mutex_lock(&(js->job_mtx));
+    while (js->job_counter != 0) {
+        pthread_cond_wait(&(js->empty), &(js->job_mtx));
+    }
+    pthread_mutex_unlock(&(js->job_mtx));
+    // printf("WAIT! job counter = 0\n");
+    return 1;
 }
 
 int destroy_scheduler(JobScheduler* js){

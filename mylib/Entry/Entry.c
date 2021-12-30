@@ -76,7 +76,7 @@ ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int ind
 }
 
 ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, LinkedList matched_queries){
-    pthread_mutex_lock(&(job_scheduler.matched_queries_mtx));
+    
     
     LinkedList l = e->payload[threshold];
     
@@ -85,19 +85,28 @@ ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, L
     for (int i = 0; i < get_number_items(l); i++) {
         info f = get_node_item(node);
         /* If all words of query match to document's words, add query to document's matched_queries list */
+        pthread_mutex_lock(&(job_scheduler.candidate_queries_mtx));
+
+        // Query q = NULL
+        // if ((q = HashT_get(candidate_queries, f->q->queryID)) == NULL) {
+        //    q = create_query();
+        //    HashT_insert(candidate_queries, q);            
+        // }
+        // found(q, f->index, &found_first_time);
+        
         if (found(f->q, f->index, &found_first_time)){
             if (add_item(matched_queries, f->q) == EC_FAIL) return EC_FAIL;
         }
         /* Insert query to candidate_queries */
         if (found_first_time == true) {
-            // pthread_mutex_lock(&(job_scheduler.candidate_queries_mtx));
             if (add_item(candidate_queries, f->q) == EC_FAIL) return EC_FAIL;
-            // pthread_mutex_unlock(&(job_scheduler.candidate_queries_mtx));
         }
+        pthread_mutex_unlock(&(job_scheduler.candidate_queries_mtx));
+
         node = get_next_node(node);
     }
 
-    pthread_mutex_unlock(&(job_scheduler.matched_queries_mtx));
+    
     return EC_SUCCESS;
 }
 
