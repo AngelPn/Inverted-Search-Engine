@@ -92,11 +92,10 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 
     /* For each token of deduplicated doc_str, search token in Index */
     char* ded_doc = deduplicate_doc_str(d, doc_str);
-    char* token = strtok(ded_doc, " ");
+    char* token;
     ErrorCode state = EC_SUCCESS;
-    while (token != NULL && state == EC_SUCCESS) {
+    while ((token = strtok_r(ded_doc, " ", &ded_doc)) && state == EC_SUCCESS) {
         state = lookup_index(&superdex, token, candidate_queries, matched_queries);
-        token = strtok(NULL, " \n");
     }
 
     wait_all_jobs_finish(&job_scheduler);
