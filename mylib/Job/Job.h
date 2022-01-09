@@ -4,7 +4,8 @@
 #include "core.h"
 
 typedef enum {
-    MATCH_DOCUMENT
+    MATCH_DOCUMENT,
+    START_Q
 } job_type;
 
 typedef struct job_struct *Job;

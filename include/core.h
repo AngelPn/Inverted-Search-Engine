@@ -44,7 +44,7 @@ extern "C" {
 //*********************************************************************************************
 
 ///Number of threads
-#define NUM_THREADS 12
+#define NUM_THREADS 6
 
 /// Maximum document length in characters.
 #define MAX_DOC_LENGTH (1<<22)
@@ -168,6 +168,7 @@ ErrorCode StartQuery(QueryID        query_id,
                      MatchType      match_type,
                      unsigned int   match_dist);
 
+ErrorCode StartQuery_job(void *args[4]);
 /**
 * Remove a query from the active query set.
 *

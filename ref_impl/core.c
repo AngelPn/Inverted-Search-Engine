@@ -34,6 +34,8 @@
 #include "Document.h"
 #include "common_types.h"
 
+bool start_q_flag = 0;
+
 // Struct used for the search machine
 static Index superdex; /* superdex = super + index, it is our super index */
 
@@ -47,28 +49,69 @@ ErrorCode DestroyIndex() {
 }
 
 ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist) {
-    wait_all_jobs_finish(&job_scheduler);
+    if(!start_q_flag) {
+        wait_all_jobs_finish(&job_scheduler);
+        start_q_flag = 1;
+    }
+    void * args[4];
+
+    int *query_ID = malloc(sizeof(int));
+    *query_ID = query_id;
+    args[0] = query_ID;
+
+    char *doc_string = malloc(strlen(query_str) + 1);;
+    strcpy(doc_string, query_str);
+    args[1] = doc_string;
+
+    MatchType *mt = malloc(sizeof(MatchType));
+    *mt = match_type;
+    args[2] = mt;
+
+    int *md = malloc(sizeof(int));
+    *md = match_dist;
+    args[3] = md;
+
+    Job j = create_job(START_Q, args);
+    submit_job(&job_scheduler, &j);
+
+    return EC_SUCCESS;
+}
+
+ErrorCode StartQuery_job(void *args[4]) {
+
+    QueryID query_id = *(int*)(args[0]);
+    char* query_str = args[1];
+    MatchType match_type = *(MatchType*)args[2];
+    unsigned int match_dist = *(int*)(args[3]);
 
     /* Tokenize query_str */
     char* new_query_str = (char*)malloc(strlen(query_str) + 1);
     strcpy(new_query_str, query_str);
-    char* token = strtok(new_query_str, " ");
+    char* temp = new_query_str;
+    char* token;
 
     /* Insert query in active set of queries */
     Query query = create_query(query_id);
+    pthread_mutex_lock(&(job_scheduler.job_mtx));
     HashT_insert(superdex.Queries, get_query_key(query), query);
+    pthread_mutex_unlock(&(job_scheduler.job_mtx));
 
     int query_words = 0; /* number of words in query */
     ErrorCode state = EC_SUCCESS;
     /* For each word in query, insert it to index */
-    while (token != NULL && state == EC_SUCCESS) {
+    while ((token = strtok_r(new_query_str, " ", &new_query_str)) && state == EC_SUCCESS) {
+        pthread_mutex_lock(&(job_scheduler.job_mtx));
         state = insert_index(&superdex, token, match_type, match_dist, query, query_words);
-        token = strtok(NULL, " \n");
+        pthread_mutex_unlock(&(job_scheduler.job_mtx));
         query_words++;
     }
     /* Set the number of words in query */
     set_size(query, query_words);
-    free(new_query_str);
+    free(temp);
+    free(args[0]);
+    free(args[1]);
+    free(args[2]);
+    free(args[3]);
 	return state;
 }
 
@@ -85,6 +128,9 @@ ErrorCode EndQuery(QueryID query_id)
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
+    if(start_q_flag)
+        start_q_flag = 0;
+
     void * args[5];
 
     int *doc_ID = malloc(sizeof(int));

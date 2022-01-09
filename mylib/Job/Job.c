@@ -27,6 +27,11 @@ void run(Job j) {
             MatchDocument_job(j->args);
             break;
         }
+        case START_Q:
+        {
+            StartQuery_job(j->args);
+            break;
+        }
     }
 }
 
