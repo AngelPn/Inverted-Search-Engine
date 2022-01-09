@@ -42,6 +42,7 @@ ErrorCode InitializeIndex() {
 }
 
 ErrorCode DestroyIndex() {
+    wait_all_jobs_finish(&job_scheduler);
 	return destroy_index(&superdex);
 }
 
@@ -104,7 +105,6 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 ErrorCode MatchDocument_job(void *args[4])
 {
     DocID doc_id = *(int*)(args[0]);
-    printf("doc_id: %d\n", doc_id);
     char* doc_str = args[1];
 
     LinkedList matched_queries = NULL;
@@ -146,7 +146,6 @@ ErrorCode MatchDocument_job(void *args[4])
 ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids)
 {
     wait_all_jobs_finish(&job_scheduler);
-
     Document d = NULL;
     if ((d = HashT_get(superdex.Documents, &superdex.curr_doc)) != NULL) {
         superdex.curr_doc++;

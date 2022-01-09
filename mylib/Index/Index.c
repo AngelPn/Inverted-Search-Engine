@@ -50,7 +50,6 @@ ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned
 }
 
 ErrorCode lookup_index(Index *index, char* token, HashT* candidate_queries, LinkedList matched_queries){
-
     entry e = HashT_get(index->ExactMatch, token);
     if (e != NULL) {
         if (update_payload(e, 0, candidate_queries, matched_queries) == EC_FAIL)

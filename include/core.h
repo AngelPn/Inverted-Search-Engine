@@ -44,7 +44,7 @@ extern "C" {
 //*********************************************************************************************
 
 ///Number of threads
-#define NUM_THREADS 3
+#define NUM_THREADS 12
 
 /// Maximum document length in characters.
 #define MAX_DOC_LENGTH (1<<22)
