@@ -19,7 +19,7 @@ void print_entry_word(void *e);
 /* Inserts info to entry's payload */
 ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int index);
 
-ErrorCode update_payload(entry e, int threshold,  LinkedList candidate_queries, LinkedList matched_queries);
+ErrorCode update_payload(entry e, int threshold,  HashT* candidate_queries, LinkedList matched_queries);
 
 /* Deallocates memory of entry */
 ErrorCode destroy_entry(void **e);

@@ -16,7 +16,7 @@ BK_tree get_specific_BKTree(HammingTree H_T,int index);
 entry insert_HammingTree(HammingTree ht, char* w);
 
 /* Search in HammingTree given word */
-ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, LinkedList candidate_queries, LinkedList matched_queries);
+ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, HashT* candidate_queries, LinkedList matched_queries);
 
 /* Prints HammingTree: BKtree index -> (word of entry) - (number of children) */
 void print_HammingTree(HammingTree ix);

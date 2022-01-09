@@ -104,7 +104,7 @@ BK_treenode get_root(BK_tree tree){
     return tree->root;
 }
 
-ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, LinkedList candidate_queries, LinkedList matched_queries) {
+ErrorCode lookup_BKtree(char* w, BK_tree ix, int threshold, HashT* candidate_queries, LinkedList matched_queries) {
     LinkedList candidate_nodes = NULL; /* actually keeps tree nodes so we can get their children and cost */
     if (create_list(&candidate_nodes, NULL) == EC_FAIL) {
         printf("Error! Create entry list failed\n");

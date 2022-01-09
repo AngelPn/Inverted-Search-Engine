@@ -205,6 +205,8 @@ ErrorCode EndQuery(QueryID query_id);
 ErrorCode MatchDocument(DocID         doc_id,
                         const char*   doc_str);
 
+ErrorCode MatchDocument_job(void *args[4]);
+
 /**
 * Return the next available active queries subset that matches any previously
 * submitted document, sorted by query IDs. The returned result must depend

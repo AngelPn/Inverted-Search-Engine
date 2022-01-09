@@ -19,17 +19,21 @@ void set_info_location(Query q, int index, LinkedList list, ListNode node);
 QueryID get_queryID(Query q);
 void* get_query_key(Query q);
 
+int get_size(Query q);
+
 /* Returns found[index] */
 bool get_index_found(Query q, int index);
 
 /* Sets found[index] to true and returns true if all words of query are found */
-bool found(Query q, int index, bool *found_first_time);
+bool found(Query q, int index);
 
 /* Sets found field to false */
 void reset_found(Query q);
 
 /* Removes the nodes of lists in query */
 ErrorCode end_query(Query q);
+
+void print_query(void *q);
 
 /* Deallocates memory of query */
 void destroy_query(void *q);

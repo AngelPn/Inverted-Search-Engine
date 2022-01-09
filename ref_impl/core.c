@@ -46,6 +46,8 @@ ErrorCode DestroyIndex() {
 }
 
 ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist) {
+    wait_all_jobs_finish(&job_scheduler);
+
     /* Tokenize query_str */
     char* new_query_str = (char*)malloc(strlen(query_str) + 1);
     strcpy(new_query_str, query_str);
@@ -71,6 +73,7 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
 
 ErrorCode EndQuery(QueryID query_id)
 {
+    wait_all_jobs_finish(&job_scheduler);
     Query query = NULL;
     if ((query = HashT_get(superdex.Queries, &query_id)) != NULL) {
         return end_query(query);
@@ -81,11 +84,34 @@ ErrorCode EndQuery(QueryID query_id)
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
-    LinkedList candidate_queries = NULL, matched_queries = NULL;
-    /* Create list of candidate queries: queries that possibly match the document */
-    if (create_list(&candidate_queries, NULL) == EC_FAIL) return EC_FAIL;
+    void * args[5];
+
+    int *doc_ID = malloc(sizeof(int));
+    *doc_ID = doc_id;
+    args[0] = doc_ID;
+
+    char *doc_string = malloc(strlen(doc_str) + 1);;
+    strcpy(doc_string, doc_str);
+    args[1] = doc_string;
+
+    Job j = create_job(MATCH_DOCUMENT, args);
+    submit_job(&job_scheduler, &j);
+    
+
+	return EC_SUCCESS;
+}
+
+ErrorCode MatchDocument_job(void *args[4])
+{
+    DocID doc_id = *(int*)(args[0]);
+    printf("doc_id: %d\n", doc_id);
+    char* doc_str = args[1];
+
+    LinkedList matched_queries = NULL;
     /* Create list of matched queries: queries that match the document */
     if (create_list(&matched_queries, NULL) == EC_FAIL) return EC_FAIL;
+
+    HashT* candidate_queries = HashT_init(integer, 1000, destroy_query);
 
     /* Create document */
     Document d = create_document(doc_id);
@@ -98,27 +124,36 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
         state = lookup_index(&superdex, token, candidate_queries, matched_queries);
     }
 
-    wait_all_jobs_finish(&job_scheduler);
-
-    // usleep(50);
     /* Match queries with document */
     // printf("d: %d\n", *(int*)get_doc_id(d));
-    match_document(d, matched_queries);
+    match_document(d, matched_queries, candidate_queries);
+    // printf("IM HERE\n");
+    // print_list(matched_queries, print_query);
 
     /* Traverse candidate_queries and reset "found" field of queries */
-    reset_candidate_queries(d, candidate_queries);
+    // reset_candidate_queries(d, candidate_queries);
 
     /* Insert document to list of documents */
-    add_item_last(superdex.Documents, d);
-    
+    pthread_mutex_lock(&(job_scheduler.job_mtx));
+    HashT_insert(superdex.Documents, get_doc_id(d), d); // eventually our only shared data
+    pthread_mutex_unlock(&(job_scheduler.job_mtx));
+
+    free(args[0]);
+    free(doc_str);
 	return state;
 }
 
-
 ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids)
 {
-    superdex.curr_doc = get_next_node(superdex.curr_doc);
-    return get_next_avail_result(get_node_item(superdex.curr_doc), p_doc_id, p_num_res, p_query_ids);
+    wait_all_jobs_finish(&job_scheduler);
+
+    Document d = NULL;
+    if ((d = HashT_get(superdex.Documents, &superdex.curr_doc)) != NULL) {
+        superdex.curr_doc++;
+        return get_next_avail_result(d, p_doc_id, p_num_res, p_query_ids);
+    } else {
+        return EC_FAIL;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

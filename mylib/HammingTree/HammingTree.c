@@ -26,7 +26,7 @@ entry insert_HammingTree(HammingTree ht, char* w) {
     return insert_BK_tree(ht->TreeArray[strlen(w) - 4], w);
 }
 
-ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, LinkedList candidate_queries, LinkedList matched_queries){
+ErrorCode lookup_HammingTree(HammingTree ix, char* word, int threshold, HashT* candidate_queries, LinkedList matched_queries){
     return lookup_BKtree(word, ix->TreeArray[strlen(word)-4], threshold, candidate_queries, matched_queries);
 }
 

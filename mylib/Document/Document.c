@@ -11,7 +11,7 @@ struct document
 	DocID doc_id;
     char *ded_doc_str;      /* deduplicated doc string */
     HashT *deduplication;   /* hash table for deduplication */
-    LinkedList candidate_queries;
+    HashT* candidate_queries;
     LinkedList matched_queries;
 };
 
@@ -35,17 +35,14 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
     /* Allocating new char array because strtok() cant be applied on string literals */
     char* new_txt = malloc(strlen(doc_str) + 1);
     strcpy(new_txt, doc_str);
+    char *temp = new_txt;
 
     d->ded_doc_str = malloc(strlen(doc_str) + 2);
     d->ded_doc_str[0] = '\0';
 
     /* The first loop happens outside because the first word doesn't need a space and a boolean flag would increase complexity */
-    char* token = strtok(new_txt, " ");
-    if (HashT_insert(d->deduplication, token, NULL)) {
-        d->ded_doc_str = strcat(d->ded_doc_str, token);
-    }
-    token = strtok(NULL, " ");
-    while(token != NULL){
+    char* token;
+    while((token = strtok_r(new_txt, " ", &new_txt)) != NULL){
         /* Insert each unique word in the hashtable and in the ded_doc_str */
         /* If word found, get next token*/
         if (HashT_insert(d->deduplication, token, NULL)) {
@@ -54,22 +51,15 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
         }
         token = strtok(NULL, " ");
     }
-    // HashT_delete(d->deduplication);
-    free(new_txt);
+    free(temp);
     return d->ded_doc_str;
+
+
 }
 
-void match_document(Document d, LinkedList matched_queries) {
+void match_document(Document d, LinkedList matched_queries, HashT* candidate_queries) {
     d->matched_queries = matched_queries;
-}
-
-void reset_candidate_queries(Document d, LinkedList candidate_queries) {
     d->candidate_queries = candidate_queries;
-    ListNode node = get_first_node(candidate_queries);
-    while (node != NULL) {
-        reset_found(get_node_item(node));
-        node = get_next_node(node);
-    }   
 }
 
 int cmpfunc(const void * a, const void * b) {
@@ -100,7 +90,7 @@ void destroy_document(void *d) {
     if(dd->deduplication)
         HashT_delete(dd->deduplication);
     if(dd->candidate_queries)
-        destroy_list(&(dd->candidate_queries));
+        HashT_delete(dd->candidate_queries);
     if(dd->matched_queries)
         destroy_list(&(dd->matched_queries));
     free(dd);
@@ -116,7 +106,7 @@ ErrorCode destroy_document_double(void **d) {
     if(dd->deduplication)
         HashT_delete(dd->deduplication);
     if(dd->candidate_queries)
-        destroy_list(&(dd->candidate_queries));
+        HashT_delete(dd->candidate_queries);
     if(dd->matched_queries)
         destroy_list(&(dd->matched_queries));
     free(dd);

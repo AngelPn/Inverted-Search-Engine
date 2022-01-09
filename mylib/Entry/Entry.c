@@ -75,37 +75,28 @@ ErrorCode insert_info_payload(entry e, unsigned int match_dist, Query q, int ind
     }
 }
 
-ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, LinkedList matched_queries){
-    
+ErrorCode update_payload(entry e, int threshold, HashT* candidate_queries, LinkedList matched_queries){
     
     LinkedList l = e->payload[threshold];
     
-    bool found_first_time = false;
     ListNode node = get_first_node(l);
     for (int i = 0; i < get_number_items(l); i++) {
         info f = get_node_item(node);
         /* If all words of query match to document's words, add query to document's matched_queries list */
-        pthread_mutex_lock(&(job_scheduler.candidate_queries_mtx));
 
-        // Query q = NULL
-        // if ((q = HashT_get(candidate_queries, f->q->queryID)) == NULL) {
-        //    q = create_query();
-        //    HashT_insert(candidate_queries, q);            
-        // }
-        // found(q, f->index, &found_first_time);
+        Query q = NULL;
+        if ((q = HashT_get(candidate_queries, get_query_key(f->q))) == NULL) {
+           q = create_query(get_queryID(f->q)); // duplicate the main threads's Query (hash table)
+           set_size(q, get_size(f->q));
+           HashT_insert(candidate_queries, get_query_key(f->q), q);            
+        }
         
-        if (found(f->q, f->index, &found_first_time)){
-            if (add_item(matched_queries, f->q) == EC_FAIL) return EC_FAIL;
+        if (found(q, f->index)){
+            if (add_item(matched_queries, q) == EC_FAIL) return EC_FAIL;
         }
-        /* Insert query to candidate_queries */
-        if (found_first_time == true) {
-            if (add_item(candidate_queries, f->q) == EC_FAIL) return EC_FAIL;
-        }
-        pthread_mutex_unlock(&(job_scheduler.candidate_queries_mtx));
 
         node = get_next_node(node);
     }
-
     
     return EC_SUCCESS;
 }

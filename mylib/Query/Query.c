@@ -40,24 +40,22 @@ void* get_query_key(Query q) {
     return &(q->query_id);
 }
 
+int get_size(Query q) {
+    return q->size;
+}
+
 bool get_index_found(Query q, int index){
     return q->found[index];
 }
 
-bool found(Query q, int index, bool *found_first_time) {
+bool found(Query q, int index) {
     if (q->found[index] == false) {
         q->counter++;
         q->found[index] = true;
 
         if (q->size == q->counter) {
-            if (q->counter == 1) {
-                *found_first_time = true;
-            }
             return true;
         } else {
-            if (q->counter == 1) {
-                *found_first_time = true;
-            }
             return false;
         }   
     } else {
@@ -76,6 +74,11 @@ ErrorCode end_query(Query q) {
         list_remove(q->lists[i], q->nodes[i]);
     }
     return EC_SUCCESS;
+}
+
+void print_query(void *q) {
+    Query qq = q;
+    printf("Query ID = %d\n", qq->query_id);
 }
 
 void destroy_query(void *q) {

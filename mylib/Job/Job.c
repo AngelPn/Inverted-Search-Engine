@@ -7,14 +7,14 @@
 
 struct job_struct{
     /*void (*func)(void*);*/
-    void* args[5];
+    void* args[4];
     job_type jobType;
 };
 
-Job create_job(job_type jt, void* args[5]) {
+Job create_job(job_type jt, void* args[4]) {
     Job j = (Job)malloc(sizeof(struct job_struct));
     j->jobType = jt;
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 4; i++){
         j->args[i] = args[i];
     }
     return j;
@@ -22,28 +22,9 @@ Job create_job(job_type jt, void* args[5]) {
 
 void run(Job j) {
     switch(j->jobType){
-        case HASH_TABLE_GET:
+        case MATCH_DOCUMENT:
         {
-
-            entry e = HashT_get(j->args[0], j->args[1]);
-            if (e != NULL) {
-                update_payload(e, 0, j->args[2], j->args[3]);
-            }
-
-            break;
-        }
-        case LOOKUP_BKTREE:
-        {
-
-            lookup_BKtree(j->args[0], j->args[1], 3, j->args[3], j->args[4]);
-
-            break;
-        }
-        case LOOKUP_HAMMING_TREE:
-        {
-
-            lookup_HammingTree(j->args[0], j->args[1], 3, j->args[3], j->args[4]);
-
+            MatchDocument_job(j->args);
             break;
         }
     }
