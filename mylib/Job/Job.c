@@ -11,6 +11,10 @@ struct job_struct{
     job_type jobType;
 };
 
+job_type get_job_type(Job j){
+    return j->jobType;
+}
+
 Job create_job(job_type jt, void* args[4]) {
     Job j = (Job)malloc(sizeof(struct job_struct));
     j->jobType = jt;

@@ -14,7 +14,7 @@ void initialize_scheduler(JobScheduler *js, int execution_threads) {
 
 
     js->job_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
-    js->candidate_queries_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    js->queries_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->matched_queries_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->job_count_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
@@ -60,6 +60,7 @@ void* thread_code(void *arg){
         // printf("before lock job count mtx in thread code\n");
         pthread_mutex_lock(&(js->job_mtx));
         (js->job_counter)--;
+        (js->job_type_counter[get_job_type(job)])--;
         // printf("THREAD CODE job_counter: %d\n", js->job_counter);
         if (js->job_counter == 0) {
             pthread_cond_signal(&(js->empty));
@@ -80,6 +81,8 @@ int submit_job(JobScheduler* js, Job* j){
     // printf("job count mtx is locked\n");
     // pthread_mutex_lock(&(js->job_count_mtx));
     (js->job_counter)++;
+    (js->job_type_counter[get_job_type(*j)])++;
+    
     // printf("SUB job_counter: %d\n", js->job_counter);
     // pthread_mutex_unlock(&(js->job_count_mtx));
 
@@ -106,6 +109,28 @@ int wait_all_jobs_finish(JobScheduler* js){
     return 1;
 }
 
+int wait_match_document_jobs_finish(JobScheduler* js){
+    // printf("before lock job count mtx in wait\n");
+    pthread_mutex_lock(&(js->job_mtx));
+    while (js->job_type_counter[MATCH_DOCUMENT] != 0) {
+        pthread_cond_wait(&(js->empty), &(js->job_mtx));
+    }
+    pthread_mutex_unlock(&(js->job_mtx));
+    // printf("WAIT! job counter = 0\n");
+    return 1;
+}
+
+int wait_insert_index_jobs_finish(JobScheduler* js){
+    // printf("before lock job count mtx in wait\n");
+    pthread_mutex_lock(&(js->job_mtx));
+    while (js->job_type_counter[START_Q] != 0) {
+        pthread_cond_wait(&(js->empty), &(js->job_mtx));
+    }
+    pthread_mutex_unlock(&(js->job_mtx));
+    // printf("WAIT! job counter = 0\n");
+    return 1;
+}
+
 int destroy_scheduler(JobScheduler* js){
     js->quit = true;
     pthread_cond_broadcast(&(js->nonempty));
@@ -119,7 +144,7 @@ int destroy_scheduler(JobScheduler* js){
     }
     pthread_cond_destroy(&(js->nonempty));
     pthread_mutex_destroy(&(js->job_mtx));
-    pthread_mutex_destroy(&(js->candidate_queries_mtx));
+    pthread_mutex_destroy(&(js->queries_mtx));
     pthread_mutex_destroy(&(js->matched_queries_mtx));
     
     pthread_barrier_destroy(&(js->barrier));

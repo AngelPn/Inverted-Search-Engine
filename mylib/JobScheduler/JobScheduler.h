@@ -14,7 +14,7 @@ typedef struct job_scheduler
     pthread_t* tids; // execution threads
 
     pthread_mutex_t job_mtx;
-    pthread_mutex_t candidate_queries_mtx;
+    pthread_mutex_t queries_mtx;
     pthread_mutex_t matched_queries_mtx;
     pthread_mutex_t job_count_mtx;
 
@@ -28,6 +28,7 @@ typedef struct job_scheduler
     pthread_barrier_t barrier;
 
     int job_counter;
+    int job_type_counter[2];
     bool quit;
 } JobScheduler;
 
@@ -35,6 +36,8 @@ void initialize_scheduler(JobScheduler *js, int execution_threads);
 int submit_job(JobScheduler* js, Job* j);
 int execute_all_jobs(JobScheduler* js);
 int wait_all_jobs_finish(JobScheduler* js);
+int wait_match_document_jobs_finish(JobScheduler* js);
+int wait_insert_index_jobs_finish(JobScheduler* js);
 int destroy_scheduler(JobScheduler* js);
 
 #endif

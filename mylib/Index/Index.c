@@ -17,23 +17,40 @@ ErrorCode init_index(Index *index) {
 }
 
 ErrorCode insert_ExactMatch(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
+
+    ErrorCode ec;
+    pthread_mutex_lock(&(job_scheduler.em_mtx));
     entry e = HashT_get(index->ExactMatch, token);
     if (e == NULL) {
         create_entry(token, &e);
         HashT_insert(index->ExactMatch, get_entry_word(e), e);
-        return insert_info_payload(e, match_dist, query, token_index);
+        ec = insert_info_payload(e, match_dist, query, token_index);
     } else {
-        return insert_info_payload(e, match_dist, query, token_index);
+        ec = insert_info_payload(e, match_dist, query, token_index);
     }
+    pthread_mutex_unlock(&(job_scheduler.em_mtx));
+    // free(token);
+    return ec;
 }
 
 ErrorCode insert_EditDist(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
+
+    ErrorCode ec;
+    pthread_mutex_lock(&(job_scheduler.ed_mtx));
     entry e = insert_BK_tree(index->EditDist, token);
-    return insert_info_payload(e, match_dist-1, query, token_index);
+    ec = insert_info_payload(e, match_dist-1, query, token_index);
+    pthread_mutex_unlock(&(job_scheduler.ed_mtx));
+    // free(token);
+    return ec;
 }
 
 ErrorCode insert_HammingDist(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
-    return insert_info_payload(insert_HammingTree(index->HammingDist, token), match_dist-1, query, token_index);
+    ErrorCode ec;
+    pthread_mutex_lock(&(job_scheduler.ed_mtx));
+    ec = insert_info_payload(insert_HammingTree(index->HammingDist, token), match_dist-1, query, token_index);
+    pthread_mutex_unlock(&(job_scheduler.ed_mtx));
+    // free(token);
+    return ec;
 }
 
 ErrorCode insert_index(Index *index, char *token, MatchType match_type, unsigned int match_dist, Query query, int token_index) {

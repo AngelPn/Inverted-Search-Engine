@@ -49,10 +49,7 @@ ErrorCode DestroyIndex() {
 }
 
 ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist) {
-    if(!start_q_flag) {
-        wait_all_jobs_finish(&job_scheduler);
-        start_q_flag = 1;
-    }
+    wait_match_document_jobs_finish(&job_scheduler);
     void * args[4];
 
     int *query_ID = malloc(sizeof(int));
@@ -92,17 +89,15 @@ ErrorCode StartQuery_job(void *args[4]) {
 
     /* Insert query in active set of queries */
     Query query = create_query(query_id);
-    pthread_mutex_lock(&(job_scheduler.job_mtx));
+    pthread_mutex_lock(&(job_scheduler.queries_mtx));
     HashT_insert(superdex.Queries, get_query_key(query), query);
-    pthread_mutex_unlock(&(job_scheduler.job_mtx));
+    pthread_mutex_unlock(&(job_scheduler.queries_mtx));
 
     int query_words = 0; /* number of words in query */
     ErrorCode state = EC_SUCCESS;
     /* For each word in query, insert it to index */
     while ((token = strtok_r(new_query_str, " ", &new_query_str)) && state == EC_SUCCESS) {
-        pthread_mutex_lock(&(job_scheduler.job_mtx));
         state = insert_index(&superdex, token, match_type, match_dist, query, query_words);
-        pthread_mutex_unlock(&(job_scheduler.job_mtx));
         query_words++;
     }
     /* Set the number of words in query */
@@ -128,8 +123,7 @@ ErrorCode EndQuery(QueryID query_id)
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
-    if(start_q_flag)
-        start_q_flag = 0;
+    wait_insert_index_jobs_finish(&job_scheduler);
 
     void * args[5];
 
