@@ -4,6 +4,7 @@
 #include "HashTable.h"
 #include "HammingTree.h"
 #include "Query.h"
+#include "JobScheduler.h"
 
 typedef struct index 
 {
@@ -15,6 +16,8 @@ typedef struct index
     HashT* Documents;
     int curr_doc;
 } Index;
+
+JobScheduler job_scheduler;
 
 ErrorCode init_index(Index *index);
 

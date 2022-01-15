@@ -3,7 +3,6 @@
 
 #include "Job.h"
 #include "HammingTree.h"
-#include "common_types.h"
 
 struct job_struct{
     /*void (*func)(void*);*/

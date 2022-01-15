@@ -15,7 +15,7 @@ void test_create_document(void) {
 void test_deduplication(void) {
     Document d = create_document(1);
     char* test = "hello hello world world this is a a project project";
-    char* answer = " hello world this is a project";
+    char* answer = "hello world this is a project";
     char* dedupl = deduplicate_doc_str(d,test);
     int result = strcmp(dedupl,answer);
     TEST_ASSERT(result == 0);

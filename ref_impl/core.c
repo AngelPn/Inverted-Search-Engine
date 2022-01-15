@@ -32,7 +32,6 @@
 #include "core.h"
 #include "Index.h"
 #include "Document.h"
-#include "common_types.h"
 
 bool start_q_flag = 0;
 
