@@ -32,7 +32,6 @@
 #include "core.h"
 #include "Index.h"
 #include "Document.h"
-#include "common_types.h"
 
 // Struct used for the search machine
 static Index superdex; /* superdex = super + index, it is our super index */

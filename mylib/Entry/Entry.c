@@ -5,7 +5,6 @@
 #include <pthread.h>
 
 #include "Entry.h"
-#include "common_types.h"
 
 // extern JobScheduler job_scheduler;
 

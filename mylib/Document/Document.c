@@ -46,11 +46,11 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
         /* Insert each unique word in the hashtable and in the ded_doc_str */
         /* If word found, get next token*/
         if (HashT_insert(d->deduplication, token, NULL)) {
-            d->ded_doc_str = strcat(d->ded_doc_str, " ");
             d->ded_doc_str = strcat(d->ded_doc_str, token);
+            d->ded_doc_str = strcat(d->ded_doc_str, " ");
         }
-        // token = strtok(NULL, " ");
     }
+    d->ded_doc_str[strlen(d->ded_doc_str)-1] = '\0';
     free(temp);
     return d->ded_doc_str;
 
