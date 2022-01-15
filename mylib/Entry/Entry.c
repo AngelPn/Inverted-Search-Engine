@@ -5,9 +5,7 @@
 #include <pthread.h>
 
 #include "Entry.h"
-#include "common_types.h"
-
-// extern JobScheduler job_scheduler;
+#include "Index.h"
 
 struct entry_struct
 {

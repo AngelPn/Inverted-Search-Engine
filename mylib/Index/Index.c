@@ -4,9 +4,9 @@
 #include "Index.h"
 #include "Document.h"
 #include "JobScheduler.h"
-#include "common_types.h"
 
 ErrorCode init_index(Index *index) {
+    initialize_scheduler(&job_scheduler, NUM_THREADS);
     if ((index->ExactMatch = HashT_init(string, 1000, destroy_entry_void)) == NULL) return EC_FAIL;
     else if ((index->EditDist = create_BK_tree(EditDistance)) == NULL) return EC_FAIL;
     else if ((index->HammingDist = create_HammingTree(HammingDistance)) == NULL) return EC_FAIL;
@@ -81,6 +81,7 @@ ErrorCode lookup_index(Index *index, char* token, LinkedList candidate_queries, 
 ErrorCode destroy_index(Index *index) {
     HashT_delete(index->ExactMatch);
     HashT_delete(index->Queries);
+	destroy_scheduler(&job_scheduler);
     if (destroy_BK_tree(&(index->EditDist)) == EC_FAIL) return EC_FAIL;
     else if (destroy_HammingTree(index->HammingDist) == EC_FAIL) return EC_FAIL;
     else if (destroy_list(&(index->Documents)) == EC_FAIL) return EC_FAIL;

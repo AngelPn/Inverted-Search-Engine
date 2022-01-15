@@ -26,7 +26,6 @@
  */
 
 #include "../include/core.h"
-#include "../include/common_types.h"
 #include <cstdlib>
 #include <cstdio>
 using namespace std;
@@ -284,17 +283,12 @@ void TestSigmod(const char* test_file_str)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// extern JobScheduler job_scheduler;
 
 int main(int argc, char* argv[])
 {
-    initialize_scheduler(&job_scheduler, NUM_THREADS);
-	// while (true) {}
-
 	if(argc<=1) TestSigmod("./test_data/small_test.txt");
 	else TestSigmod(argv[1]);
 
-	destroy_scheduler(&job_scheduler);
 	return 0;
 }
 

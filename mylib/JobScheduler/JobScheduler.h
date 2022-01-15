@@ -25,8 +25,6 @@ typedef struct job_scheduler
     pthread_cond_t nonempty;
     pthread_cond_t empty;
 
-    pthread_barrier_t barrier;
-
     int job_counter;
     bool quit;
 } JobScheduler;

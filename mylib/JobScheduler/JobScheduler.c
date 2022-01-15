@@ -25,8 +25,6 @@ void initialize_scheduler(JobScheduler *js, int execution_threads) {
     js->em_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->ed_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     js->hd_mtx = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
-    
-    pthread_barrier_init(&(js->barrier), NULL, 3);
 
     for (int i = 0; i < js->execution_threads; i++) {
         /* Create threads */
@@ -66,7 +64,7 @@ void* thread_code(void *arg){
         }
         pthread_mutex_unlock(&(js->job_mtx));
         
-        destroy_job((void**)(&job)); //FIXME
+        destroy_job((void**)(&job));
     }
 
     return NULL;
@@ -85,8 +83,6 @@ int submit_job(JobScheduler* js, Job* j){
 
     pthread_cond_signal(&(js->nonempty));
     pthread_mutex_unlock(&(js->job_mtx));
-
-
 
     return err;
 }
@@ -121,8 +117,6 @@ int destroy_scheduler(JobScheduler* js){
     pthread_mutex_destroy(&(js->job_mtx));
     pthread_mutex_destroy(&(js->candidate_queries_mtx));
     pthread_mutex_destroy(&(js->matched_queries_mtx));
-    
-    pthread_barrier_destroy(&(js->barrier));
 
     free(js->tids);
     destroy_list(&(js->jobs));
