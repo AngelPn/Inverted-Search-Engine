@@ -185,7 +185,7 @@ ErrorCode MatchDocument_job(void *args[4])
 
 ErrorCode GetNextAvailRes(DocID* p_doc_id, unsigned int* p_num_res, QueryID** p_query_ids)
 {
-    wait_all_jobs_finish(&job_scheduler);
+    wait_match_document_jobs_finish(&job_scheduler);
     Document d = NULL;
     if ((d = HashT_get(superdex.Documents, &superdex.curr_doc)) != NULL) {
         superdex.curr_doc++;

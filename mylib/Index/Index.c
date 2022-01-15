@@ -46,9 +46,9 @@ ErrorCode insert_EditDist(Index *index, char *token, unsigned int match_dist, Qu
 
 ErrorCode insert_HammingDist(Index *index, char *token, unsigned int match_dist, Query query, int token_index) {
     ErrorCode ec;
-    pthread_mutex_lock(&(job_scheduler.ed_mtx));
+    pthread_mutex_lock(&(job_scheduler.hd_mtx));
     ec = insert_info_payload(insert_HammingTree(index->HammingDist, token), match_dist-1, query, token_index);
-    pthread_mutex_unlock(&(job_scheduler.ed_mtx));
+    pthread_mutex_unlock(&(job_scheduler.hd_mtx));
     // free(token);
     return ec;
 }
