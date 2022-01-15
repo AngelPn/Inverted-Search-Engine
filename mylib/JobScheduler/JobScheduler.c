@@ -108,7 +108,9 @@ int wait_all_jobs_finish(JobScheduler* js){
 
 int destroy_scheduler(JobScheduler* js){
     js->quit = true;
+    pthread_mutex_lock(&(js->job_mtx));
     pthread_cond_broadcast(&(js->nonempty));
+    pthread_mutex_unlock(&(js->job_mtx));
     for (int i=0 ; i<NUM_THREADS ; i++) {
         int err;
         if ((err = pthread_join(js->tids[i], NULL))) {

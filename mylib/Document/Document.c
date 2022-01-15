@@ -49,7 +49,7 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
             d->ded_doc_str = strcat(d->ded_doc_str, " ");
             d->ded_doc_str = strcat(d->ded_doc_str, token);
         }
-        token = strtok(NULL, " ");
+        // token = strtok(NULL, " ");
     }
     free(temp);
     return d->ded_doc_str;
