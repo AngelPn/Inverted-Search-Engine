@@ -286,7 +286,10 @@ void TestSigmod(const char* test_file_str)
 
 int main(int argc, char* argv[])
 {
-	if(argc<=1) TestSigmod("./test_data/small_test.txt");
+	// if(argc<=1) TestSigmod("./test_data/small_test.txt");
+	if(argc<=1) TestSigmod("./test_data/input30m.txt");
+	// if(argc<=1) TestSigmod("./test_data/input100m.txt");
+	// if(argc<=1) TestSigmod("./test_data/input1000m.txt");
 	else TestSigmod(argv[1]);
 
 	return 0;

@@ -166,11 +166,6 @@ ErrorCode MatchDocument_job(void *args[4])
     /* Match queries with document */
     // printf("d: %d\n", *(int*)get_doc_id(d));
     match_document(d, matched_queries, candidate_queries);
-    // printf("IM HERE\n");
-    // print_list(matched_queries, print_query);
-
-    /* Traverse candidate_queries and reset "found" field of queries */
-    // reset_candidate_queries(d, candidate_queries);
 
     /* Insert document to list of documents */
     pthread_mutex_lock(&(job_scheduler.job_mtx));
