@@ -8,6 +8,9 @@ test_Document
 test_HammingTree
 test_Query
 test_HashTable
+/test_data/input30m.txt
+/test_data/input100m.txt
+/test_data/input1000m.txt
 
 # Prerequisites
 *.d
