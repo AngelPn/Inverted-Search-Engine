@@ -48,7 +48,7 @@ ErrorCode DestroyIndex() {
 }
 
 ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_type, unsigned int match_dist) {
-    wait_match_document_jobs_finish(&job_scheduler);
+    
     void * args[4];
 
     int *query_ID = malloc(sizeof(int));
@@ -68,13 +68,13 @@ ErrorCode StartQuery(QueryID query_id, const char* query_str, MatchType match_ty
     args[3] = md;
 
     Job j = create_job(START_Q, args);
+    wait_match_document_jobs_finish(&job_scheduler);
     submit_job(&job_scheduler, &j);
 
     return EC_SUCCESS;
 }
 
 ErrorCode StartQuery_job(void *args[4]) {
-
     QueryID query_id = *(int*)(args[0]);
     char* query_str = args[1];
     MatchType match_type = *(MatchType*)args[2];
@@ -122,7 +122,6 @@ ErrorCode EndQuery(QueryID query_id)
 
 ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 {
-    wait_insert_index_jobs_finish(&job_scheduler);
 
     void * args[5];
 
@@ -135,6 +134,7 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
     args[1] = doc_string;
 
     Job j = create_job(MATCH_DOCUMENT, args);
+    wait_insert_index_jobs_finish(&job_scheduler);
     submit_job(&job_scheduler, &j);
     
 

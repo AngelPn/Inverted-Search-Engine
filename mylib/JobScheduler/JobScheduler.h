@@ -23,6 +23,7 @@ typedef struct job_scheduler
 
     pthread_cond_t nonempty;
     pthread_cond_t empty;
+    pthread_cond_t job_type_cond[2];
 
     int job_counter;
     int job_type_counter[2];
