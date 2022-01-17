@@ -15,11 +15,10 @@
 
  
  # Πρώτη προσέγγιση
- Το [match-document-token-parallel](https://github.com/AngelPn/Inverted-Search-Engine/tree/match-document-token-parallel) υποστηρίζει την παράλληλη εκτέλεση της αναζήτησης λέξεων 
- στις δομές που έχουμε δημιουργήσει. Δηλαδή, εξετάζει κάθε λέξη `token` κάθε document από ένα ξεχωριστό thread. Για κάθε λέξη `token`, ένα thread κάνει αναζήτηση στο hash table της 
- `ExactMatch`, ένα δεύτερο thread εκτελεί αναζήτηση στο BK tree της `EditDist` και ένα τρίτο thread στο Hamming Tree της `HammingDist`.
+ Το [match-document-token-parallel](https://github.com/AngelPn/Inverted-Search-Engine/tree/match-document-token-parallel) υποστηρίζει την παράλληλη εκτέλεση της αναζήτησης λέξεων στις δομές που έχουμε δημιουργήσει. Kάθε λέξη `token` κάθε document εξετάζεται από ένα ξεχωριστό thread. Δηλαδή, για κάθε λέξη `token`, ένα thread κάνει αναζήτηση στο hash table της `ExactMatch`, ένα δεύτερο thread εκτελεί αναζήτηση στο BK tree της `EditDist` και ένα τρίτο thread στο Hamming Tree της `HammingDist`.
  
   ## Υλοποίηση
+  Οι δομές είναι οι ίδιες με το δεύτερο παραδοτέο και περιγράφονται αναλυτικά στο [README](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-token-parallel/README.md#implementation****). Επιπλέον, έγινε εισαγωγή του [Job Scheduler](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-token-parallel/README.md#job-scheduler) και του [Job](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-token-parallel/README.md#job). Οι συναρτήσεις αναζήτησης στις δομές κατά την εκτέλεση της `match document` έγιναν jobs για τα threads στην [`lookup_index()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-token-parallel/mylib/Index/Index.c#L52).
   
   ## Ταχύτητα Εκτέλεσης
  
@@ -28,21 +27,16 @@
  `MatchDocument_job()` γίνεται `job` για τα threads και άρα κάθε τρέχουν παράλληλα τόσες match document για διαφορετικά documents όσες και ο αριθμός των threads.
  
   ## Υλοποίηση
+  Οι δομές είναι οι ίδιες με το δεύτερο παραδοτέο και περιγράφονται αναλυτικά στο [README](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/README.md#implementation). Επιπλέον, έγινε εισαγωγή του [Job Scheduler](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/README.md#job-scheduler) και του [Job](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/README.md#job).
   
   ## Ταχύτητα Εκτέλεσης
  
  # Τρίτη προσέγγιση
- Η [main](https://github.com/AngelPn/Inverted-Search-Engine/tree/main) υποστηρίζει την παράλληλη εκτέλεση της match document και της εισαγωγής νέων στοιχείων
- σε διαφορετικές δομές. Δηλαδή, 
- έχουμε δύο ειδών `jobs` στον `Job Scheduler`, τη [`MatchDocument_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c#L144-L178) και την 
- [`StartQuery_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c#L76-L110). Σκεφτήκαμε να το
- υλοποιήσουμε αυτό καθώς τόσο τα queries όσο και τα documents αναγράφονται κατά ομάδες στα κείμενα `test_data`, οπότε όταν έρχεται μια ομάδα από `start query` να τρέχουν και αυτά
- παράλληλα. Ουσιαστικά, μέχρι τρία threads θα μπορούν να τρέχουν παράλληλα τη `StartQuery_job()` καθώς οι διαφορετικές δομές προς εισαγωγή είναι τρεις, το hash table της 
- `ExactMatch`, το BK tree της `EditDist` και το Hamming Tree της `HammingDist`.
- 
- [``]()
+ Η [main](https://github.com/AngelPn/Inverted-Search-Engine/tree/main) υποστηρίζει την παράλληλη εκτέλεση της match document και της εισαγωγής νέων στοιχείων σε διαφορετικές δομές. Δηλαδή, έχουμε δύο ειδών `jobs` στον `Job Scheduler`, τη [`MatchDocument_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c#L144-L178) και την [`StartQuery_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c#L76-L110). Σκεφτήκαμε να το υλοποιήσουμε αυτό καθώς τόσο τα queries όσο και τα documents αναγράφονται κατά ομάδες στα κείμενα `test_data`, οπότε όταν έρχεται μια ομάδα από `start query` να τρέχουν και αυτάπαράλληλα. Ουσιαστικά, μέχρι τρία threads θα μπορούν να τρέχουν παράλληλα τη `StartQuery_job()` καθώς οι διαφορετικές δομές προς εισαγωγή είναι τρεις, το hash table της `ExactMatch`, το BK tree της `EditDist` και το Hamming Tree της `HammingDist`.
  
  ## Υλοποίηση
+ Οι δομές είναι οι ίδιες με το δεύτερο παραδοτέο και περιγράφονται αναλυτικά στο [README](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/README.md#implementation). Επιπλέον, έγινε εισαγωγή του [Job Scheduler](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/README.md#job-scheduler) και του [Job](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/README.md#job).
+     
  Χρησιμοποιούμε ξεχωριστό `mutex` για κάθε διαφορετική δομή ευρετηρίου, το οποίο "κλειδώνει" κατά την εισαγωγή λέξης σε κάθε ευρετήριο [`ExactMatch`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Index/Index.c#L19-L33),
  [`EditDist`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Index/Index.c#L36-L44), [`HammingDist`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Index/Index.c#L47-L66).
  
@@ -50,6 +44,7 @@
  [job_type_counter](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.h#L10) που ο καθένας μετράει πόσα jobs κάθε είδους υπάρχουν στην 
  ουρά. Οι συναρτήσεις που διακόπτουν τη ροή του προγράμματος περιμένοντας να εκτελεστούν τα διαφορετικά είδη εργασιών είναι οι [`wait_match_document_jobs_finish`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L104), 
  [`wait_insert_index_jobs_finish`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L115).
+ 
  ## Ταχύτητα Εκτέλεσης
  
 # Σύγκριση μεταξύ των προσεγγίσεων
