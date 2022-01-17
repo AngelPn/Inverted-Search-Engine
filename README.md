@@ -112,18 +112,18 @@
 ### [Job Scheduler](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/JobScheduler)
 Η δομή JobScheduler αποθηκεύει σε μια ουρά όλα τα jobs που πρόκειται να εκτελεστούν από τα threads, διαχειρίζεται την εκτέλεσή τους, διατηρείται σε όλη τη διάρκεια εκτέλεσης 
 του προγράμματος και καταστρέφεται στο τέλος. Τα πεδία που περιέχει είναι:
-    - `execution_threads`: Ο αριθμός των threads.
-    - `LinkedList jobs`: Η ουρά FIFO που συγκρατεί τις διεργασίες προς εκτέλεση.
-    - `pthread_t* tids`: Τα id των threads.
-    - `pthread_mutex_t job_mtx`: Mutex για τα jobs.
-    - `pthread_mutex_t queries_mtx`: Mutex για τα jobs τύπου `start query`.
-    - `pthread_mutex_t em_mtx`: Mutex για τη δομή ευρετηρίου `ExactMatch`.
-    - `pthread_mutex_t ed_mtx`: Mutex για τη δομή ευρετηρίου `EditDist`.
-    - `pthread_mutex_t hd_mtx`: Mutex για τη δομή ευρετηρίου `HammingDist`.
-    - `pthread_cond_t nonempty`, `pthread_cond_t empty`: Condition variables που συμβολίζουν αν η ουρά είναι κενή ή όχι.
-    - `int job_counter`: Το πλήθος των στοιχείων που υπάρχουν στην ουρά jobs.
-    - `int job_type_counter[2]`: Το πλήθος των συγκεκριμένου είδους διεργασιών που υπάρχουν στην ουρά.
-    - `bool quit`: Βοηθητική μεταβλητή για τον τερματισμό των threads.
+  - `execution_threads`: Ο αριθμός των threads.
+  - `LinkedList jobs`: Η ουρά FIFO που συγκρατεί τις διεργασίες προς εκτέλεση.
+  - `pthread_t* tids`: Τα id των threads.
+  - `pthread_mutex_t job_mtx`: Mutex για τα jobs.
+  - `pthread_mutex_t queries_mtx`: Mutex για τα jobs τύπου `start query`.
+  - `pthread_mutex_t em_mtx`: Mutex για τη δομή ευρετηρίου `ExactMatch`.
+  - `pthread_mutex_t ed_mtx`: Mutex για τη δομή ευρετηρίου `EditDist`.
+  - `pthread_mutex_t hd_mtx`: Mutex για τη δομή ευρετηρίου `HammingDist`.
+  - `pthread_cond_t nonempty`, `pthread_cond_t empty`: Condition variables που συμβολίζουν αν η ουρά είναι κενή ή όχι.
+  - `int job_counter`: Το πλήθος των στοιχείων που υπάρχουν στην ουρά jobs.
+  - `int job_type_counter[2]`: Το πλήθος των συγκεκριμένου είδους διεργασιών που υπάρχουν στην ουρά.
+  - `bool quit`: Βοηθητική μεταβλητή για τον τερματισμό των threads.
 
 Ο Job Scheduler περιέχει τις παρακάτω λειτουργίες:
   * [`submit_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L76): Θέτει ένα job στην ουρά και αυξάνει τον μετρητή στοιχείων της ουράς.
