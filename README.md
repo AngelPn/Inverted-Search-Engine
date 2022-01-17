@@ -109,6 +109,28 @@
   * [`insert_index()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Index/Index.c#L37): Ανάλογα το `match_dist`, προσθέτει τη λέξη `token` στο κατάλληλο ευρετήριο ενημερώνοντας το `payload`, με κλήση της συνάρτησης `insert_info_payload()`.
   * [`lookup_index()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/Index/Index.c#L50): Αναζητεί τη λέξη `token` στα ευρετήρια και ενημερώνει ότι η λέξη αυτή βρέθηκε με κλήση της `update_payload()`.
 
+### [Job Scheduler](https://github.com/AngelPn/Inverted-Search-Engine/tree/match-document-parallel/mylib/JobScheduler)
+Η δομή JobScheduler αποθηκεύει σε μια ουρά όλα τα jobs που πρόκειται να εκτελεστούν από τα threads, διαχειρίζεται την εκτέλεσή τους, διατηρείται σε όλη τη διάρκεια εκτέλεσης 
+του προγράμματος και καταστρέφεται στο τέλος. Τα πεδία που περιέχει είναι:
+    - `execution_threads`: Ο αριθμός των threads.
+    - `LinkedList jobs`: Η ουρά FIFO που συγκρατεί τις διεργασίες προς εκτέλεση.
+    - `pthread_t* tids`: Τα id των threads.
+    - `pthread_mutex_t job_mtx`: Mutex για τα jobs.
+    - `pthread_cond_t nonempty`, `pthread_cond_t empty`: Condition variables που συμβολίζουν αν η ουρά είναι κενή ή όχι.
+    - `int job_counter`: Το πλήθος των στοιχείων που υπάρχουν στην ουρά jobs.
+    - `bool quit`: Βοηθητική μεταβλητή για τον τερματισμό των threads.
+
+Ο Job Scheduler περιέχει τις παρακάτω λειτουργίες:
+  * [`submit_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/mylib/JobScheduler/JobScheduler.c#L63): Θέτει ένα job στην ουρά και αυξάνει τον μετρητή στοιχείων της ουράς.
+  * [`wait_all_jobs_finish()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/mylib/JobScheduler/JobScheduler.c#L80): Περιμένει να εκτελεστούν όλα τα jobs της ουράς.
+  * [`thread_code()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/mylib/JobScheduler/JobScheduler.c#L30): Η ρουτίνα που θα εκτελέσει ένα νέο νήμα όταν δημιουργηθεί. Αρχικά, περιμένει να γίνει submit ένα job στην ουρά. Στη συνέχεια, εξάγει το job από την ουρά και το εκτελεί, μειώνοντας τον μετρητή στοιχείων της ουράς.
+
+### [Job](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Job)
+Η δομή που αντιπροσωπεύει μία εργασία προς εκτέλεση των threads. Περιέχει τις παραμέτρους της συνάρτησης προς εκτέλεσης καθώς και τον τύπο του job. Οι εργασίες που αναλαμβάνουν τα νήματα είναι οι συναρτήσεις match document και της εισαγωγής νέων στοιχείων σε διαφορετικές δομές (start query). Γι' αυτό, το [`job_type`](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/mylib/Job/Job.h#L6) περιλαμβάνει έναν τύπο εργασίας. 
+
+Το Job περιλαμβάνει συναρτήσεις δημιουργίας/καταστροφής και τη λειτουργία εκτέλεσης εργασίας:
+  * [`run()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/match-document-parallel/mylib/Job/Job.c#L21): Kαλεί την συνάρτηση `MatchDocument_job()`, περνώντας τις παραμέτρους, καθώς έχουμε έναν τύπο job.
+
 ### [Core](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c)
 Οι βασικές συναρτήσεις και οι EditDist, HammingDist περιέχουν αναλυτικά σχόλια στον κώδικα.
 
