@@ -128,6 +128,8 @@
 Ο Job Scheduler περιέχει τις παρακάτω λειτουργίες:
   * [`submit_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L76): Θέτει ένα job στην ουρά και αυξάνει τον μετρητή στοιχείων της ουράς.
   * [`wait_all_jobs_finish()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L95): Περιμένει να εκτελεστούν όλα τα jobs της ουράς.
+  * [`wait_match_document_jobs_finish()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L106): Περιμένει να εκτελεστούν όλα τα jobs της ουράς τύπου `MATCH_DOCUMENT`.
+  * [`wait_insert_index_jobs_finish()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L117): Περιμένει να εκτελεστούν όλα τα jobs της ουράς τύπου `START_Q`.
   * [`thread_code()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/mylib/JobScheduler/JobScheduler.c#L37): Η ρουτίνα που θα εκτελέσει ένα νέο νήμα όταν δημιουργηθεί. Αρχικά, περιμένει να γίνει submit ένα job στην ουρά. Στη συνέχεια, εξάγει το job από την ουρά και το εκτελεί, μειώνοντας τον μετρητή στοιχείων της ουράς.
 
 ### [Job](https://github.com/AngelPn/Inverted-Search-Engine/tree/main/mylib/Job)
