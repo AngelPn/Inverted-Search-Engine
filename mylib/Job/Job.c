@@ -5,7 +5,6 @@
 #include "HammingTree.h"
 
 struct job_struct{
-    /*void (*func)(void*);*/
     void* args[4];
     job_type jobType;
 };
@@ -20,13 +19,7 @@ Job create_job(job_type jt, void* args[4]) {
 }
 
 void run(Job j) {
-    switch(j->jobType){
-        case MATCH_DOCUMENT:
-        {
-            MatchDocument_job(j->args);
-            break;
-        }
-    }
+    MatchDocument_job(j->args);
 }
 
 ErrorCode destroy_job(void **j) {

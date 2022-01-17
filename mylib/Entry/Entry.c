@@ -6,8 +6,6 @@
 
 #include "Entry.h"
 
-// extern JobScheduler job_scheduler;
-
 struct entry_struct
 {
     char *w;
