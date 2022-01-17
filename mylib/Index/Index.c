@@ -29,7 +29,7 @@ ErrorCode insert_ExactMatch(Index *index, char *token, unsigned int match_dist, 
         ec = insert_info_payload(e, match_dist, query, token_index);
     }
     pthread_mutex_unlock(&(job_scheduler.em_mtx));
-    // free(token);
+
     return ec;
 }
 
@@ -40,7 +40,7 @@ ErrorCode insert_EditDist(Index *index, char *token, unsigned int match_dist, Qu
     entry e = insert_BK_tree(index->EditDist, token);
     ec = insert_info_payload(e, match_dist-1, query, token_index);
     pthread_mutex_unlock(&(job_scheduler.ed_mtx));
-    // free(token);
+
     return ec;
 }
 
@@ -49,7 +49,7 @@ ErrorCode insert_HammingDist(Index *index, char *token, unsigned int match_dist,
     pthread_mutex_lock(&(job_scheduler.hd_mtx));
     ec = insert_info_payload(insert_HammingTree(index->HammingDist, token), match_dist-1, query, token_index);
     pthread_mutex_unlock(&(job_scheduler.hd_mtx));
-    // free(token);
+
     return ec;
 }
 

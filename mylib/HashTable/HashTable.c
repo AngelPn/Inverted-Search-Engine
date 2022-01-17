@@ -56,13 +56,6 @@ static int int_hash(void* key){
     return abs(*(int*)key);
 }
 
-// int compare_int(void* key1, void* key2){
-//     if (*((int*)key1) == *((int*)key2)) {
-//         return 0;
-//     }
-//     else return 1;
-// }
-
 int compare_int(void * a, void * b) {
    return ( *(int*)a - *(int*)b );
 }

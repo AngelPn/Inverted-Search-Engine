@@ -15,7 +15,6 @@ typedef struct job_scheduler
 
     pthread_mutex_t job_mtx;
     pthread_mutex_t queries_mtx;
-    pthread_mutex_t job_count_mtx;
 
     pthread_mutex_t em_mtx;
     pthread_mutex_t ed_mtx;
