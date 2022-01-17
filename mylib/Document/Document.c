@@ -54,7 +54,7 @@ char *deduplicate_doc_str(Document d, const char* doc_str) {
         }
         token = strtok(NULL, " ");
     }
-    // HashT_delete(d->deduplication);
+
     free(new_txt);
     return d->ded_doc_str;
 }

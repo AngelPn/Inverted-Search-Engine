@@ -84,13 +84,6 @@ ErrorCode update_payload(entry e, int threshold, LinkedList candidate_queries, L
         info f = get_node_item(node);
         /* If all words of query match to document's words, add query to document's matched_queries list */
         pthread_mutex_lock(&(job_scheduler.candidate_queries_mtx));
-
-        // Query q = NULL
-        // if ((q = HashT_get(candidate_queries, f->q->queryID)) == NULL) {
-        //    q = create_query();
-        //    HashT_insert(candidate_queries, q);            
-        // }
-        // found(q, f->index, &found_first_time);
         
         if (found(f->q, f->index, &found_first_time)){
             if (add_item(matched_queries, f->q) == EC_FAIL) return EC_FAIL;

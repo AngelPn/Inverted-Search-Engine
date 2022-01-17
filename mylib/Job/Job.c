@@ -5,7 +5,6 @@
 #include "HammingTree.h"
 
 struct job_struct{
-    /*void (*func)(void*);*/
     void* args[5];
     job_type jobType;
 };

@@ -15,12 +15,6 @@ typedef struct job_scheduler
 
     pthread_mutex_t job_mtx;
     pthread_mutex_t candidate_queries_mtx;
-    pthread_mutex_t matched_queries_mtx;
-    pthread_mutex_t job_count_mtx;
-
-    pthread_mutex_t em_mtx;
-    pthread_mutex_t ed_mtx;
-    pthread_mutex_t hd_mtx;
 
     pthread_cond_t nonempty;
     pthread_cond_t empty;

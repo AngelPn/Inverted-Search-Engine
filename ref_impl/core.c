@@ -100,7 +100,6 @@ ErrorCode MatchDocument(DocID doc_id, const char* doc_str)
 
     wait_all_jobs_finish(&job_scheduler);
 
-    // usleep(50);
     /* Match queries with document */
     // printf("d: %d\n", *(int*)get_doc_id(d));
     match_document(d, matched_queries);
