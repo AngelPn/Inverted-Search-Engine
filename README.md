@@ -116,9 +116,7 @@
   - `LinkedList jobs`: Η ουρά FIFO που συγκρατεί τις διεργασίες προς εκτέλεση.
   - `pthread_t* tids`: Τα id των threads.
   - `pthread_mutex_t job_mtx`: Mutex για τα jobs.
-  - `pthread_mutex_t em_mtx`: Mutex για τη δομή ευρετηρίου `ExactMatch`.
-  - `pthread_mutex_t ed_mtx`: Mutex για τη δομή ευρετηρίου `EditDist`.
-  - `pthread_mutex_t hd_mtx`: Mutex για τη δομή ευρετηρίου `HammingDist`.
+  - `pthread_mutex_t candidate_queries_mtx`: Mutex για την ενημέρωση των δομών `Query`.
   - `pthread_cond_t nonempty`, `pthread_cond_t empty`: Condition variables που συμβολίζουν αν η ουρά είναι κενή ή όχι.
   - `int job_counter`: Το πλήθος των στοιχείων που υπάρχουν στην ουρά jobs.
   - `bool quit`: Βοηθητική μεταβλητή για τον τερματισμό των threads.
