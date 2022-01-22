@@ -173,6 +173,9 @@
 |  6 threads | 7s : 820ms  | 2m : 25s : 879ms  |  |
 |  12 threads | 17s : 795ms | 1m : 31s : 330ms |  13m : 22s : 712ms |
 |  20 threads | 24s : 944ms  |  1m : 29s : 8ms |  |
+
+### Μνήμη
+small_text: 303,318,842 bytes allocated
  
  ## Δεύτερη προσέγγιση
  Το [match-document-parallel](https://github.com/AngelPn/Inverted-Search-Engine/tree/match-document-parallel) υποστηρίζει την παράλληλη εκτέλεση της match document. Δηλαδή, η
@@ -209,6 +212,9 @@
 |  6 threads |  177ms | 2m : 43s : 281ms  |  |
 |  12 threads | 167ms | 2m : 25s : 405ms | 21m : 17s : 722ms |
 |  20 threads | 175ms  | 2m : 32s : 603ms |  |
+
+### Μνήμη
+small_text: 263,175,358 bytes allocated
  
  ## Τρίτη προσέγγιση
  Η [main](https://github.com/AngelPn/Inverted-Search-Engine/tree/main) υποστηρίζει την παράλληλη εκτέλεση της match document και της εισαγωγής νέων στοιχείων σε διαφορετικές δομές. Δηλαδή, έχουμε δύο ειδών `jobs` στον `Job Scheduler`, τη [`MatchDocument_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c#L144-L178) και την [`StartQuery_job()`](https://github.com/AngelPn/Inverted-Search-Engine/blob/main/ref_impl/core.c#L76-L110). Σκεφτήκαμε να το υλοποιήσουμε αυτό καθώς τόσο τα queries όσο και τα documents αναγράφονται κατά ομάδες στα κείμενα `test_data`, οπότε όταν έρχεται μια ομάδα από `start query` να τρέχουν και αυτάπαράλληλα. Ουσιαστικά, μέχρι τρία threads θα μπορούν να τρέχουν παράλληλα τη `StartQuery_job()` καθώς οι διαφορετικές δομές προς εισαγωγή είναι τρεις, το hash table της `ExactMatch`, το BK tree της `EditDist` και το Hamming Tree της `HammingDist`.
@@ -258,6 +264,9 @@
 |  6 threads  |  236ms | 3m : 8s : 169ms  |  |
 |  12 threads | 235ms | 2m : 55s : 587ms  |  24m : 43s : 624ms |
 |  20 threads | 256ms  | 3m : 3s :15ms  |  |
+
+### Μνήμη
+small_text: 258,828,985 bytes allocated
  
 ## Σύγκριση μεταξύ των προσεγγίσεων
 ## Η καλύτερη υλοποίηση
