@@ -269,4 +269,14 @@ small_text: 263,175,358 bytes allocated
 small_text: 258,828,985 bytes allocated
  
 ## Σύγκριση μεταξύ των προσεγγίσεων
+![](include/Slide1.PNG)
+
+![](include/Slide2.PNG)
+
+![](include/Slide3.PNG)
+
+![](include/Slide4.PNG)
+
+![](include/Slide5.PNG)
+
 ## Η καλύτερη υλοποίηση
