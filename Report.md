@@ -170,9 +170,9 @@
   **Σημείωση**: Τα αρχεία 30m και 100m είναι αυτά που δόθηκαν στο piazza (το 1000m είναι τεράστιο και κάνει πολύ ώρα, δεν το τρέξαμε)
 |   | small_text  | input30m  | input100m  |
 |---|---|---|---|
-|  6 threads | 7s : 820ms  | 2m : 25s : 879ms  |  |
+|  6 threads | 7s : 820ms  | 2m : 25s : 879ms  |  20m : 41s : 436ms |
 |  12 threads | 17s : 795ms | 1m : 31s : 330ms |  13m : 22s : 712ms |
-|  20 threads | 24s : 944ms  |  1m : 29s : 8ms |  |
+|  20 threads | 24s : 944ms  |  1m : 29s : 8ms |  12m : 55s : 199ms |
 
 ### Μνήμη
 small_text: 303,318,842 bytes allocated
@@ -209,9 +209,9 @@ small_text: 303,318,842 bytes allocated
   ### Ταχύτητα Εκτέλεσης
   |   | small_text  | input30m  | input100m  |
 |---|---|---|---|
-|  6 threads |  177ms | 2m : 43s : 281ms  |  |
+|  6 threads |  177ms | 2m : 43s : 281ms  | 25m : 10s : 898ms |
 |  12 threads | 167ms | 2m : 25s : 405ms | 21m : 17s : 722ms |
-|  20 threads | 175ms  | 2m : 32s : 603ms |  |
+|  20 threads | 175ms  | 2m : 32s : 603ms |  20m : 19s : 558ms |
 
 ### Μνήμη
 small_text: 263,175,358 bytes allocated
@@ -261,9 +261,9 @@ small_text: 263,175,358 bytes allocated
  ### Ταχύτητα Εκτέλεσης
  |   | small_text  | input30m  | input100m  |
 |---|---|---|---|
-|  6 threads  |  236ms | 3m : 8s : 169ms  |  |
+|  6 threads  |  236ms | 3m : 8s : 169ms  |  31m : 29s : 699ms |
 |  12 threads | 235ms | 2m : 55s : 587ms  |  24m : 43s : 624ms |
-|  20 threads | 256ms  | 3m : 3s :15ms  |  |
+|  20 threads | 256ms  | 3m : 3s :15ms  |  24m : 36s : 452ms |
 
 ### Μνήμη
 small_text: 258,828,985 bytes allocated
